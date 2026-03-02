@@ -667,6 +667,402 @@
         Time integration uses <strong>4th-order Runge-Kutta (RK4)</strong> with &Delta;t = 1/3 (normalized 20-minute step) for numerical stability.
     </p>
 
+    <!-- Training Pipeline -->
+    <h3 style="margin-top:44px;">Training Pipeline — How the Models Are Built</h3>
+    <p style="color:#555; max-width:860px; margin-bottom:22px;">
+        This section walks through the complete training procedure step by step, from raw data to a trained model.
+        It covers how the data is prepared, when and how physics enters the training loop, how the two losses are
+        combined and weighted, what parameters get updated, and how over-fitting is controlled.
+        The goal is to give enough detail that anyone can reproduce this from scratch.
+    </p>
+
+    <!-- Step 1: Data Preparation -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 1 &mdash; Data Preparation</h4>
+        <p style="color:#555; margin-bottom:12px;">
+            All four models share the same data pipeline. The raw CSV is a 1,341&times;44 matrix of temperatures.
+            Three operations happen before any model sees the data:
+        </p>
+        <ol style="color:#555; line-height:2.1; padding-left:22px; margin-bottom:14px;">
+            <li>
+                <strong>Global z-score normalisation (training split only).</strong>
+                The global mean <code>G_MEAN</code> and standard deviation <code>G_STD</code> are computed from
+                the training rows only — this is critical to avoid data leakage from future timesteps.
+                Every temperature value is then mapped to <code>T_norm = (T_raw − G_MEAN) / G_STD</code>.
+                All model internals work in normalised space; results are denormalised at evaluation time.
+            </li>
+            <li>
+                <strong>Consecutive-window slicing.</strong>
+                A sliding window of length 11 (IN_STEPS=10 + OUT_STEPS=1) is swept across the time series.
+                Each window becomes one training sample: the first 10 steps are the input context
+                <code>x ∈ ℝ<sup>10×44</sup></code>, and step 11 is the regression target
+                <code>y ∈ ℝ<sup>1×44</sup></code>.
+                Windows are created separately for each split (train / val / test) so no window straddles a split boundary.
+            </li>
+            <li>
+                <strong>Gap filtering.</strong>
+                The dataset has a small number of missing 20-minute intervals.
+                Before accepting a window, the code checks that every consecutive timestamp pair inside it is
+                exactly 20 minutes apart. Any window that contains a gap is silently discarded.
+                This keeps the physics loss valid — the ODE time step DT = 1/3 assumes uniform 20-min spacing.
+            </li>
+        </ol>
+        <div style="background:#f0f4f9; border-left:3px solid #aab; padding:12px 18px; border-radius:5px; font-family:monospace; font-size:0.88rem; color:#334;">
+            Split sizes after gap filtering:<br>
+            &nbsp;&nbsp;Train windows : ~929 &nbsp; (rows 0 &ndash; 937, 70% of 1341)<br>
+            &nbsp;&nbsp;Val windows&nbsp;&nbsp; : ~200 &nbsp; (rows 938 &ndash; 1139, 15%)<br>
+            &nbsp;&nbsp;Test windows&nbsp; : ~200 &nbsp; (rows 1140 &ndash; 1340, 15%)<br>
+            &nbsp;&nbsp;Batch size (PINN): 32 &nbsp;&nbsp; Batch size (Baseline): 64
+        </div>
+    </div>
+
+    <!-- Step 2: Model Forward Pass -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 2 &mdash; The Forward Pass</h4>
+        <p style="color:#555; margin-bottom:12px;">
+            The forward pass differs between the baseline and the PINN models:
+        </p>
+        <p style="color:#555; font-weight:600; margin-bottom:6px;">Baseline (NN LSTM):</p>
+        <div style="background:#f4f6f9; border-left:4px solid #888; padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:14px;">
+            h = LSTM(x)[-1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# last hidden state, shape (B, 256)<br>
+            y_pred = Linear(GELU(Linear(h)))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# shape (B, 1, 44)<br>
+            L_data = MSE(y_pred, y_true)
+        </div>
+        <p style="color:#555; font-weight:600; margin-bottom:6px;">PINN models (KNN / Corr / Global):</p>
+        <div style="background:#f4f6f9; border-left:4px solid var(--accent); padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:0;">
+            Q = encoder(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# LSTM → (B, 44) heat sources, or (B, 1) for Global<br>
+            L = build_laplacian(log_R)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# graph conductance matrix, shape (44, 44)<br>
+            T = x[:, -1, :]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# current temperature at last context step<br>
+            T_next = rk4_step(T, Q, L)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# integrate ODE forward by DT = 1/3<br>
+            L_data = MSE(T_next, y_true)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# pure prediction error
+        </div>
+        <p style="color:#888; font-size:0.86rem; margin-top:10px;">
+            The LSTM encoder is called <em>once</em> per batch, producing a single heat-source vector Q (or scalar T_latent)
+            that is held constant while the ODE integrates forward. This is the key architectural decision:
+            the encoder "reads" the 10-step history and decides how much HVAC forcing is currently active,
+            then hands off to the physics integrator to propagate that forward in time.
+        </p>
+    </div>
+
+    <!-- Step 3: Where Physics Kicks In -->
+    <div style="border:1px solid #c8e6c9; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#f5fbf5;">
+        <h4 style="margin-bottom:10px; color:#2e7d32;">Step 3 &mdash; Where the Physics Kicks In: the Context-Window Residual</h4>
+        <p style="color:#555; margin-bottom:12px;">
+            This is the core PINN idea. The physics does <em>not</em> only constrain the one-step-ahead prediction.
+            It also enforces that the ODE is satisfied at <em>every transition within the known 10-step context window</em>.
+            This turns the input history into a dense field of physics supervision signals — 9 additional constraints per sample:
+        </p>
+        <div style="background:#e8f5e9; border-left:4px solid #43a047; padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:14px;">
+            def physics_loss(x):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# x shape: (B, 10, 44)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Q = encoder(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# encode full context once<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;L = build_laplacian(log_R)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# same graph for all steps<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;total = 0<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;for t in range(9):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# steps 0→1, 1→2, …, 8→9<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_hat = rk4_step(x[:,t,:], Q, L)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ODE prediction of T at t+1<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += (x[:,t+1,:] &minus; T_hat).pow(2).mean()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# residual vs observed T<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;return total / 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# average over 9 transitions
+        </div>
+        <p style="color:#555; margin-bottom:8px;">
+            Crucially, <strong>the same Q and L are reused for all 9 transitions</strong> without re-running the encoder.
+            This is intentional: Q represents the current HVAC state (which changes slowly), and L represents the
+            fixed building topology (which does not change at all). The gradient of the physics loss then flows back
+            through all 9 RK4 calls simultaneously, giving the encoder a strong signal to produce physically
+            consistent heat-source estimates.
+        </p>
+        <p style="color:#555;">
+            Geometrically, the physics loss is a <em>manifold constraint</em>: it pushes the model's state trajectory
+            to lie on the solution manifold of the ODE. The data loss then constrains which specific trajectory
+            on that manifold matches the observations.
+        </p>
+    </div>
+
+    <!-- Step 4: Combined Loss -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 4 &mdash; The Combined Loss Function</h4>
+        <p style="color:#555; margin-bottom:12px;">
+            At each training iteration the total loss is:
+        </p>
+        <div style="background:#f4f6f9; border-left:4px solid var(--cmu-red); padding:16px 22px; border-radius:6px; font-family:monospace; font-size:0.97rem; margin-bottom:16px; max-width:660px;">
+            L<sub>total</sub> &nbsp;=&nbsp; L<sub>data</sub> &nbsp;+&nbsp; w<sub>phys</sub> &middot; L<sub>phys</sub>
+        </div>
+        <ul style="color:#555; line-height:2.1; padding-left:20px; margin-bottom:16px;">
+            <li>
+                <strong>L<sub>data</sub></strong> — MSE between the ODE-predicted T at step 11 and the observed ground truth.
+                Computed on shape (B, 1, 44), averaged over batch, time, and nodes.
+                This is the classic supervised regression loss.
+            </li>
+            <li>
+                <strong>L<sub>phys</sub></strong> — mean squared ODE residual over 9 context transitions (Step 3 above).
+                This is computed entirely from the input window <code>x</code> — no ground-truth labels needed.
+                It is self-supervised physics regulation.
+            </li>
+            <li>
+                <strong>w<sub>phys</sub></strong> — a scalar weight that controls how strongly physics is enforced.
+                It is not a fixed hyperparameter: it is <em>ramped up linearly</em> during training (see Step 5).
+            </li>
+        </ul>
+        <p style="color:#555;">
+            At inference time only the forward pass is used. The physics loss is a training-only regulariser;
+            the ODE is still evaluated once (for the prediction step) but its residual is not penalised.
+            The entire physics benefit is "baked in" to the learned parameters.
+        </p>
+    </div>
+
+    <!-- Step 5: Physics Ramp -->
+    <div style="border:1px solid #fff3e0; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fffdf8;">
+        <h4 style="margin-bottom:10px; color:#e65100;">Step 5 &mdash; The Physics Ramp Schedule</h4>
+        <p style="color:#555; margin-bottom:12px;">
+            The physics weight is not applied from epoch 1. It is ramped in linearly:
+        </p>
+        <div style="background:#fff8f0; border-left:4px solid #ef6c00; padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:14px; max-width:560px;">
+            w_phys = W_PHYS_MAX &times; min(1.0, epoch / W_PHYS_RAMP)<br><br>
+            # W_PHYS_MAX  = 1.0<br>
+            # W_PHYS_RAMP = 300<br><br>
+            # epoch 1&nbsp;&nbsp;&nbsp;&nbsp;→ w = 0.003 (physics nearly off)<br>
+            # epoch 150 → w = 0.500 (half weight)<br>
+            # epoch 300 → w = 1.000 (full physics)<br>
+            # epoch 301+ → w = 1.000 (locked)
+        </div>
+        <p style="color:#555; margin-bottom:8px;">
+            <strong>Why not start with full physics?</strong>
+            In early epochs the LSTM encoder is randomly initialised and produces arbitrary Q values.
+            If the physics loss is immediately applied at full weight, its gradients overwhelm the data loss
+            and the encoder is trained to satisfy the ODE with wrong Q values — it gets stuck in a local minimum
+            where the physics is satisfied but the actual temperatures are wrong.
+        </p>
+        <p style="color:#555;">
+            The ramp gives the encoder ~300 epochs to first learn a reasonable mapping from temperature
+            history to heat sources (guided only by the data loss), and then gradually imposes the additional
+            constraint that those heat sources must also be consistent with the physical ODE.
+            Think of it as: <em>first teach the model what the data looks like, then teach it to also obey the physics.</em>
+        </p>
+    </div>
+
+    <!-- Step 6: Learned Parameters & Positivity -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 6 &mdash; Learned Physics Parameters and Positivity Constraints</h4>
+        <p style="color:#555; margin-bottom:12px;">
+            Every physical parameter in the ODE must be strictly positive (you cannot have negative thermal mass
+            or negative resistance). The models never directly learn R, C, or &alpha; — instead they learn
+            unconstrained real-valued proxies in log-space, then pass them through <code>softplus</code>:
+        </p>
+        <div style="background:#f4f6f9; border-left:4px solid var(--accent); padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:16px;">
+            softplus(x) = log(1 + exp(x)) &nbsp;&gt; 0 &nbsp;&nbsp;for all x &isin; ℝ<br><br>
+            R_ij = softplus(log_R_ij)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# thermal resistance, one per graph edge<br>
+            C_i&nbsp;&nbsp;= softplus(log_C_i)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# thermal capacitance, one per node<br>
+            &beta;&nbsp;&nbsp;&nbsp;= softplus(log_beta)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ambient coupling (KNN &amp; Corr only, global scalar)<br>
+            &alpha;_i&nbsp;= softplus(log_alpha_i)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# HVAC coupling (Global model only, per node)
+        </div>
+        <p style="color:#555; margin-bottom:10px;">
+            <strong>Initialisation:</strong> log_R values are initialised to <code>log(physical_distance + 1e-3)</code>,
+            so longer physical distances start with higher resistance — a physically informed warm start.
+            log_C and log_alpha are initialised to zero, meaning R = softplus(0) ≈ 0.69 at the start
+            (a neutral, mid-range initial value for capacitances).
+            T_set is initialised to 0 (i.e., the normalised mean temperature).
+        </p>
+        <p style="color:#555;">
+            These parameters are registered as <code>nn.Parameter</code> objects and are included in the same
+            Adam optimiser as the LSTM encoder weights. They are updated by the same backpropagation pass —
+            there is no separate physics parameter optimisation step.
+        </p>
+    </div>
+
+    <!-- Step 7: Laplacian + RK4 -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 7 &mdash; Differentiable Laplacian and RK4 Integrator</h4>
+        <p style="color:#555; font-weight:600; margin-bottom:6px;">Building the graph Laplacian:</p>
+        <p style="color:#555; margin-bottom:10px;">
+            Given edge conductances g<sub>ij</sub> = 1 / R<sub>ij</sub>, the weighted graph Laplacian L is:
+        </p>
+        <div style="background:#f4f6f9; border-left:4px solid var(--accent); padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:14px;">
+            L[i, j] = &minus;g_ij &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# off-diagonal: negative conductance<br>
+            L[i, i] = &sum;<sub>j&isin;N(i)</sub> g_ij&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# diagonal: sum of incident conductances<br><br>
+            then: (T &middot; L<sup>T</sup>)<sub>i</sub> &nbsp;=&nbsp; &sum;_j g_ij (T_i &minus; T_j)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# net heat outflow from node i
+        </div>
+        <p style="color:#555; margin-bottom:16px;">
+            This matrix multiplication replaces an explicit loop over edges and is fully differentiable
+            with respect to log_R. PyTorch's autograd traces through the Laplacian construction and
+            backpropagates gradients to each log_R parameter.
+        </p>
+        <p style="color:#555; font-weight:600; margin-bottom:6px;">The RK4 integrator:</p>
+        <p style="color:#555; margin-bottom:10px;">
+            Forward Euler (<code>T_next = T + DT &middot; f(T)</code>) accumulates error proportional to DT per step.
+            Over 9 transitions in the physics loss, Euler drift would corrupt the gradients.
+            RK4 gives fourth-order accuracy and is much more stable:
+        </p>
+        <div style="background:#f4f6f9; border-left:4px solid var(--accent); padding:14px 20px; border-radius:6px; font-family:monospace; font-size:0.88rem; margin-bottom:14px;">
+            f(T) = ODE_rhs(T, Q, L)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# dT/dt<br>
+            k1 = f(T)<br>
+            k2 = f(T + 0.5 &middot; DT &middot; k1)<br>
+            k3 = f(T + 0.5 &middot; DT &middot; k2)<br>
+            k4 = f(T + DT &middot; k3)<br>
+            T_next = T + (DT / 6) &middot; (k1 + 2k2 + 2k3 + k4)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# DT = 1/3
+        </div>
+        <p style="color:#555;">
+            Each RK4 call evaluates the ODE right-hand side 4 times, so the physics loss evaluation involves
+            9 transitions &times; 4 RK4 stages = 36 ODE evaluations per batch, all of which contribute gradients
+            back to log_R, log_C, log_beta / log_alpha, and the LSTM encoder parameters.
+        </p>
+    </div>
+
+    <!-- Step 8: Gradient Flow -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 8 &mdash; What Gets Updated Each Iteration</h4>
+        <p style="color:#555; margin-bottom:14px;">
+            All parameters are updated together in a single <code>optimizer.step()</code> call.
+            The gradient of L<sub>total</sub> flows through the following paths:
+        </p>
+        <div style="overflow-x:auto; margin-bottom:14px;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Shape</th>
+                    <th>Updated via L<sub>data</sub></th>
+                    <th>Updated via L<sub>phys</sub></th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>LSTM weights &amp; biases</td>
+                    <td>~44K params</td>
+                    <td>&#10003; (through forward pass)</td>
+                    <td>&#10003; (through physics_loss encoder call)</td>
+                    <td>Encodes temperature history into Q / T<sub>latent</sub></td>
+                </tr>
+                <tr>
+                    <td>FC head weights</td>
+                    <td>128&times;44 or 128&times;1</td>
+                    <td>&#10003;</td>
+                    <td>&#10003;</td>
+                    <td>Projects LSTM hidden state to heat sources</td>
+                </tr>
+                <tr>
+                    <td>log_R<sub>ij</sub></td>
+                    <td>one per graph edge</td>
+                    <td>&#10003; (through rk4_step in forward)</td>
+                    <td>&#10003; (through 9&times;4 ODE evals)</td>
+                    <td>Thermal resistances; controls heat flow speed between nodes</td>
+                </tr>
+                <tr>
+                    <td>log_C<sub>i</sub></td>
+                    <td>44 (one per node)</td>
+                    <td>&#10003;</td>
+                    <td>&#10003;</td>
+                    <td>Thermal capacitances; controls temperature inertia at each node</td>
+                </tr>
+                <tr>
+                    <td>log_&beta; / log_&alpha;<sub>i</sub></td>
+                    <td>1 scalar / 44 per-node</td>
+                    <td>&#10003;</td>
+                    <td>&#10003;</td>
+                    <td>HVAC coupling strength to ambient / setpoint</td>
+                </tr>
+                <tr>
+                    <td>T_set (KNN/Corr only)</td>
+                    <td>1 scalar</td>
+                    <td>&#10003;</td>
+                    <td>&#10003;</td>
+                    <td>HVAC setpoint temperature (normalised)</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <p style="color:#555;">
+            Gradient clipping is applied at max norm 1.0 before the optimiser step
+            (<code>nn.utils.clip_grad_norm_(all_params, 1.0)</code>).
+            This prevents the physics loss gradients from exploding when the ODE residuals are large early in training.
+        </p>
+    </div>
+
+    <!-- Step 9: Optimiser, Scheduler, Early Stopping -->
+    <div style="border:1px solid #dde3ec; border-radius:10px; padding:22px 28px; margin-bottom:20px; background:#fafbfd;">
+        <h4 style="margin-bottom:10px; color:var(--cmu-dark);">Step 9 &mdash; Optimiser, Learning Rate Schedule, and Early Stopping</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:16px;">
+            <div>
+                <p style="font-weight:600; color:#444; margin-bottom:6px;">Baseline (NN LSTM)</p>
+                <ul style="color:#555; line-height:2; padding-left:18px;">
+                    <li>Optimiser: Adam, lr = 1e-3</li>
+                    <li>Scheduler: ReduceLROnPlateau<br>patience=50 epochs, factor=0.5, min lr=1e-6</li>
+                    <li>Max epochs: 2,000</li>
+                    <li>Early stopping: patience = 150 epochs</li>
+                    <li>Batch size: 64</li>
+                </ul>
+            </div>
+            <div>
+                <p style="font-weight:600; color:#444; margin-bottom:6px;">PINN Models (KNN / Corr / Global)</p>
+                <ul style="color:#555; line-height:2; padding-left:18px;">
+                    <li>Optimiser: Adam, lr = 1e-3 (shared across all params)</li>
+                    <li>Scheduler: ReduceLROnPlateau<br>patience=80 epochs, factor=0.5, min lr=1e-6</li>
+                    <li>Max epochs: 5,000</li>
+                    <li>Early stopping: patience = 300 epochs</li>
+                    <li>Batch size: 32 (smaller to stabilise physics gradients)</li>
+                </ul>
+            </div>
+        </div>
+        <p style="color:#555; margin-bottom:8px;">
+            <strong>Validation is always purely data-driven.</strong>
+            The scheduler and early-stopping criterion both watch the <em>data loss only</em>
+            on the validation set — the physics loss is never part of model selection.
+            This ensures the best checkpoint is the one that predicts temperatures most accurately,
+            not the one that most strongly satisfies the ODE.
+        </p>
+        <p style="color:#555; margin-bottom:8px;">
+            <strong>Checkpointing.</strong>
+            Every time the validation loss improves, the full model state is copied to CPU memory
+            (not just the loss value). This includes the LSTM encoder weights <em>and</em> all physics
+            parameters (log_R, log_C, log_beta / log_alpha, T_set). At the end of training, the
+            best checkpoint is restored before evaluation.
+        </p>
+        <p style="color:#555;">
+            <strong>Device handling.</strong>
+            The code auto-selects CUDA (GPU) → MPS (Apple Silicon) → CPU, in priority order.
+            Training times on CPU range from ~30 min (baseline) to ~3–4 hours (PINN at 5,000 epochs).
+        </p>
+    </div>
+
+    <!-- Training Loop Pseudocode -->
+    <div style="border:1px solid #c5cae9; border-radius:10px; padding:22px 28px; margin-bottom:30px; background:#f8f9ff;">
+        <h4 style="margin-bottom:14px; color:#283593;">Complete Training Loop (PINN Pseudocode)</h4>
+        <div style="background:#eef0fa; border-radius:6px; padding:16px 20px; font-family:monospace; font-size:0.82rem; line-height:1.8; color:#1a237e; overflow-x:auto;">
+            for epoch in 1 &hellip; 5000:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;w_phys = min(1.0, epoch / 300)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ramp physics weight<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;for (x_batch, y_batch) in train_loader:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# batch_size = 32<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;optimizer.zero_grad()<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q = encoder(x_batch)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# LSTM encodes context<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L = build_laplacian(softplus(log_R))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# graph conductance matrix<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# --- data loss ---<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_pred = rk4_step(x_batch[:,-1,:], Q, L)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# predict step 11<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L_data = MSE(T_pred, y_batch)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# supervised<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# --- physics loss (context window residual) ---<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L_phys = 0<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for t in 0 &hellip; 8:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_hat = rk4_step(x_batch[:,t,:], Q, L)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ODE forward<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L_phys += MSE(x_batch[:,t+1,:], T_hat)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# residual vs observed<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L_phys /= 9<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# --- combine and backprop ---<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L_total = L_data + w_phys * L_phys<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L_total.backward()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# autograd through ODE + LSTM<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clip_grad_norm_(all_params, max=1.0)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;optimizer.step()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# update LSTM + log_R + log_C + ...<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;# --- end-of-epoch validation (data loss only) ---<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;v_loss = MSE(forward_pass(X_val), Y_val)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# no physics term<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;scheduler.step(v_loss)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# halve lr if plateau (patience=80)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if v_loss &lt; best_val: save_checkpoint()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# save LSTM + all physics params<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if no_improve &ge; 300: break&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# early stopping<br>
+            <br>
+            restore best checkpoint<br>
+            evaluate on test set (no physics loss, data loss only)
+        </div>
+    </div>
+
     <!-- Four Models -->
     <h3 style="margin-top:36px;">Four Model Variants</h3>
     <div class="card-grid" style="margin-top:16px;">
