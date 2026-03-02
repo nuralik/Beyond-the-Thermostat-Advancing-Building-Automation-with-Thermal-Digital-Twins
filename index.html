@@ -301,6 +301,78 @@
         }
         footer a { color: rgba(255,255,255,0.8); }
 
+        /* Heatmap animation */
+        .heatmap-wrap {
+            position: relative;
+            max-width: 900px;
+            margin: 20px auto 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        #hmCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #eef2f7;
+        }
+        #hmLoading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.88);
+            font-size: 1.1rem;
+            color: #555;
+            z-index: 10;
+        }
+        .hm-controls {
+            max-width: 900px;
+            margin: 12px auto 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #hmPlayBtn {
+            padding: 8px 20px;
+            background: var(--cmu-red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        #hmPlayBtn:hover { background: #a00f26; }
+        #hmSlider {
+            flex: 1;
+            min-width: 120px;
+            accent-color: var(--cmu-red);
+        }
+        #hmTimeDisplay {
+            font-family: monospace;
+            font-size: 0.88rem;
+            color: #444;
+            flex-shrink: 0;
+            min-width: 130px;
+        }
+        .hm-speed-btn {
+            padding: 4px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .hm-speed-btn.active {
+            background: var(--cmu-red);
+            color: white;
+            border-color: var(--cmu-red);
+        }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 1.6rem; }
             .photo-row { flex-direction: column; }
@@ -324,6 +396,7 @@
         <a href="#progress">Progress</a>
         <a href="#sensors">Sensors</a>
         <a href="#calibration">Calibration</a>
+        <a href="#heatmap">Heatmap</a>
         <a href="#pinn-experiment">PINN Experiment</a>
     </div>
 </nav>
@@ -502,6 +575,32 @@
         <canvas id="timeSeriesChart"></canvas>
     </div>
 
+</section>
+
+<!-- Animated Thermal Heatmap -->
+<section id="heatmap">
+    <h2>Animated Thermal Heatmap</h2>
+    <p class="section-sub">44 sensors &middot; 18.6-day record (Feb&ndash;Mar 2004) &middot; 1-hour resolution &middot; Spatial temperature evolution across the Intel Berkeley Lab floor plan</p>
+
+    <div class="heatmap-wrap">
+        <div id="hmLoading">&#9654;&nbsp; Loading animation data&hellip;</div>
+        <canvas id="hmCanvas" width="900" height="467"></canvas>
+    </div>
+
+    <div class="hm-controls">
+        <button id="hmPlayBtn" onclick="hmTogglePlay()">&#9654; Play</button>
+        <input type="range" id="hmSlider" min="0" max="446" step="1" value="0"
+               oninput="hmSeek(this.value)">
+        <span id="hmTimeDisplay">Loading&hellip;</span>
+        <span style="color:#888; font-size:0.8rem; margin-left:4px;">Speed:</span>
+        <button class="hm-speed-btn" id="hmSpd2" onclick="hmSetSpeed(2,this)">2&times;</button>
+        <button class="hm-speed-btn active" id="hmSpd5" onclick="hmSetSpeed(5,this)">5&times;</button>
+        <button class="hm-speed-btn" id="hmSpd10" onclick="hmSetSpeed(10,this)">10&times;</button>
+        <button class="hm-speed-btn" id="hmSpd20" onclick="hmSetSpeed(20,this)">20&times;</button>
+    </div>
+    <p style="color:#888; font-size:0.82rem; max-width:900px; margin: 8px auto 0; text-align:center;">
+        Gaussian spatial interpolation using all 44 sensor readings. Colormap: blue (cool) &rarr; yellow (medium) &rarr; red (warm). Click Play to animate.
+    </p>
 </section>
 
 <!-- PINN Experiment -->
@@ -819,6 +918,227 @@ function showSeries(mode) {
     document.querySelectorAll('#seriesToggle button').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
 }
+
+// ============================================================
+//  ANIMATED THERMAL HEATMAP
+// ============================================================
+(function() {
+    // RdYlBu_r colormap stops  [fraction, [R,G,B]]
+    const CMAP = [
+        [0.00, [49,  54,  149]],
+        [0.10, [69,  117, 180]],
+        [0.22, [116, 173, 209]],
+        [0.35, [171, 217, 233]],
+        [0.46, [224, 243, 248]],
+        [0.50, [255, 255, 191]],
+        [0.55, [254, 224, 144]],
+        [0.65, [253, 174, 97 ]],
+        [0.78, [244, 109, 67 ]],
+        [0.88, [215, 48,  39 ]],
+        [1.00, [165, 0,   38 ]],
+    ];
+
+    function tempToRGB(t, vmin, vmax) {
+        const f = Math.max(0, Math.min(1, (t - vmin) / (vmax - vmin)));
+        for (let i = 1; i < CMAP.length; i++) {
+            if (f <= CMAP[i][0]) {
+                const lo = (f - CMAP[i-1][0]) / (CMAP[i][0] - CMAP[i-1][0]);
+                const [r0,g0,b0] = CMAP[i-1][1], [r1,g1,b1] = CMAP[i][1];
+                return [(r0+lo*(r1-r0))|0, (g0+lo*(g1-g0))|0, (b0+lo*(b1-b0))|0];
+            }
+        }
+        return CMAP[CMAP.length-1][1];
+    }
+
+    const canvas  = document.getElementById('hmCanvas');
+    const ctx     = canvas.getContext('2d');
+    const offCanvas = document.createElement('canvas');  // reused each frame
+    offCanvas.width  = 900;
+    offCanvas.height = 467;
+    const offCtx  = offCanvas.getContext('2d');
+
+    const floorImg = new Image();
+    let floorReady = false;
+    floorImg.onload = () => { floorReady = true; if (hmData) hmRender(hmStep); };
+    floorImg.src = 'node_map.png';
+
+    let hmData = null, hmStep = 0, hmPlaying = false;
+    let hmSpeed = 5, hmAnimId = null, hmLastTime = 0;
+
+    // ---- render one frame ----
+    function hmRender(stepIdx) {
+        if (!hmData || !floorReady) return;
+        const { nodes, temps, vmin, vmax } = hmData;
+        const T  = temps[stepIdx];
+        const CW = canvas.width, CH = canvas.height;
+        const SX = CW / 900, SY = CH / 467;
+
+        // 1. Blurred blob heatmap on offscreen canvas
+        offCtx.clearRect(0, 0, CW, CH);
+        offCtx.filter = 'blur(62px)';
+        for (let i = 0; i < nodes.length; i++) {
+            const [r,g,b] = tempToRGB(T[i], vmin, vmax);
+            offCtx.beginPath();
+            offCtx.arc(nodes[i].px * SX, nodes[i].py * SY, 115, 0, Math.PI * 2);
+            offCtx.fillStyle = `rgb(${r},${g},${b})`;
+            offCtx.fill();
+        }
+        offCtx.filter = 'none';
+
+        // 2. Compose: white bg + heatmap + floor plan
+        ctx.fillStyle = '#eef2f7';
+        ctx.fillRect(0, 0, CW, CH);
+        ctx.globalAlpha = 0.58;
+        ctx.drawImage(offCanvas, 0, 0);
+        ctx.globalAlpha = 0.68;
+        ctx.drawImage(floorImg, 0, 0, CW, CH);
+        ctx.globalAlpha = 1.0;
+
+        // 3. Sensor dots + labels
+        ctx.save();
+        for (let i = 0; i < nodes.length; i++) {
+            const [r,g,b] = tempToRGB(T[i], vmin, vmax);
+            const px = nodes[i].px * SX, py = nodes[i].py * SY;
+            // dot
+            ctx.beginPath();
+            ctx.arc(px, py, 5.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.strokeStyle = '#111';
+            ctx.lineWidth = 1.2;
+            ctx.fill(); ctx.stroke();
+            // label background
+            ctx.fillStyle = 'rgba(255,255,255,0.84)';
+            ctx.fillRect(px + 7, py - 9, 36, 18);
+            // node id
+            ctx.fillStyle = '#111';
+            ctx.font = 'bold 7.5px sans-serif';
+            ctx.fillText(nodes[i].id, px + 9, py - 1);
+            // temperature
+            ctx.font = '6.5px sans-serif';
+            ctx.fillStyle = '#333';
+            ctx.fillText(T[i].toFixed(1) + '\u00b0C', px + 9, py + 8);
+        }
+        ctx.restore();
+
+        // 4. Colorbar (right edge)
+        hmDrawColorbar(vmin, vmax);
+
+        // 5. Timestamp chip (top-left)
+        const ts = hmData.timestamps[stepIdx];
+        ctx.fillStyle = 'rgba(10,10,25,0.68)';
+        ctx.beginPath();
+        ctx.roundRect(10, 10, 172, 28, 5);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 11px monospace';
+        ctx.fillText(ts, 18, 29);
+    }
+
+    function hmDrawColorbar(vmin, vmax) {
+        const CW = canvas.width, CH = canvas.height;
+        const cbX = CW - 22, cbY = 45, cbH = CH - 85, cbW = 12;
+
+        // gradient bar
+        const grad = ctx.createLinearGradient(0, cbY + cbH, 0, cbY);
+        for (const [stop, rgb] of CMAP) {
+            grad.addColorStop(stop, `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`);
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(cbX, cbY, cbW, cbH);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 0.7;
+        ctx.strokeRect(cbX, cbY, cbW, cbH);
+
+        // tick labels
+        ctx.fillStyle = '#222';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'right';
+        const N = 5;
+        for (let i = 0; i <= N; i++) {
+            const frac = i / N;
+            const temp = vmin + frac * (vmax - vmin);
+            const y    = cbY + cbH * (1 - frac);
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.fillRect(cbX - 33, y - 6, 32, 12);
+            ctx.fillStyle = '#222';
+            ctx.fillText(temp.toFixed(1) + '\u00b0C', cbX - 2, y + 3);
+        }
+
+        // rotated axis title
+        ctx.save();
+        ctx.translate(CW - 5, cbY + cbH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#444';
+        ctx.fillText('Temperature (\u00b0C)', 0, 0);
+        ctx.restore();
+        ctx.textAlign = 'left';
+    }
+
+    // ---- animation loop ----
+    function hmLoop(ts) {
+        const elapsed = ts - hmLastTime;
+        const stepMs  = 1000 / hmSpeed;
+        if (elapsed >= stepMs) {
+            hmLastTime = ts - (elapsed % stepMs);
+            hmStep = (hmStep + 1) % hmData.timestamps.length;
+            hmRender(hmStep);
+            const slider = document.getElementById('hmSlider');
+            if (slider) slider.value = hmStep;
+            const disp = document.getElementById('hmTimeDisplay');
+            if (disp) disp.textContent = hmData.timestamps[hmStep];
+        }
+        if (hmPlaying) hmAnimId = requestAnimationFrame(hmLoop);
+    }
+
+    // ---- public controls ----
+    window.hmTogglePlay = function() {
+        hmPlaying = !hmPlaying;
+        const btn = document.getElementById('hmPlayBtn');
+        btn.innerHTML = hmPlaying ? '&#9646;&#9646; Pause' : '&#9654; Play';
+        if (hmPlaying) {
+            hmLastTime = performance.now();
+            hmAnimId = requestAnimationFrame(hmLoop);
+        } else if (hmAnimId) {
+            cancelAnimationFrame(hmAnimId);
+        }
+    };
+
+    window.hmSeek = function(val) {
+        hmStep = parseInt(val);
+        if (hmData) {
+            hmRender(hmStep);
+            const disp = document.getElementById('hmTimeDisplay');
+            if (disp) disp.textContent = hmData.timestamps[hmStep];
+        }
+    };
+
+    window.hmSetSpeed = function(s, btn) {
+        hmSpeed = s;
+        document.querySelectorAll('.hm-speed-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    };
+
+    // ---- load data ----
+    fetch('heatmap_data.json')
+        .then(r => r.json())
+        .then(data => {
+            hmData = data;
+            const slider = document.getElementById('hmSlider');
+            if (slider) slider.max = data.timestamps.length - 1;
+            const disp = document.getElementById('hmTimeDisplay');
+            if (disp) disp.textContent = data.timestamps[0];
+            const loading = document.getElementById('hmLoading');
+            if (loading) loading.style.display = 'none';
+            if (floorReady) hmRender(0);
+        })
+        .catch(err => {
+            const loading = document.getElementById('hmLoading');
+            if (loading) loading.textContent = 'Could not load animation data.';
+            console.error('Heatmap data load error:', err);
+        });
+})();
 
 </script>
 
