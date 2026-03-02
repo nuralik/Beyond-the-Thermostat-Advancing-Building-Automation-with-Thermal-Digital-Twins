@@ -324,6 +324,7 @@
         <a href="#progress">Progress</a>
         <a href="#sensors">Sensors</a>
         <a href="#calibration">Calibration</a>
+        <a href="#pinn-experiment">PINN Experiment</a>
     </div>
 </nav>
 
@@ -400,25 +401,25 @@
             <p>Strategic placement of sensors within the faculty office to capture spatial thermal gradients.</p>
         </div>
         <div class="timeline-item">
-            <div class="timeline-dot pending"></div>
+            <div class="timeline-dot done"></div>
             <h4>Step 4: Formulate Governing Equations
-                <span class="timeline-label label-pending">Upcoming</span>
+                <span class="timeline-label label-done">Complete</span>
             </h4>
-            <p>Define the heat transfer and convection equations specific to the testbed environment.</p>
+            <p>Formulated RC-circuit thermal dynamics: heat conduction between nodes via learned graph conductances, HVAC injection modeled as latent heat sources, and ambient coupling loss term. Equations embedded as physics loss during training.</p>
         </div>
         <div class="timeline-item">
-            <div class="timeline-dot pending"></div>
+            <div class="timeline-dot done"></div>
             <h4>Step 5: Train PINN Model
-                <span class="timeline-label label-pending">Upcoming</span>
+                <span class="timeline-label label-done">Complete</span>
             </h4>
-            <p>Train the Physics-Informed Neural Network using sensor data and physics constraints.</p>
+            <p>Trained four model variants on 44-node Berkeley office dataset (Feb&ndash;Mar 2004, 1,341 time steps at 20-min resolution): pure LSTM baseline, RC-ODE with KNN graph, RC-ODE with correlation graph, and RC-ODE with global latent driver.</p>
         </div>
         <div class="timeline-item">
-            <div class="timeline-dot pending"></div>
+            <div class="timeline-dot done"></div>
             <h4>Step 6: Model Validation
-                <span class="timeline-label label-pending">Upcoming</span>
+                <span class="timeline-label label-done">Complete</span>
             </h4>
-            <p>Compare PINN predictions against held-out real-world sensor data.</p>
+            <p>Evaluated all models on held-out test set. Best PINN variant (RC-ODE Global) reduced RMSE by 59% and improved R&sup2; from 0.619 to 0.916 vs. the pure LSTM baseline. See the <a href="#pinn-experiment">PINN Experiment</a> section for full results.</p>
         </div>
     </div>
 </section>
@@ -503,10 +504,251 @@
 
 </section>
 
+<!-- PINN Experiment -->
+<section id="pinn-experiment">
+    <h2>Experiment: How Effective Are PINNs for Thermal Modeling?</h2>
+    <p class="section-sub">Benchmarking four model variants &mdash; from pure deep learning to physics-constrained ODEs &mdash; on a real multi-zone building dataset</p>
+
+    <!-- Dataset -->
+    <h3>Dataset</h3>
+    <p style="color:#555; max-width:820px; margin-bottom:18px;">
+        The experiment uses the <strong>Intel Berkeley Research Lab temperature dataset</strong>, a real-world indoor climate record from a densely instrumented office space.
+        Sensors were deployed on a 2D floor plan and logged every 20 minutes for approximately 18.6 days (February 28 &ndash; March 19, 2004).
+        After alignment and preprocessing, the dataset contains <strong>44 sensor nodes</strong> and <strong>1,341 time steps</strong>,
+        yielding roughly 59,000 individual temperature observations. Node IDs are non-contiguous (1&ndash;54, with some indices unused)
+        reflecting the original lab deployment.
+    </p>
+    <div class="metrics">
+        <div class="metric-box"><div class="num">44</div><div class="label">Sensor Nodes</div></div>
+        <div class="metric-box"><div class="num">1,341</div><div class="label">Time Steps</div></div>
+        <div class="metric-box"><div class="num">20 min</div><div class="label">Sampling Interval</div></div>
+        <div class="metric-box"><div class="num">18.6 days</div><div class="label">Duration (Feb&ndash;Mar 2004)</div></div>
+        <div class="metric-box"><div class="num">70/15/15</div><div class="label">Train / Val / Test Split</div></div>
+    </div>
+    <p style="color:#555; max-width:820px; margin-top:16px;">
+        The forecasting task is <strong>1-step-ahead prediction (+20 minutes)</strong>: given a sliding window of
+        10 consecutive observations (200 minutes of context) across all 44 nodes, predict the temperature at the next time step for every node simultaneously.
+        Two nodes (node 6 and node 38) show anomalous dynamics (likely HVAC vents or sensor malfunctions) and exhibit higher error across all models.
+    </p>
+
+    <!-- Governing Physics -->
+    <h3 style="margin-top:36px;">Governing Physics Equations</h3>
+    <p style="color:#555; max-width:820px; margin-bottom:14px;">
+        All three physics-informed variants are built on an <strong>RC-circuit analogy for heat transfer</strong>.
+        Each sensor node <em>i</em> is modeled as a thermal capacitor with capacitance C<sub>i</sub> [J/&deg;C],
+        connected to neighboring nodes via thermal resistances R<sub>ij</sub> [&deg;C/W].
+        The continuous-time heat balance equation for node <em>i</em> is:
+    </p>
+    <div style="background:#f4f6f9; border-left:4px solid var(--accent); padding:18px 24px; border-radius:6px; font-family:monospace; font-size:0.97rem; max-width:680px; margin-bottom:18px;">
+        C<sub>i</sub> &middot; dT<sub>i</sub>/dt &nbsp;=&nbsp;
+        &minus;&sum;<sub>j&isin;N(i)</sub> g<sub>ij</sub>(T<sub>i</sub> &minus; T<sub>j</sub>)
+        &nbsp;+&nbsp; Q<sub>i</sub>
+        &nbsp;&minus;&nbsp; &beta;<sub>i</sub>(T<sub>i</sub> &minus; T<sub>set</sub>)
+    </div>
+    <p style="color:#555; max-width:820px; margin-bottom:6px;">Where:</p>
+    <ul style="color:#555; line-height:2.1; max-width:760px; margin-bottom:20px;">
+        <li><strong>C<sub>i</sub></strong> &mdash; Thermal capacitance at node <em>i</em> (learned, constrained positive via softplus)</li>
+        <li><strong>g<sub>ij</sub> = 1/R<sub>ij</sub></strong> &mdash; Thermal conductance between nodes <em>i</em> and <em>j</em> (learned per graph edge)</li>
+        <li><strong>Q<sub>i</sub></strong> &mdash; HVAC heat injection/removal at node <em>i</em>, inferred by the LSTM encoder from the temperature history</li>
+        <li><strong>&beta;<sub>i</sub></strong> &mdash; Ambient coupling coefficient (heat loss to environment, KNN &amp; Corr models)</li>
+        <li><strong>T<sub>set</sub></strong> &mdash; HVAC setpoint temperature (learned scalar)</li>
+    </ul>
+    <p style="color:#555; max-width:820px; margin-bottom:6px;">
+        The RC-ODE Global model replaces per-node Q<sub>i</sub> with a shared latent driver:
+    </p>
+    <div style="background:#f4f6f9; border-left:4px solid #e76f51; padding:18px 24px; border-radius:6px; font-family:monospace; font-size:0.97rem; max-width:680px; margin-bottom:18px;">
+        C<sub>i</sub> &middot; dT<sub>i</sub>/dt &nbsp;=&nbsp;
+        &minus;&sum;<sub>j&isin;N(i)</sub> g<sub>ij</sub>(T<sub>i</sub> &minus; T<sub>j</sub>)
+        &nbsp;+&nbsp; &alpha;<sub>i</sub>(T<sub>latent</sub> &minus; T<sub>i</sub>)
+    </div>
+    <p style="color:#555; max-width:820px;">
+        Here <strong>&alpha;<sub>i</sub></strong> is a per-node HVAC coupling strength and <strong>T<sub>latent</sub></strong> is a global latent setpoint
+        (both learned). This formulation is physically motivated: a central HVAC system drives all zones toward a common target,
+        with each node's sensitivity controlled by &alpha;<sub>i</sub>.
+        Time integration uses <strong>4th-order Runge-Kutta (RK4)</strong> with &Delta;t = 1/3 (normalized 20-minute step) for numerical stability.
+    </p>
+
+    <!-- Four Models -->
+    <h3 style="margin-top:36px;">Four Model Variants</h3>
+    <div class="card-grid" style="margin-top:16px;">
+        <div class="card">
+            <h4 style="color:var(--cmu-red);">Model 1: NN LSTM (Baseline)</h4>
+            <p><strong>Type:</strong> Pure data-driven &mdash; no physics constraints<br>
+            <strong>Architecture:</strong> 2-layer LSTM (256 hidden units) &rarr; dense head (512 units) &rarr; 44-node output<br>
+            <strong>Parameters:</strong> ~650K<br>
+            <strong>Training:</strong> 2,000 epochs, batch size 64, early stopping (patience 150), Adam optimizer<br>
+            <strong>Input:</strong> 10-step window (all 44 nodes) &rarr; predict next step<br><br>
+            This baseline establishes the performance ceiling achievable with deep learning alone,
+            without any knowledge of the underlying thermal physics.</p>
+        </div>
+        <div class="card">
+            <h4 style="color:#2a9d8f;">Model 2: RC-ODE KNN</h4>
+            <p><strong>Type:</strong> Physics-informed (PINN)<br>
+            <strong>Graph:</strong> K=6 nearest neighbors by <em>Euclidean spatial distance</em> between sensor coordinates<br>
+            <strong>LSTM encoder:</strong> Outputs per-node heat injection Q<sub>i</sub><br>
+            <strong>Physics:</strong> ODE residual enforced over context window; weight ramped 0&rarr;1.0 over first 300 epochs<br>
+            <strong>Training:</strong> 5,000 epochs<br>
+            <strong>Learned:</strong> R<sub>ij</sub> per edge, C<sub>i</sub> per node, &beta; (global), T<sub>set</sub><br><br>
+            Uses the physical floor plan layout to define connectivity &mdash; nodes that are physically close share a thermal edge.</p>
+        </div>
+        <div class="card">
+            <h4 style="color:#457b9d;">Model 3: RC-ODE Correlation</h4>
+            <p><strong>Type:</strong> Physics-informed (PINN)<br>
+            <strong>Graph:</strong> K=6 nearest neighbors by <em>Pearson correlation</em> of training temperature signals<br>
+            <strong>LSTM encoder:</strong> Outputs per-node heat injection Q<sub>i</sub><br>
+            <strong>Physics:</strong> Same ODE residual loss as KNN model<br>
+            <strong>Training:</strong> 5,000 epochs<br>
+            <strong>Learned:</strong> R<sub>ij</sub> per edge, C<sub>i</sub> per node, &beta; (global), T<sub>set</sub><br><br>
+            Replaces geometry with data-driven connectivity &mdash; nodes whose temperature dynamics are historically correlated are assumed to be thermally coupled.</p>
+        </div>
+        <div class="card">
+            <h4 style="color:#e76f51;">Model 4: RC-ODE Global Driver</h4>
+            <p><strong>Type:</strong> Physics-informed (PINN) with interpretable HVAC model<br>
+            <strong>Graph:</strong> Correlation-based (same as Model 3)<br>
+            <strong>LSTM encoder:</strong> Outputs a single scalar latent driver T<sub>latent</sub> shared by all nodes<br>
+            <strong>Physics:</strong> HVAC modeled as per-node attraction to global setpoint<br>
+            <strong>Training:</strong> 5,000 epochs<br>
+            <strong>Learned:</strong> R<sub>ij</sub> per edge, C<sub>i</sub> per node, &alpha;<sub>i</sub> (per node), T<sub>latent</sub><br><br>
+            Physically the most principled: a central air system simultaneously conditions all zones, with spatially heterogeneous node sensitivities &alpha;<sub>i</sub> capturing different room configurations.</p>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <h3 style="margin-top:40px;">Test Results</h3>
+    <p style="color:#555; max-width:820px; margin-bottom:14px;">
+        All models evaluated on held-out 15% test set (consecutive time windows, no shuffling).
+        RMSE and MAE are in &deg;C. Averages are computed over all 44 nodes.
+        Node 6 and Node 38 are anomalous (HVAC vents / sensor artifacts) &mdash; they contribute to elevated overall averages.
+    </p>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Avg RMSE (&deg;C)</th>
+                <th>Avg MAE (&deg;C)</th>
+                <th>Avg R&sup2;</th>
+                <th>Median R&sup2;</th>
+                <th>RMSE Reduction vs. Baseline</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>NN LSTM (Baseline)</strong></td>
+                <td>1.324</td>
+                <td>0.914</td>
+                <td>0.619</td>
+                <td>0.722</td>
+                <td>&mdash;</td>
+            </tr>
+            <tr style="background:#f0faf8;">
+                <td><strong>RC-ODE KNN</strong></td>
+                <td>0.721</td>
+                <td>0.446</td>
+                <td>0.868</td>
+                <td>0.926</td>
+                <td style="color:#2a9d8f; font-weight:600;">&darr; 45.6%</td>
+            </tr>
+            <tr style="background:#eef4fa;">
+                <td><strong>RC-ODE Correlation</strong></td>
+                <td>0.649</td>
+                <td>0.414</td>
+                <td>0.848</td>
+                <td>0.927</td>
+                <td style="color:#457b9d; font-weight:600;">&darr; 51.0%</td>
+            </tr>
+            <tr style="background:#fff4f1;">
+                <td><strong>RC-ODE Global</strong></td>
+                <td><strong>0.538</strong></td>
+                <td><strong>0.339</strong></td>
+                <td><strong>0.916</strong></td>
+                <td><strong>0.944</strong></td>
+                <td style="color:#e76f51; font-weight:600;">&darr; 59.4%</td>
+            </tr>
+        </tbody>
+    </table>
+    <p style="color:#888; font-size:0.88rem; margin-top:8px;">
+        Task: 1-step-ahead (+20 min) temperature forecast across all 44 nodes simultaneously.
+        Training set: 70% of 1,341 time steps. Validation: 15%. Test: 15%.
+    </p>
+
+    <!-- Key Findings -->
+    <h3 style="margin-top:36px;">Key Findings</h3>
+    <div class="card-grid" style="margin-top:16px;">
+        <div class="card">
+            <h4>Physics Constraints Dramatically Improve Accuracy</h4>
+            <p>Embedding the RC-ODE physics residual as a training loss term reduces average RMSE by 46&ndash;59% and lifts median R&sup2; from 0.72 to over 0.94 compared to the pure LSTM baseline. The constraint acts as a powerful regularizer in the low-data regime of 1,341 steps across 44 nodes.</p>
+        </div>
+        <div class="card">
+            <h4>Graph Construction Matters</h4>
+            <p>Replacing the spatial KNN graph with a correlation-based graph provides a further improvement in RMSE. Temperature correlation captures functional coupling (shared HVAC zones, open doorways) that pure Euclidean distance does not, making the graph topology a design parameter worth tuning.</p>
+        </div>
+        <div class="card">
+            <h4>Global Latent Driver Outperforms Node-Local Inputs</h4>
+            <p>Reducing the LSTM encoder output from 44 per-node heat terms to a single global scalar improves both accuracy and interpretability. The global driver architecture forces the model to learn a physically meaningful building-wide thermal forcing, suppressing overfitting to node-specific noise.</p>
+        </div>
+        <div class="card">
+            <h4>Learned Parameters Are Physically Interpretable</h4>
+            <p>The RC-ODE Global model learns spatially heterogeneous capacitance C<sub>i</sub> and HVAC coupling &alpha;<sub>i</sub> values per node. Nodes near HVAC vents show high &alpha;<sub>i</sub> (strong coupling to the setpoint), while thermally massive nodes show high C<sub>i</sub>. These parameters align with physical expectations and provide actionable building diagnostics.</p>
+        </div>
+    </div>
+
+    <!-- Visualizations -->
+    <h3 style="margin-top:40px;">Result Visualizations</h3>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:16px;">
+        <div>
+            <h4 style="margin-bottom:10px; font-size:1rem;">Prediction Comparison: Baseline vs. RC-ODE Global</h4>
+            <p style="color:#888; font-size:0.85rem; margin-bottom:8px;">Left: pure LSTM baseline. Right: RC-ODE Global. Across 12 nodes (worst 6 + best 6), the PINN tracks thermal dynamics considerably more tightly.</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div>
+                    <p style="text-align:center; font-size:0.8rem; color:#888; margin-bottom:4px;">NN LSTM Baseline</p>
+                    <img src="pred_vs_actual_baseline.png" alt="Baseline LSTM predictions vs actual" style="width:100%; border-radius:8px; border:1px solid #e0e0e0;">
+                </div>
+                <div>
+                    <p style="text-align:center; font-size:0.8rem; color:#888; margin-bottom:4px;">RC-ODE Global (Best Model)</p>
+                    <img src="pred_vs_actual_global.png" alt="RC-ODE Global predictions vs actual" style="width:100%; border-radius:8px; border:1px solid #e0e0e0;">
+                </div>
+            </div>
+        </div>
+        <div>
+            <h4 style="margin-bottom:10px; font-size:1rem;">ODE Prediction vs. Residual Analysis</h4>
+            <p style="color:#888; font-size:0.85rem; margin-bottom:8px;">Decomposes the ODE-predicted temperature change into conduction flux, HVAC coupling, and ODE residual per node &mdash; confirming the physics is internalized rather than ignored.</p>
+            <img src="comparison_ode_pred_resid.png" alt="ODE prediction and residual analysis" style="width:100%; border-radius:8px; border:1px solid #e0e0e0;">
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:28px;">
+        <div>
+            <h4 style="margin-bottom:10px; font-size:1rem;">Learned Thermal Capacitance Map</h4>
+            <p style="color:#888; font-size:0.85rem; margin-bottom:8px;">Per-node C<sub>i</sub> learned by the RC-ODE Global model. Higher capacitance indicates thermally massive regions (walls, structural elements) that resist temperature change.</p>
+            <img src="thermal_capacitance_heatmap.png" alt="Learned thermal capacitance heatmap" style="width:100%; border-radius:8px; border:1px solid #e0e0e0;">
+        </div>
+        <div>
+            <h4 style="margin-bottom:10px; font-size:1rem;">Learned Thermal Resistance Map</h4>
+            <p style="color:#888; font-size:0.85rem; margin-bottom:8px;">Per-node equivalent thermal resistance (aggregated from all incident edges). High resistance nodes are thermally isolated; low resistance nodes are strongly coupled to their neighborhood.</p>
+            <img src="thermal_resistance_heatmap.png" alt="Learned thermal resistance heatmap" style="width:100%; border-radius:8px; border:1px solid #e0e0e0;">
+        </div>
+    </div>
+
+    <div style="margin-top:28px;">
+        <h4 style="margin-bottom:10px; font-size:1rem;">Learned HVAC Coupling (&alpha;<sub>i</sub>) and Thermal Capacitance (C<sub>i</sub>) &mdash; RC-ODE Global</h4>
+        <p style="color:#888; font-size:0.85rem; margin-bottom:8px;">Spatial heatmaps of the two key per-node physics parameters learned by the Global model.
+        Left: &alpha;<sub>i</sub> (HVAC coupling strength) &mdash; nodes near supply vents show higher values. Right: C<sub>i</sub> (capacitance) &mdash; reflects thermal mass distribution across the floor plan.</p>
+        <img src="learned_alpha_C.png" alt="Learned alpha and capacitance spatial maps" style="width:100%; border-radius:8px; border:1px solid #e0e0e0; max-width:900px; display:block;">
+    </div>
+
+    <div style="margin-top:28px;">
+        <h4 style="margin-bottom:10px; font-size:1rem;">Graph Edge Conductance (Correlation Graph)</h4>
+        <p style="color:#888; font-size:0.85rem; margin-bottom:8px;">The thermal conductance g<sub>ij</sub> = 1/R<sub>ij</sub> learned for each edge in the correlation graph. Thicker/brighter edges indicate stronger thermal coupling. The pattern reveals heat flow pathways that differ from simple spatial proximity.</p>
+        <img src="edge_conductance.png" alt="RC-ODE Correlation graph edge conductance" style="width:100%; border-radius:8px; border:1px solid #e0e0e0; max-width:900px; display:block;">
+    </div>
+
+</section>
+
 <!-- Footer -->
 <footer>
     Carnegie Mellon University &middot; 12-770 Intelligent Building Systems &middot; Spring 2026<br>
-    <span style="opacity:0.6;">Last updated: February 2026</span>
+    <span style="opacity:0.6;">Last updated: March 2026</span>
 </footer>
 
 <script>
