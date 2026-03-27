@@ -667,94 +667,200 @@
       <div class="section-num">7</div>
       <span class="section-cat">Physics-Informed Learning</span>
     </div>
-    <h2>Physics-Informed DeepONet (RC-PINN)</h2>
+    <h2>Physics-Informed DeepONet — Advection-Diffusion PINN</h2>
     <p>
-      Data-driven models can fit observations well but may produce physically inconsistent predictions —
-      for example, violating energy conservation or ignoring the thermal inertia of walls and furniture.
-      To address this, we introduce a <strong>physics-informed regularisation</strong> term derived from
-      an RC thermal network model of the room.
+      A purely data-driven model can fit sensor observations accurately but has no guarantee that its
+      spatial temperature field obeys the governing equations of heat transfer.
+      To constrain the solution to physically plausible dynamics, we add a
+      <strong>PDE residual loss</strong> derived from the <strong>advection-diffusion-source equation</strong>
+      for indoor thermal fields. The key departure from an RC-circuit approach is that this formulation
+      is fully continuous in space — it reasons about the temperature field at every point in the room,
+      not just at sensor locations.
     </p>
 
     <div class="info-box">
-      <div class="ib-title">What is a Physics-Informed Neural Network (PINN)?</div>
+      <div class="ib-title">Why Advection-Diffusion instead of a Lumped RC Model?</div>
       <p>
-        A PINN adds a physics residual term to the training loss so that the network is penalised
-        whenever its predictions violate known governing equations — here, the thermal energy balance
-        of the room. This acts as a structured prior: the model cannot just memorise sensor patterns,
-        it must also be consistent with heat flow physics. The result is typically better generalisation,
-        especially in low-data or out-of-distribution scenarios.
+        An RC network is a <em>lumped</em> model: it treats the room as a small number of discrete
+        zones connected by resistors. It cannot represent how heat spreads continuously across the
+        floor plan. The advection-diffusion PDE operates on the continuous spatial field
+        T(x,&nbsp;y,&nbsp;t) that the DeepONet trunk already represents, so the physics loss
+        directly penalises the network output at any queried coordinate — including the withheld
+        Sensor&nbsp;7 location.
       </p>
     </div>
 
-    <h3>RC Thermal Network Model</h3>
+    <h3>Governing Equation</h3>
     <p>
-      We model the room as a <strong>resistor-capacitor (RC) thermal network</strong>,
-      a lumped-parameter analogy borrowed from circuit theory where:
+      The temperature field satisfies the following PDE at every interior point of the room:
     </p>
+    <div class="arch-box">
+      <span class="hl">ADVECTION-DIFFUSION-SOURCE PDE</span><br/>
+      <br/>
+      <span class="arrow">  ∂T/∂t  +  v(x,y) · ∇T  =  α ∇²T  +  S(T̄, x, y)</span><br/>
+      <br/>
+      where:<br/>
+      <span class="arrow">  T(x,y,t)</span>  = temperature field at position (x,y) at time t<br/>
+      <span class="arrow">  v(x,y)</span>     = spatially-varying air velocity field  <span class="hl2">(learned by v-net)</span><br/>
+      <span class="arrow">  α</span>           = thermal diffusivity scalar              <span class="hl2">(learned, log-space for positivity)</span><br/>
+      <span class="arrow">  S(T̄, x, y)</span> = spatially-varying heat source/sink       <span class="hl2">(learned by source-net)</span><br/>
+      <span class="arrow">  T̄</span>           = mean sensor temperature (scalar context for S)<br/>
+      <br/>
+      <span class="hl">TOTAL TRAINING LOSS</span><br/>
+      <span class="arrow">  L = λ_data · L_data  +  λ_pde · ( L_pde  +  λ_div · L_div</span><br/>
+      <span class="arrow">                           +  λ_noslip · L_noslip  +  λ_sparse · L_sparse</span><br/>
+      <span class="arrow">                           +  λ_neumann · L_neumann )</span><br/>
+      <br/>
+      <span class="arrow">  λ_data=1.0  λ_pde=0.1  λ_div=0.1  λ_noslip=0.1  λ_sparse=1e-3  λ_neumann=0.1</span>
+    </div>
+
+    <h3>Spatial Derivative Computation</h3>
     <div class="grid-2" style="margin-top:1rem;">
       <div class="card">
-        <div class="card-title">Thermal Resistance R<sub>ij</sub></div>
-        <p style="font-size:0.88rem;">Represents the insulating effect between two zones <em>i</em> and <em>j</em> (walls, air gaps). A high R means heat flows slowly between the two locations.</p>
+        <div class="card-title">∂T/∂t — Temporal Derivative</div>
+        <p style="font-size:0.88rem;">
+          Approximated by a <strong>finite difference</strong> between consecutive 5-minute timesteps:
+          model(u<sub>t+1</sub>,&nbsp;xy) − model(u<sub>t</sub>,&nbsp;xy).
+          Both evaluations share the same spatial coordinates; only the branch input changes.
+        </p>
       </div>
       <div class="card">
-        <div class="card-title">Thermal Capacitance C<sub>i</sub></div>
-        <p style="font-size:0.88rem;">Represents the heat storage capacity of zone <em>i</em> (walls, furniture, air mass). A high C means the zone takes longer to heat up or cool down.</p>
+        <div class="card-title">∇T and ∇²T — Spatial Derivatives</div>
+        <p style="font-size:0.88rem;">
+          Computed via <strong>automatic differentiation</strong> through the SIREN trunk with respect
+          to the input coordinates (x,&nbsp;y). The SIREN activation (sin(ω₀··)) guarantees
+          non-vanishing second derivatives everywhere, keeping the Laplacian ∇²T meaningful.
+          ω₀ = 5 is used (reduced from the standard 30) since thermal fields are spatially smooth —
+          large ω₀ causes ∇²T&nbsp;~&nbsp;ω₀² blow-up in the PDE residual.
+        </p>
       </div>
     </div>
 
-    <p style="margin-top:1rem;">
-      The energy balance for zone <em>i</em> over time gives the RC residual:
-    </p>
+    <h3>Learned Physics Sub-networks</h3>
     <div class="arch-box">
-      <span class="hl">RC RESIDUAL (physics constraint)</span><br/>
+      <span class="hl">V-NET  —  Spatially-Varying Velocity Field</span><br/>
+      <span class="arrow">  Input  : (x, y)  [normalised room coordinates ∈ [0,1]²]</span><br/>
+      <span class="arrow">  Hidden : Linear(2→16) → Tanh → Linear(16→2)</span><br/>
+      <span class="arrow">  Output : (v_x, v_y)  [air velocity at each point]</span><br/>
       <br/>
-      <span class="arrow">  C_i · dT_i/dt  =  Σ_j [ (T_j − T_i) / R_ij ]  +  Q_i</span><br/>
+      A global scalar velocity cannot represent AC-driven circulation patterns.
+      The v-net learns the full 2-D velocity field from data.<br/>
+      Kept shallow (1 hidden layer, width 16) to prevent memorising PDE residuals.<br/>
       <br/>
-      where:<br/>
-      <span class="arrow">  T_i</span>  = predicted temperature at zone i<br/>
-      <span class="arrow">  R_ij</span> = thermal resistance between zones i and j   <span class="hl2">(learned)</span><br/>
-      <span class="arrow">  C_i</span>  = thermal capacitance of zone i               <span class="hl2">(learned)</span><br/>
-      <span class="arrow">  Q_i</span>  = net heat injection at zone i (HVAC, occupancy) <span class="hl2">(learned)</span><br/>
+      <span class="hl">SOURCE-NET  —  Spatially-Varying Heat Source/Sink</span><br/>
+      <span class="arrow">  Input  : (T̄, x, y)  [mean sensor temperature + coordinates]</span><br/>
+      <span class="arrow">  Hidden : Linear(3→32) → Tanh → Linear(32→1)</span><br/>
+      <span class="arrow">  Output : S(T̄, x, y)  [local heat injection/extraction rate]</span><br/>
       <br/>
-      <span class="hl">TOTAL LOSS</span><br/>
-      <span class="arrow">  L = L_data  +  λ · L_RC</span><br/>
-      <span class="arrow">  L_data</span> = MSE between predicted and measured T at Sensor 7<br/>
-      <span class="arrow">  L_RC</span>   = MSE of the RC residual across all sensor zones<br/>
-      <span class="arrow">  λ</span>      = weighting hyperparameter balancing data fit vs. physics
+      Uses only the mean temperature T̄ (not all 12 sensor readings) as temporal context.
+      Giving the net all 12 readings allows it to reconstruct ∂T/∂t exactly and zero the PDE
+      residual without learning any physics — a known failure mode called the "source fudge factor."<br/>
+      <br/>
+      <span class="hl">THERMAL DIFFUSIVITY  α</span><br/>
+      <span class="arrow">  α = exp(log_α)  —  single learnable scalar, initialised at exp(−2) ≈ 0.135</span>
+    </div>
+
+    <h3>Collocation Strategy</h3>
+    <p>
+      The PDE residual is evaluated at <strong>512 collocation points per training step</strong>,
+      split equally between:
+    </p>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card">
+        <div class="card-title">50 % — Sensor Locations</div>
+        <p style="font-size:0.88rem;">
+          Randomly sampled from the 12 training sensor coordinates.
+          The data loss anchors the field here, so the PDE is better conditioned at these points.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">50 % — Random Interior</div>
+        <p style="font-size:0.88rem;">
+          Uniformly sampled from the room interior [0,1]².
+          These enforce the PDE in regions with no sensor, including the neighbourhood
+          of withheld Sensor&nbsp;7.
+        </p>
+      </div>
+    </div>
+
+    <h3>Boundary Condition Losses</h3>
+    <p>
+      Without geometric constraints, spatially-varying MLPs can learn degenerate solutions —
+      for example, inventing wind that blows through solid walls, or room-wide heat sinks that
+      absorb the entire PDE residual. Four additional loss terms enforce real-world geometry:
+    </p>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card">
+        <div class="card-title">Fix 1 — No-Slip Boundary Condition</div>
+        <p style="font-size:0.88rem;">
+          <strong>L_noslip = ‖v(x_wall)‖²</strong><br/>
+          Air velocity must be zero at solid walls. 64 points are sampled on each of the four
+          walls at every training step and the v-net output is penalised directly.
+          This prevents the learned circulation from passing through walls.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Fix 2 — L1 Sparsity on Source</div>
+        <p style="font-size:0.88rem;">
+          <strong>L_sparse = mean(|S(x,y)|)</strong><br/>
+          Real heat sources are localised (AC vents, windows).
+          L1 on the source output pushes S to exactly zero for most of the room,
+          forcing the network to concentrate heating/cooling into a small distinct region
+          rather than spreading a diffuse bias across the entire field.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Fix 3 — Reduced Network Capacity</div>
+        <p style="font-size:0.88rem;">
+          v-net and source-net are deliberately shallow (1 hidden layer) and narrow
+          (width 16 and 32 respectively). A deeper, wider network has enough capacity to
+          memorise the PDE residual as a function of its inputs — effectively becoming
+          another fudge factor. Reducing capacity forces the networks to learn smooth,
+          generalisable spatial patterns instead.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Fix 4 — Neumann (Insulated Wall) Condition</div>
+        <p style="font-size:0.88rem;">
+          <strong>L_neumann = (∂T/∂n)<sup>2</sup> at walls</strong><br/>
+          Concrete walls have low thermal conductivity, so the normal heat flux at the
+          perimeter is approximately zero: ∂T/∂n ≈ 0.
+          The normal gradient of T is computed via autograd at 64 wall points per wall
+          and penalised. This prevents the temperature field from developing sharp gradients
+          at the room boundary.
+        </p>
+      </div>
     </div>
 
     <div class="green-box">
-      <div class="ib-title">Key Insight</div>
+      <div class="ib-title">Key Design Principle — The Blind Inverse Problem</div>
       <p>
-        The R, C, and Q values are not prescribed from engineering drawings — they are
-        <strong>jointly learned</strong> alongside the network weights during training.
-        This means the model discovers the effective thermal properties of the room
-        purely from temperature data, while using the RC structure to constrain
-        the solution to physically plausible dynamics.
+        The exact AC vent locations, airflow rates, and occupancy patterns are unknown.
+        Rather than prescribing these from engineering drawings, the model
+        <strong>discovers them from data</strong> subject to physical constraints.
+        The no-slip and Neumann boundary conditions act as geometric priors that rule out
+        unphysical solutions, while the L1 sparsity and reduced capacity prevent the physics
+        sub-networks from finding degenerate mathematical shortcuts.
+        The result is a spatial field that is not only accurate at sensor locations but
+        physically consistent everywhere in the room.
       </p>
     </div>
 
     <h3>Results</h3>
-
-    <div class="grid-2">
-      <figure>
-        <img src="pinn/results_pinn.png" alt="PINN DeepONet results" />
-        <figcaption><strong>Figure 7-3 — Physics-Informed DeepONet (PINN).</strong> Loss curve, time series, scatter, and residual distribution. The physics regularisation suppresses large prediction errors during rapid temperature changes, where the data-only model tends to lag.</figcaption>
-      </figure>
-      <figure>
-        <img src="pinn/results_rc_pinn.png" alt="RC-PINN DeepONet results" />
-        <figcaption><strong>Figure 7-4 — RC Thermal Network PINN.</strong> Full RC-regularised training results. The jointly learned R, C, Q parameters impose a physically consistent structure on the spatial temperature field, improving extrapolation to unseen conditions.</figcaption>
-      </figure>
-    </div>
-
-    <div class="warn-box">
-      <div class="ib-title" style="color:var(--orange);">Next Steps</div>
-      <p>
-        Ongoing investigations include probabilistic uncertainty quantification over the spatial field
-        (predicting not just temperature but confidence intervals at every room location),
-        and multi-lab generalisation testing across different room geometries.
-      </p>
-    </div>
+    <figure>
+      <img src="pinn/results_pinn.png" alt="PINN DeepONet results" />
+      <figcaption>
+        <strong>Figure 7 — Physics-Informed DeepONet Results.</strong>
+        Top row (left to right): training loss curves (total, data, PDE physics);
+        learned velocity field v(x,&nbsp;y) as a quiver plot coloured by speed;
+        learned source field S(T̄,&nbsp;x,&nbsp;y) at mean thermal state (red = heat source, blue = cooling).
+        Bottom row: full time-series prediction for withheld Sensor&nbsp;7;
+        predicted vs. actual scatter; residual histogram with RMSE and MAE.
+        The velocity field reflects physically plausible indoor circulation with the
+        no-slip constraint applied, and the source field concentrates into a localised
+        region consistent with an AC vent.
+      </figcaption>
+    </figure>
 
   </div>
 </section>
