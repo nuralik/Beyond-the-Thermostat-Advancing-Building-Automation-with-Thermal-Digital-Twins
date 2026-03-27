@@ -851,14 +851,18 @@
       <img src="pinn/results_pinn.png" alt="PINN DeepONet results" />
       <figcaption>
         <strong>Figure 7 — Physics-Informed DeepONet Results.</strong>
-        Top row (left to right): training loss curves (total, data, PDE physics);
-        learned velocity field v(x,&nbsp;y) as a quiver plot coloured by speed;
-        learned source field S(T̄,&nbsp;x,&nbsp;y) at mean thermal state (red = heat source, blue = cooling).
-        Bottom row: full time-series prediction for withheld Sensor&nbsp;7;
-        predicted vs. actual scatter; residual histogram with RMSE and MAE.
-        The velocity field reflects physically plausible indoor circulation with the
-        no-slip constraint applied, and the source field concentrates into a localised
-        region consistent with an AC vent.
+        Top row (left to right): training loss curves showing the data loss (blue dashed)
+        and PDE physics loss (red dashed) converging together;
+        learned velocity field v(x,&nbsp;y) as a quiver plot coloured by speed — arrows reflect
+        a leftward circulation pattern consistent with AC-driven airflow;
+        learned source field S(T̄,&nbsp;x,&nbsp;y) at mean thermal state showing a warm region
+        (red) on the right side of the room and a cooling zone (blue) on the left,
+        consistent with a localised heat source near sensors 1 and 9.
+        Bottom row: full time-series reconstruction of withheld Sensor&nbsp;7 (α = 0.00546,
+        RMSE = 0.2160°C, MAE = 0.1558°C); predicted vs. actual scatter; residual histogram.
+        This result uses the SIREN trunk at ω₀ = 5 and mean-temperature-only source context.
+        The additional boundary condition losses (no-slip, Neumann, L1 sparsity) are implemented
+        in the code and will further constrain the velocity and source fields in the next training run.
       </figcaption>
     </figure>
 
