@@ -320,6 +320,7 @@
   <a href="#humidity">Humidity &amp; PCA</a>
   <a href="#lstm">LSTM</a>
   <a href="#physics">Physics</a>
+  <a href="#lstm-pinn">LSTM-PINN</a>
   <a href="#uncertainty">Uncertainty</a>
 </nav>
 
@@ -334,7 +335,8 @@
       <span class="pill">LSTM Branch</span>
       <span class="pill">SG Filtering</span>
       <span class="pill">Humidity PCA</span>
-      <span class="pill">Physics-Informed (RC-PINN)</span>
+      <span class="pill">LSTM-PINN DeepONet</span>
+      <span class="pill">Physics-Informed (PINN)</span>
       <span class="pill">Uncertainty Quantification</span>
       <span class="pill">13 Sensors · Lab 1</span>
       <span class="pill">40 Days</span>
@@ -869,11 +871,257 @@
   </div>
 </section>
 
-<!-- ===================== SECTION 8: UNCERTAINTY ===================== -->
-<section id="uncertainty">
+<!-- ===================== SECTION 8: LSTM-PINN ===================== -->
+<section id="lstm-pinn">
   <div class="container">
     <div class="section-label">
       <div class="section-num">8</div>
+      <span class="section-cat">LSTM-PINN DeepONet</span>
+    </div>
+    <h2>LSTM-Branch DeepONet with Advection-Diffusion PINN</h2>
+    <p>
+      The previous physics section used a snapshot MLP branch — it treated every timestep
+      independently, with no memory of how the room arrived at its current state.
+      This section upgrades the branch network to an <strong>LSTM encoder</strong>,
+      giving the model a 4-hour sliding window of sensor history,
+      and combines it with a richer <strong>Advection-Diffusion-Source PDE</strong>
+      that simultaneously learns the air-velocity field, thermal diffusivity, and
+      spatial heat sources from data.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Why replace the snapshot branch with an LSTM?</div>
+      <p>
+        A plain MLP branch encodes only the <em>current</em> sensor snapshot — it has no memory of
+        recent occupancy ramps, AC cycles, or thermal inertia.
+        An LSTM branch encodes the full <em>trajectory</em> of how the room got to its current
+        thermal state.  This matters for two reasons:
+      </p>
+      <ul style="margin:0.5rem 0 0 1.2rem;">
+        <li><strong>∂T/∂t</strong> is estimated from consecutive LSTM embeddings whose hidden state
+          already reflects recent history — not just an instantaneous finite difference.</li>
+        <li><strong>The velocity field v(x,y)</strong> is fitted against a model that already understands
+          directionality-over-time, so it converges to more physically plausible circulation patterns.</li>
+      </ul>
+    </div>
+
+    <h3>Architecture Overview</h3>
+    <div class="arch-box">
+      <span class="hl">BRANCH NET — LSTM ENCODER</span><br/>
+      <span class="arrow">  ├─</span> Input: sliding window of 12 sensor temperatures over 48 timesteps (4 h)<br/>
+      <span class="arrow">  │        Shape: (batch, seq=48, n_sensors=12)</span><br/>
+      <span class="arrow">  ├─</span> LSTM: hidden=128, layers=2, dropout=0.1 between layers<br/>
+      <span class="arrow">  ├─</span> Take last hidden state of final layer  → (batch, 128)<br/>
+      <span class="arrow">  └─</span> Linear projection → (batch, p=128)   <em>branch embedding b</em><br/>
+      <br/>
+      <span class="hl">TRUNK NET — SIREN MLP</span><br/>
+      <span class="arrow">  ├─</span> Input: normalised spatial query point (x, y) ∈ [0,1]²<br/>
+      <span class="arrow">  ├─</span> SIREN layers: 2 → 128 → 128 → 128 → 128 → 128 (depth=4)<br/>
+      <span class="arrow">  │        activation: sin(ω₀ · Wx + b),  ω₀ = 5</span><br/>
+      <span class="arrow">  │        ω₀ reduced from 30 — thermal fields are smooth;</span><br/>
+      <span class="arrow">  │        large ω₀ causes ∇²T ~ ω₀² blow-up in the PDE residual</span><br/>
+      <span class="arrow">  └─</span> Final linear layer (no sin) → (batch, p=128)  <em>trunk embedding t</em><br/>
+      <br/>
+      <span class="hl">OUTPUT</span><br/>
+      <span class="arrow">  T̂(x,y,t) = b · t  +  bias   (inner product + scalar bias)</span><br/>
+      <br/>
+      <span class="hl">PHYSICS MODULE — AdvectionDiffusionPINN</span><br/>
+      <span class="arrow">  ├─</span> log_α  : learnable scalar,  α = exp(log_α) > 0   (thermal diffusivity)<br/>
+      <span class="arrow">  ├─</span> v_net  : MLP  2 → 16 → 2   (x,y) → (vx, vy)   spatially-varying velocity<br/>
+      <span class="arrow">  └─</span> source_net : MLP  3 → 32 → 1   (T_mean, x, y) → S   heat source/sink
+    </div>
+
+    <h3>Physics: Advection-Diffusion-Source PDE</h3>
+    <p>
+      Instead of the simple heat equation used earlier, this model enforces a full
+      advection-diffusion-source PDE at a set of collocation points every training step:
+    </p>
+    <div class="arch-box" style="font-size:1.05rem; text-align:center; letter-spacing:0.02em;">
+      ∂T/∂t + v(x,y) · ∇T = α ∇²T + S(T<sub>mean</sub>, x, y)
+    </div>
+    <p style="margin-top:1rem;">Each term has a concrete physical role:</p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>∂T/∂t</strong> — temporal rate of change, estimated by a finite difference between
+        the model output at window [t−48:t] and window [t−47:t+1].
+        The LSTM hidden state encodes history, so these consecutive embeddings capture genuine dynamics.</li>
+      <li><strong>v(x,y) · ∇T</strong> — advective transport by the spatially-varying air-circulation field.
+        <code>v_net</code> is a shallow MLP (2→16→2) that outputs (v<sub>x</sub>, v<sub>y</sub>)
+        at any room location.  A soft divergence-free penalty ‖∇·v‖² ≈ 0 encourages mass conservation.</li>
+      <li><strong>α ∇²T</strong> — diffusion.  α = exp(log_α) is learned end-to-end; it starts near
+        e<sup>−2</sup> ≈ 0.135 (normalised units) and converges to the physically meaningful value.</li>
+      <li><strong>S(T<sub>mean</sub>, x, y)</strong> — spatially-varying source/sink conditioned on the
+        mean sensor temperature of the last window step only.  Using only T<sub>mean</sub>
+        (a single scalar) as temporal context prevents the network from absorbing the full PDE residual
+        as a fudge factor.  An L1 sparsity penalty forces S to localise into small distinct regions
+        (like real AC vents or equipment racks).</li>
+    </ul>
+
+    <h3>Derivative Computation</h3>
+    <div class="arch-box">
+      <span class="hl">∂T/∂t  (finite difference over LSTM windows)</span><br/>
+      <span class="arrow">  dT_dt = [ model(seq[t-48:t], xy) − model(seq[t-47:t+1], xy) ] / Δt</span><br/>
+      <span class="arrow">  Both sequences share the same spatial coords; only the LSTM history shifts by one step.</span><br/>
+      <br/>
+      <span class="hl">∇T  (1st-order autograd through SIREN trunk)</span><br/>
+      <span class="arrow">  grad1 = ∂T̂/∂(x,y)   via torch.autograd.grad with create_graph=True</span><br/>
+      <br/>
+      <span class="hl">∇²T  (Laplacian via 2nd-order autograd)</span><br/>
+      <span class="arrow">  d²T/dx² = ∂(dT/dx)/∂x</span><br/>
+      <span class="arrow">  d²T/dy² = ∂(dT/dy)/∂y</span><br/>
+      <span class="arrow">  Laplacian = d²T/dx² + d²T/dy²</span><br/>
+      <span class="arrow">  SIREN activations (sin) have non-vanishing 2nd derivatives — this is why</span><br/>
+      <span class="arrow">  ReLU/Tanh trunks fail: their Laplacians are zero or extremely sparse.</span>
+    </div>
+
+    <h3>Boundary Conditions</h3>
+    <p>
+      Four physics-motivated boundary conditions are enforced at 64 sampled wall points per edge
+      (256 total) each training iteration:
+    </p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>No-slip (Fix 1)</strong> — v(x<sub>wall</sub>) = 0.
+        Air velocity is zero at solid walls; penalised as ‖v_wall‖².</li>
+      <li><strong>Neumann thermal BC (Fix 4)</strong> — ∂T/∂n = 0 at each wall (insulated boundary).
+        The normal gradient is extracted from autograd: ∂T/∂y for bottom/top walls,
+        ∂T/∂x for left/right walls.</li>
+      <li><strong>Divergence-free penalty (λ_div)</strong> — ‖∂v<sub>x</sub>/∂x + ∂v<sub>y</sub>/∂y‖²
+        encourages mass conservation throughout the domain (not just at walls).</li>
+      <li><strong>L1 source sparsity (Fix 2, λ_sparse)</strong> — ‖S‖₁ penalty localises heat
+        sources to compact regions, preventing diffuse room-wide compensation.</li>
+    </ul>
+
+    <h3>Collocation Strategy</h3>
+    <p>
+      Each training step draws <strong>512 collocation points</strong> using a mixed strategy:
+      half (256) from the actual sensor locations (high-information zones), half (256) uniformly
+      random from the room interior [0,1]².  This ensures the PDE residual is enforced both
+      where data is dense <em>and</em> in sparsely covered regions.
+    </p>
+
+    <h3>Loss Function</h3>
+    <div class="arch-box">
+      <span class="hl">TOTAL LOSS</span><br/>
+      <span class="arrow">  L = λ_data · MSE_data</span><br/>
+      <span class="arrow">    + λ_pde  · ( MSE_pde  +  λ_div · MSE_div  +  λ_noslip · MSE_noslip</span><br/>
+      <span class="arrow">                          +  λ_sparse · L1_source  +  λ_neumann · MSE_neumann )</span><br/>
+      <br/>
+      <span class="hl">HYPER-PARAMETERS</span><br/>
+      <span class="arrow">  λ_data   = 1.0   (primary data-fitting objective)</span><br/>
+      <span class="arrow">  λ_pde    = 0.1   (physics regularisation — strong enough without overwhelming data)</span><br/>
+      <span class="arrow">  λ_div    = 0.1   (divergence-free penalty on v_net)</span><br/>
+      <span class="arrow">  λ_noslip = 0.1   (no-slip BC at walls)</span><br/>
+      <span class="arrow">  λ_sparse = 0.001 (L1 sparsity on source field)</span><br/>
+      <span class="arrow">  λ_neumann= 0.1   (Neumann ∂T/∂n = 0 at walls)</span>
+    </div>
+
+    <h3>Training Configuration</h3>
+    <div class="arch-box">
+      <span class="hl">DATASET</span><br/>
+      <span class="arrow">  ├─</span> Source: Temperature_5min.xlsx  (40-day, 5-min resampled, Lab 1)<br/>
+      <span class="arrow">  ├─</span> 12 training sensors (sensor 7 fully withheld as held-out test)<br/>
+      <span class="arrow">  ├─</span> Sliding window: 48 steps = 4 hours look-back per sample<br/>
+      <span class="arrow">  └─</span> Training pairs: (N − 48) × 12  ≈ 127,000 samples<br/>
+      <br/>
+      <span class="hl">OPTIMISER</span><br/>
+      <span class="arrow">  Adam  lr=1e-3  |  CosineAnnealingLR  T_max=300</span><br/>
+      <br/>
+      <span class="hl">PARAMETERS</span><br/>
+      <span class="arrow">  DeepONet (branch + trunk + bias) + Physics module (log_α, v_net, source_net)</span><br/>
+      <span class="arrow">  v_net: 2→16→2  (50 params)   source_net: 3→32→1  (129 params)   log_α: 1 param</span><br/>
+      <br/>
+      <span class="hl">HARDWARE</span><br/>
+      <span class="arrow">  Auto-detects: Apple MPS → CUDA → CPU   (MPS used on Mac M-series)</span><br/>
+      <br/>
+      <span class="hl">CHECKPOINTING</span><br/>
+      <span class="arrow">  Best epoch saved to deeponet_lstm_pinn_best.pth  (lowest total loss)</span><br/>
+      <span class="arrow">  Final model   saved to deeponet_lstm_pinn.pth</span>
+    </div>
+
+    <h3>Withheld-Sensor Evaluation (Sensor 7)</h3>
+    <p>
+      Sensor 7 (location: x=1.92 m, y=3.91 m) is <strong>completely excluded from training</strong> —
+      it does not appear in the branch input, in the data loss, or in the collocation set.
+      After training, the model is queried at the sensor 7 coordinates for every valid timestep
+      and the prediction is compared against the true sensor 7 readings.
+      This tests spatial generalisation: the model must reconstruct temperature at an
+      unobserved location purely from the physics constraints and the 12 surrounding sensors.
+    </p>
+    <p>
+      Inference uses 512-sample chunks over the full time series
+      (first 48 timesteps are excluded as LSTM warm-up).
+      Predictions are de-normalised with the global mean and standard deviation from training.
+    </p>
+
+    <h3>Visualised Results</h3>
+    <p>
+      The 6-panel result figure provides a complete diagnostic view of the trained model:
+    </p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>Training losses</strong> (log scale) — total, data, and PDE physics components over 300 epochs.</li>
+      <li><strong>Learned velocity field v(x,y)</strong> — quiver plot coloured by speed; shows the
+        air-circulation pattern the model discovered. Sensor positions are overlaid; sensor 7 (withheld) is
+        marked with a red star.</li>
+      <li><strong>Source field S(T<sub>mean</sub>, x, y)</strong> — heatmap of the learned heat source/sink
+        distribution (red = heating, blue = cooling) at the mean thermal state.</li>
+      <li><strong>Sensor 7 full time series</strong> — predicted vs actual temperature over the 40-day dataset
+        (first 48 steps skipped for LSTM warm-up).</li>
+      <li><strong>Predicted vs Actual scatter</strong> — ideal line in red; clustering around the diagonal
+        indicates low bias.</li>
+      <li><strong>Residual histogram</strong> — centred near zero with RMSE and MAE annotations.</li>
+    </ul>
+
+    <figure>
+      <img src="lstm_pinn_results.png" alt="LSTM-PINN DeepONet results — 6-panel diagnostic" />
+      <figcaption>
+        <strong>Figure 8-1 — LSTM-PINN DeepONet Diagnostic (6 Panels).</strong>
+        Top row (left to right): training loss curves (total, data, PDE physics) on a log scale;
+        learned spatially-varying velocity field v(x,y) from v_net — colour encodes flow speed,
+        sensor locations shown as white dots, withheld sensor 7 as a red star;
+        source/sink field S(T<sub>mean</sub>, x, y) from source_net — red regions indicate
+        net heat input, blue regions net cooling.
+        Bottom row: full 40-day time-series reconstruction of withheld sensor 7 (predicted vs actual);
+        predicted vs actual scatter plot; residual histogram with RMSE and MAE.
+        Sensor 7 is excluded entirely from training — the reconstruction is driven purely by
+        physics constraints and the 12 surrounding sensors.
+      </figcaption>
+    </figure>
+
+    <h3>Learned Physics Parameters</h3>
+    <p>
+      After training the model reports the following learned PDE parameters:
+    </p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>Thermal diffusivity α</strong> — a single positive scalar (learned in log-space to
+        ensure positivity).  The converged value reflects the effective thermal diffusivity of
+        the room in normalised units.</li>
+      <li><strong>Velocity at each sensor location</strong> — (v<sub>x</sub>, v<sub>y</sub>) and speed
+        printed per sensor, giving a point-sample of the learned circulation field.</li>
+    </ul>
+
+    <div class="green-box">
+      <div class="ib-title">Key Improvements over the Snapshot PINN (Section 7)</div>
+      <p>
+        The LSTM-PINN model differs from Section 7 in three fundamental ways:
+      </p>
+      <ul style="margin:0.5rem 0 0 1.2rem;">
+        <li><strong>Temporal memory</strong>: the LSTM branch encodes a 4-hour history of all 12 sensors;
+          the Section 7 branch encoded only the current snapshot.</li>
+        <li><strong>Richer PDE</strong>: full advection + diffusion + spatially-varying source vs. a
+          simpler heat equation with learned α only.</li>
+        <li><strong>Additional boundary conditions</strong>: no-slip for velocity, Neumann for temperature,
+          and L1 source sparsity are all active — physically grounding the sub-networks and
+          preventing unphysical solutions.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SECTION 9: UNCERTAINTY ===================== -->
+<section id="uncertainty">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">9</div>
       <span class="section-cat">Uncertainty Quantification</span>
     </div>
     <h2>Spatial Uncertainty Maps</h2>
@@ -930,7 +1178,7 @@
 
     <figure>
       <img src="Uncertainty_Map/uncertainty_map.png" alt="Uncertainty map — all sensors" />
-      <figcaption><strong>Figure 8-1 — Predictive Uncertainty Map (All 13 Sensors).</strong> Spatial heatmap of predicted variance σ² across the room when all sensors are active. Low uncertainty near sensor locations, elevated uncertainty in corners and areas with sparse coverage.</figcaption>
+      <figcaption><strong>Figure 9-1 — Predictive Uncertainty Map (All 13 Sensors).</strong> Spatial heatmap of predicted variance σ² across the room when all sensors are active. Low uncertainty near sensor locations, elevated uncertainty in corners and areas with sparse coverage.</figcaption>
     </figure>
 
     <h3>Uncertainty with Withheld Sensors</h3>
@@ -944,7 +1192,7 @@
 
     <figure>
       <img src="Uncertainty_Map/uncertainty_map_withheld.png" alt="Uncertainty map — withheld sensors" />
-      <figcaption><strong>Figure 8-2 — Predictive Uncertainty Map (4 Sensors Withheld).</strong> Removing 4 sensors from the branch input causes σ² to rise at their locations, confirming the model correctly identifies its own ignorance. This property can be used to guide optimal sensor placement.</figcaption>
+      <figcaption><strong>Figure 9-2 — Predictive Uncertainty Map (4 Sensors Withheld).</strong> Removing 4 sensors from the branch input causes σ² to rise at their locations, confirming the model correctly identifies its own ignorance. This property can be used to guide optimal sensor placement.</figcaption>
     </figure>
 
     <div class="green-box">
