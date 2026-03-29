@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThermoDT — Research Questions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111614;
+      color: #c8e6c8;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 21px;
+      line-height: 1.9;
+      padding: 3.5rem 2.5rem;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .prompt::before {
+      content: '> ';
+      color: #6bbf6b;
+      opacity: 0.5;
+    }
+
+    .header {
+      border-bottom: 1px solid #2a4a2a;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .header .sys-line {
+      color: #5a9e5a;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .header h1 {
+      font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+      font-weight: normal;
+      color: #d6f0d6;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.2rem;
+    }
+
+    .header p {
+      color: #a8d4a8;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      max-width: 720px;
+    }
+
+    .progress-btn {
+      display: inline-block;
+      border: 1px solid #7ac47a;
+      color: #7ac47a;
+      background: transparent;
+      padding: 0.65rem 1.5rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.05em;
+    }
+
+    .progress-btn:hover {
+      background: #7ac47a;
+      color: #111614;
+    }
+
+    .progress-btn::before {
+      content: '[ ';
+    }
+
+    .progress-btn::after {
+      content: ' ]';
+    }
+
+    .section-header {
+      color: #6bbf6b;
+      font-size: 0.88rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0.75;
+    }
+
+    .question {
+      margin-bottom: 3.5rem;
+      padding-left: 1.4rem;
+      border-left: 2px solid #2a4a2a;
+    }
+
+    .question.hot {
+      border-left-color: #7ac47a;
+    }
+
+    .question-id {
+      font-size: 0.82rem;
+      color: #5a9e5a;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+
+    .question-title {
+      font-size: 1.25rem;
+      color: #d6f0d6;
+      margin-bottom: 0.9rem;
+      font-weight: normal;
+    }
+
+    .question p {
+      color: #a8d4a8;
+      font-size: 1rem;
+      line-height: 1.9;
+      max-width: 740px;
+    }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid #2a4a2a;
+      color: #5a9e5a;
+      font-size: 0.75rem;
+      padding: 0.18rem 0.6rem;
+      margin-top: 0.8rem;
+      margin-right: 0.4rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tag.active {
+      border-color: #7ac47a;
+      color: #a8d4a8;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #2a4a2a;
+      margin: 0.5rem 0 3rem;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 11px;
+      height: 1.1em;
+      background: #7ac47a;
+      vertical-align: text-bottom;
+      animation: blink 1.1s step-end infinite;
+      margin-left: 3px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #2a4a2a;
+      color: #4a844a;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="sys-line">THERMODT :: RESEARCH QUESTIONS :: DRAFT FOR REVIEW</div>
+  <h1>Thermal Digital Twin — Potential Research Directions<span class="cursor"></span></h1>
+  <p>
+    We have finished some initial investigation on the data and operator neural networks.
+    The progress page documents the full pipeline so far — feel free to review it before reading on.
+    Below are five potential angles for where this project goes next.
+    We will likely pick one or two to pursue seriously.
+  </p>
+  <a class="progress-btn" href="index.html">View Progress Page</a>
+</div>
+
+<div class="section-header">// research questions — open for discussion</div>
+
+<hr class="divider" />
+
+<!-- Q1 -->
+<div class="question hot">
+  <div class="question-id">ANGLE 01 &mdash; CORE CLAIM</div>
+  <div class="question-title">Can we extract the physics a DeepONet actually learned from real sensor data?</div>
+  <p>
+    After training DeepONet on real indoor sensor measurements, the operator encodes some implicit physical law —
+    but is it the one we would assume? My initial results suggest a clear sim-to-real gap exists:
+    simply imposing a known PDE at the loss function is not enough, because the real environment does not
+    perfectly obey that equation. The operator learns what the physics <em>actually is</em> here, not what textbooks say.
+    The idea is to extract and characterise that learned physics, then test it on held-out data the model
+    has never seen, and compare it directly against a black-box baseline under the same conditions.
+    This matters because everyone right now is excited about PINNs, but almost all published results are on CFD
+    or synthetic data. We would be doing this with real wireless sensor data from a real building,
+    which is a fundamentally different and messier problem.
+  </p>
+  <span class="tag active">primary candidate</span>
+  <span class="tag active">novel contribution</span>
+  <span class="tag">real sensor data</span>
+  <span class="tag">physics-informed</span>
+</div>
+
+<!-- Q2 -->
+<div class="question">
+  <div class="question-id">ANGLE 02 &mdash; BENCHMARKING</div>
+  <div class="question-title">How do different operator architectures compare on real thermodynamic sensor data?</div>
+  <p>
+    There is a growing family of operator networks — DeepONet, FNO, GNO, and others — but almost all benchmarks
+    are run on clean, simulation-generated data. No one, to my knowledge, has done a systematic comparison
+    of these architectures on real indoor sensor data, where you have noise, irregular sensor placement,
+    and genuine physical complexity. If the benchmark is rigorous and the dataset is well-documented,
+    this could serve as a solid reference paper for anyone building surrogate models for built environments.
+    Needs more literature search to confirm the gap, but the angle feels viable.
+  </p>
+  <span class="tag">secondary candidate</span>
+  <span class="tag">benchmark / reference</span>
+  <span class="tag">FNO / GNO / DeepONet</span>
+</div>
+
+<!-- Q3 -->
+<div class="question">
+  <div class="question-id">ANGLE 03 &mdash; SENSOR OPTIMISATION</div>
+  <div class="question-title">What is the minimum sensor set needed for reliable field reconstruction?</div>
+  <p>
+    Given a trained operator network, we can run an ablation over sensor subsets to find which nodes
+    are essential for accurate temperature field reconstruction and which are redundant.
+    This has practical value — if you are deploying a real building monitoring system,
+    you want to know the minimum number of sensors and their best placement before you buy hardware.
+    The analysis itself is fairly straightforward, and the result is immediately actionable.
+    Honest assessment: not the most exciting research question, but it is useful and publishable.
+  </p>
+  <span class="tag">applied / practical</span>
+  <span class="tag">sensor placement</span>
+  <span class="tag">ablation study</span>
+</div>
+
+<!-- Q4 -->
+<div class="question">
+  <div class="question-id">ANGLE 04 &mdash; RSSI CAUSAL ANALYSIS</div>
+  <div class="question-title">Does RSSI predict temperature, or is it the other way around?</div>
+  <p>
+    The paper that published this dataset assumes temperature and humidity drive RSSI signal strength.
+    My intuition is the reverse: RSSI is primarily a proxy for human activity (people moving, doors opening,
+    devices being used), and it is that activity which then influences the thermal environment.
+    If that is true, RSSI becomes a leading indicator rather than a dependent variable,
+    which changes how you would use it in a model. This could be a clean causal analysis,
+    but the impact is probably limited. Worth a section in a paper, maybe not a standalone contribution.
+  </p>
+  <span class="tag">exploratory</span>
+  <span class="tag">causal inference</span>
+  <span class="tag">RSSI</span>
+</div>
+
+<!-- Q5 -->
+<div class="question hot">
+  <div class="question-id">ANGLE 05 &mdash; HARDEST, MOST INTERESTING</div>
+  <div class="question-title">Can an operator trained in Lab 1 generalise to Lab 2?</div>
+  <p>
+    The dataset includes two different labs with different geometries, furniture layouts, and occupancy patterns —
+    and therefore different underlying physics. The question is whether a model trained entirely on Lab 1 can
+    transfer to Lab 2 with no additional data (zero-shot), or whether a small number of Lab 2 observations
+    is enough to adapt it (few-shot). If zero-shot transfer works at all, it would suggest the operator
+    has genuinely learned something about indoor thermodynamics as a class of problem,
+    not just memorised Lab 1. If it fails, the few-shot question becomes: how much data is the minimum
+    needed before the model becomes useful? This is technically the hardest angle here, but it is also
+    the one with the clearest scientific story and the broadest implications for deploying digital twins
+    in buildings we have never instrumented before.
+  </p>
+  <span class="tag active">primary candidate</span>
+  <span class="tag active">high impact</span>
+  <span class="tag">transfer learning</span>
+  <span class="tag">zero-shot / few-shot</span>
+  <span class="tag">cross-domain generalisation</span>
+</div>
+
+<footer>
+  <div>ThermoDT &mdash; 12-770 Research Project &mdash; Carnegie Mellon University</div>
+  <div style="margin-top:0.4rem; opacity:0.6;">Draft for internal review. Feedback welcome.</div>
+</footer>
+
+</body>
+</html>
