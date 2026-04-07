@@ -1,0 +1,26 @@
+{
+  "checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\runs\\s0data_v0.1\\thermodt_best.pt",
+  "overall": [
+    {
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12529316841674001,
+      "mae": 0.09995212291295712,
+      "r2": 0.9596214849433121
+    },
+    {
+      "masked_total": 3,
+      "variable": "temperature",
+      "rmse": 0.16994054430751343,
+      "mae": 0.13058165852458048,
+      "r2": 0.896485354489345
+    },
+    {
+      "masked_total": 6,
+      "variable": "temperature",
+      "rmse": 0.4045431738918753,
+      "mae": 0.3282901893059413,
+      "r2": 0.3795004219613783
+    }
+  ]
+}
