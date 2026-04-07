@@ -1,0 +1,51 @@
+protocol_family,protocol_name,display_name,masked_total,variable,rmse,mae,r2
+central_removed,central_removed_m8,Central Removed (m=8),8,humidity,0.7254411222637874,0.5650777174876287,0.9550580346137796
+central_removed,central_removed_m8,Central Removed (m=8),8,temperature,0.1780255807059306,0.13544953070007837,0.9018763837347338
+perimeter_removed,perimeter_removed_m8,Perimeter Removed (m=8),8,humidity,0.6263089015300837,0.49056369066238403,0.9673638373519283
+perimeter_removed,perimeter_removed_m8,Perimeter Removed (m=8),8,temperature,0.1572737817458996,0.11871058493852615,0.9248203654935353
+random,random_m8,Random masks (m=8),8,humidity,0.6884454344896992,0.5339495715422508,0.9615939733009617
+random,random_m8,Random masks (m=8),8,temperature,0.16810154352042023,0.12669951535570315,0.9185796910119367
+spread_removed,spread_removed_m8,Spread Removed (m=8),8,humidity,0.6979541323077915,0.5629270168451163,0.9597317829203578
+spread_removed,spread_removed_m8,Spread Removed (m=8),8,temperature,0.15186645393783535,0.12309454324153754,0.9331734177043689
+central_removed,central_removed_m9,Central Removed (m=9),9,humidity,0.7417945413239034,0.5816853023492373,0.9520310022280097
+central_removed,central_removed_m9,Central Removed (m=9),9,temperature,0.1860338235404251,0.1435557185457303,0.889717319727147
+perimeter_removed,perimeter_removed_m9,Perimeter Removed (m=9),9,humidity,0.6966644333063454,0.5496539863256308,0.9620804448815855
+perimeter_removed,perimeter_removed_m9,Perimeter Removed (m=9),9,temperature,0.17035796218706936,0.12753056849424654,0.9185651529967214
+random,random_m9,Random masks (m=9),9,humidity,0.7332680721609532,0.5694243854437119,0.9573842445462586
+random,random_m9,Random masks (m=9),9,temperature,0.17922828788877718,0.13512340016089952,0.911954272439772
+spread_removed,spread_removed_m9,Spread Removed (m=9),9,humidity,0.716752875309884,0.5728982641146734,0.9571219642064186
+spread_removed,spread_removed_m9,Spread Removed (m=9),9,temperature,0.16642429830484173,0.1323898219718383,0.9255460735462143
+central_removed,central_removed_m10,Central Removed (m=10),10,humidity,0.7501476383945092,0.5978539700691516,0.9541347885089058
+central_removed,central_removed_m10,Central Removed (m=10),10,temperature,0.1852709762336322,0.14549563423945353,0.8999897305420212
+perimeter_removed,perimeter_removed_m10,Perimeter Removed (m=10),10,humidity,0.7702565699294516,0.603525698184967,0.9539761814116443
+perimeter_removed,perimeter_removed_m10,Perimeter Removed (m=10),10,temperature,0.18328913564278487,0.14322780989683592,0.9055119238763235
+random,random_m10,Random masks (m=10),10,humidity,0.785608193440648,0.6138696059202536,0.9522954977277291
+random,random_m10,Random masks (m=10),10,temperature,0.1926177896056786,0.14600820266283476,0.9045175882897968
+spread_removed,spread_removed_m10,Spread Removed (m=10),10,humidity,0.7421029981308221,0.5905931339814112,0.9552762286105646
+spread_removed,spread_removed_m10,Spread Removed (m=10),10,temperature,0.171015507813378,0.13625992920536262,0.9238868409762706
+active_only,active_central_diag_tl_br,Central diagonal TL-BR only,11,humidity,0.8308115642178813,0.667673246218608,0.9417633169035798
+active_only,active_central_diag_tl_br,Central diagonal TL-BR only,11,temperature,0.20290178398123793,0.1601981812944779,0.8907765229283193
+active_only,active_central_diag_tr_bl,Central diagonal TR-BL only,11,humidity,0.821924598365847,0.6594002762666116,0.9464060523293932
+active_only,active_central_diag_tr_bl,Central diagonal TR-BL only,11,temperature,0.1921868237753927,0.15125612112192008,0.9042352398538622
+active_only,active_corners_diag_bl_tr,Corners diagonal BL-TR only,11,humidity,0.8593172047464489,0.6727641568734095,0.9420778810352667
+active_only,active_corners_diag_bl_tr,Corners diagonal BL-TR only,11,temperature,0.20999873103910846,0.16552504209371713,0.8715277662401968
+active_only,active_corners_diag_br_tl,Corners diagonal BR-TL only,11,humidity,0.8444587581613896,0.6742974061232346,0.9433262597177063
+active_only,active_corners_diag_br_tl,Corners diagonal BR-TL only,11,temperature,0.2091300165799175,0.17111963176956543,0.8869754283193487
+central_removed,central_removed_m11,Central Removed (m=11),11,humidity,0.8408065146826957,0.6563709263618176,0.9446426531227667
+central_removed,central_removed_m11,Central Removed (m=11),11,temperature,0.2044430486654017,0.15949560243349808,0.878212085898489
+perimeter_removed,perimeter_removed_m11,Perimeter Removed (m=11),11,humidity,0.7702507912416239,0.6167102868740375,0.9535293447343622
+perimeter_removed,perimeter_removed_m11,Perimeter Removed (m=11),11,temperature,0.18807537379328385,0.1476978355875382,0.8956672563791747
+random,random_m11,Random masks (m=11),11,humidity,0.8950610733477935,0.6972186664740244,0.9398620685640605
+random,random_m11,Random masks (m=11),11,temperature,0.22276486596601208,0.16970512251823378,0.8784605919200206
+spread_removed,spread_removed_m11,Spread Removed (m=11),11,humidity,0.8099434926359587,0.6454120908792202,0.9479596993034469
+spread_removed,spread_removed_m11,Spread Removed (m=11),11,temperature,0.195951600440442,0.15260901445379624,0.8986475993805306
+active_only,active_center_one_only,Center one only,12,humidity,1.5291609846877678,1.233355265397292,0.8102706554855004
+active_only,active_center_one_only,Center one only,12,temperature,0.3926018760131881,0.3146294607565953,0.6349872410747075
+central_removed,central_removed_m12,Central Removed (m=12),12,humidity,1.0300930043445735,0.8405087085870596,0.9249099793592914
+central_removed,central_removed_m12,Central Removed (m=12),12,temperature,0.26623978027830897,0.21688110667925614,0.8334096785776478
+perimeter_removed,perimeter_removed_m12,Perimeter Removed (m=12),12,humidity,1.3403809506005249,1.0728432398576002,0.8722961571032044
+perimeter_removed,perimeter_removed_m12,Perimeter Removed (m=12),12,temperature,0.3594672810022701,0.2875663431791159,0.6873967564344708
+random,random_m12,Random masks (m=12),12,humidity,1.1370437680360723,0.850840551730914,0.9071760961020703
+random,random_m12,Random masks (m=12),12,temperature,0.2992198829191102,0.21704116157996348,0.7941713373826708
+spread_removed,spread_removed_m12,Spread Removed (m=12),12,humidity,0.9558841689984454,0.7674856942433578,0.9288766631282245
+spread_removed,spread_removed_m12,Spread Removed (m=12),12,temperature,0.2230814946283201,0.17962980098449266,0.8643480811760385
