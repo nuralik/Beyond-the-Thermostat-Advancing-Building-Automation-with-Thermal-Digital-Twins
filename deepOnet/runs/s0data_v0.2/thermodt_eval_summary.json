@@ -1,0 +1,47 @@
+{
+  "checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\s0data_v0.2\\thermodt_best.pt",
+  "overall": [
+    {
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.3878531497126499,
+      "mae": 0.29686059516209823,
+      "r2": 0.9871393047538498
+    },
+    {
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.08895038961171096,
+      "mae": 0.06773048610641406,
+      "r2": 0.9712447419764754
+    },
+    {
+      "masked_total": 3,
+      "variable": "humidity",
+      "rmse": 0.4390499798840106,
+      "mae": 0.3336561413911673,
+      "r2": 0.9840096304824519
+    },
+    {
+      "masked_total": 3,
+      "variable": "temperature",
+      "rmse": 0.10150063852502708,
+      "mae": 0.07594309116785343,
+      "r2": 0.9660304437304783
+    },
+    {
+      "masked_total": 6,
+      "variable": "humidity",
+      "rmse": 0.6890031591101565,
+      "mae": 0.5236814862642533,
+      "r2": 0.9605019075489843
+    },
+    {
+      "masked_total": 6,
+      "variable": "temperature",
+      "rmse": 0.15765529071921866,
+      "mae": 0.11793397586697187,
+      "r2": 0.9223753870784472
+    }
+  ]
+}
