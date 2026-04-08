@@ -1,0 +1,1727 @@
+{
+  "checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1data_v0.4.1\\thermodt_best.pt",
+  "overall": [
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "full_reference_all_active",
+      "display_name": "Full reference (all sensors active)",
+      "masked_total": 0,
+      "variable": "humidity",
+      "rmse": 0.5171803697007303,
+      "mae": 0.4013638484936494,
+      "r2": 0.9745096154986507
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "full_reference_all_active",
+      "display_name": "Full reference (all sensors active)",
+      "masked_total": 0,
+      "variable": "temperature",
+      "rmse": 0.12013166551735036,
+      "mae": 0.09023768512102273,
+      "r2": 0.9384250515818932
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k12",
+      "display_name": "Backward elimination best set (k=12)",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.521565067830112,
+      "mae": 0.41112110821100384,
+      "r2": 0.9747925954246999
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k12",
+      "display_name": "Backward elimination best set (k=12)",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12163037449605651,
+      "mae": 0.09350294018020996,
+      "r2": 0.9412475602405714
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_1",
+      "display_name": "Drop sensor 1",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.527956745083461,
+      "mae": 0.4109864808045901,
+      "r2": 0.9740216207310979
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_1",
+      "display_name": "Drop sensor 1",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12028385218469585,
+      "mae": 0.09124055905983998,
+      "r2": 0.9384094743321871
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_10",
+      "display_name": "Drop sensor 10",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5216196105133378,
+      "mae": 0.40529918441405666,
+      "r2": 0.9744606831209276
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_10",
+      "display_name": "Drop sensor 10",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.1221333503398998,
+      "mae": 0.09115600557281421,
+      "r2": 0.9386077512136597
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_11",
+      "display_name": "Drop sensor 11",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5299312911777005,
+      "mae": 0.41332170596489537,
+      "r2": 0.9739963739303804
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_11",
+      "display_name": "Drop sensor 11",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12486947969679876,
+      "mae": 0.09386866969557908,
+      "r2": 0.9369186644476619
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_12",
+      "display_name": "Drop sensor 12",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5312715092207306,
+      "mae": 0.410752806525964,
+      "r2": 0.9731813509307196
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_12",
+      "display_name": "Drop sensor 12",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12261111533975748,
+      "mae": 0.09209629492117809,
+      "r2": 0.935210849443195
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_13",
+      "display_name": "Drop sensor 13",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.533994512213704,
+      "mae": 0.4214176145883707,
+      "r2": 0.9734211351954513
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_13",
+      "display_name": "Drop sensor 13",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12407412187090855,
+      "mae": 0.09418334697301571,
+      "r2": 0.9367741079743369
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_2",
+      "display_name": "Drop sensor 2",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.547582343523505,
+      "mae": 0.4257511290220114,
+      "r2": 0.9726992862104111
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_2",
+      "display_name": "Drop sensor 2",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12664118301903599,
+      "mae": 0.09825131297111511,
+      "r2": 0.938458534050969
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_3",
+      "display_name": "Drop sensor 3",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5511516946148437,
+      "mae": 0.4285224343721683,
+      "r2": 0.970685072979436
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_3",
+      "display_name": "Drop sensor 3",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.1286579703974982,
+      "mae": 0.09767885448840949,
+      "r2": 0.9304093755009979
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_4",
+      "display_name": "Drop sensor 4",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5285072400370546,
+      "mae": 0.40840917711074537,
+      "r2": 0.9739813405052874
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_4",
+      "display_name": "Drop sensor 4",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12475739037730767,
+      "mae": 0.09348796565945332,
+      "r2": 0.9361117772378873
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_5",
+      "display_name": "Drop sensor 5",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5321516350810855,
+      "mae": 0.4116185020941954,
+      "r2": 0.9726723308830233
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_5",
+      "display_name": "Drop sensor 5",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12698436089891543,
+      "mae": 0.09478943107219842,
+      "r2": 0.9320796934034804
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_6",
+      "display_name": "Drop sensor 6",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5410881129558524,
+      "mae": 0.42580159581624544,
+      "r2": 0.973004171344868
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_6",
+      "display_name": "Drop sensor 6",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12176247269280906,
+      "mae": 0.09453054603475791,
+      "r2": 0.9415943725444451
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_7",
+      "display_name": "Drop sensor 7",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5274834295994439,
+      "mae": 0.4091133395066628,
+      "r2": 0.9747176884027486
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_7",
+      "display_name": "Drop sensor 7",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12490110438079711,
+      "mae": 0.09381633825027026,
+      "r2": 0.9399613609908392
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_8",
+      "display_name": "Drop sensor 8",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.5300896164463802,
+      "mae": 0.40841440512583804,
+      "r2": 0.9718823547000759
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_8",
+      "display_name": "Drop sensor 8",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.1271426504313278,
+      "mae": 0.09674425107928422,
+      "r2": 0.9286165811044491
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_9",
+      "display_name": "Drop sensor 9",
+      "masked_total": 1,
+      "variable": "humidity",
+      "rmse": 0.521565067830112,
+      "mae": 0.41112110821100384,
+      "r2": 0.9747925954246999
+    },
+    {
+      "protocol_family": "sensor_importance",
+      "protocol_name": "drop_sensor_9",
+      "display_name": "Drop sensor 9",
+      "masked_total": 1,
+      "variable": "temperature",
+      "rmse": 0.12163037449605651,
+      "mae": 0.09350294018020996,
+      "r2": 0.9412475602405714
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k11",
+      "display_name": "Backward elimination best set (k=11)",
+      "masked_total": 2,
+      "variable": "humidity",
+      "rmse": 0.5236652632654206,
+      "mae": 0.41635532218676347,
+      "r2": 0.9752739214582531
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k11",
+      "display_name": "Backward elimination best set (k=11)",
+      "masked_total": 2,
+      "variable": "temperature",
+      "rmse": 0.12500907537718303,
+      "mae": 0.09636816038535191,
+      "r2": 0.9419940967567269
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k10",
+      "display_name": "Backward elimination best set (k=10)",
+      "masked_total": 3,
+      "variable": "humidity",
+      "rmse": 0.5318975959678494,
+      "mae": 0.4222462750398196,
+      "r2": 0.9749981079046987
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k10",
+      "display_name": "Backward elimination best set (k=10)",
+      "masked_total": 3,
+      "variable": "temperature",
+      "rmse": 0.12320435626659834,
+      "mae": 0.09382872770612057,
+      "r2": 0.9441904224174158
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k9",
+      "display_name": "Backward elimination best set (k=9)",
+      "masked_total": 4,
+      "variable": "humidity",
+      "rmse": 0.558556012440592,
+      "mae": 0.4502726598427846,
+      "r2": 0.973018010725966
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k9",
+      "display_name": "Backward elimination best set (k=9)",
+      "masked_total": 4,
+      "variable": "temperature",
+      "rmse": 0.1265027554731803,
+      "mae": 0.09771469579293178,
+      "r2": 0.9427129793862221
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k8",
+      "display_name": "Backward elimination best set (k=8)",
+      "masked_total": 5,
+      "variable": "humidity",
+      "rmse": 0.5718386598415583,
+      "mae": 0.4552103854142703,
+      "r2": 0.9721408694114919
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k8",
+      "display_name": "Backward elimination best set (k=8)",
+      "masked_total": 5,
+      "variable": "temperature",
+      "rmse": 0.1310037219846114,
+      "mae": 0.09860643085378867,
+      "r2": 0.9405134404741629
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k7",
+      "display_name": "Backward elimination best set (k=7)",
+      "masked_total": 6,
+      "variable": "humidity",
+      "rmse": 0.58132448437944,
+      "mae": 0.45995114055963665,
+      "r2": 0.9716050637516737
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k7",
+      "display_name": "Backward elimination best set (k=7)",
+      "masked_total": 6,
+      "variable": "temperature",
+      "rmse": 0.1346905076435491,
+      "mae": 0.10205441913925685,
+      "r2": 0.9391341490609508
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k6",
+      "display_name": "Backward elimination best set (k=6)",
+      "masked_total": 7,
+      "variable": "humidity",
+      "rmse": 0.6287155303939612,
+      "mae": 0.5039106836685767,
+      "r2": 0.9676618581168428
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k6",
+      "display_name": "Backward elimination best set (k=6)",
+      "masked_total": 7,
+      "variable": "temperature",
+      "rmse": 0.14040179185626703,
+      "mae": 0.11033022231780566,
+      "r2": 0.9396534904333083
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k5",
+      "display_name": "Backward elimination best set (k=5)",
+      "masked_total": 8,
+      "variable": "humidity",
+      "rmse": 0.6466246185607935,
+      "mae": 0.5207088337494776,
+      "r2": 0.9662289740831019
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k5",
+      "display_name": "Backward elimination best set (k=5)",
+      "masked_total": 8,
+      "variable": "temperature",
+      "rmse": 0.14773709350105457,
+      "mae": 0.11608069361402439,
+      "r2": 0.9350279955309818
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k4",
+      "display_name": "Backward elimination best set (k=4)",
+      "masked_total": 9,
+      "variable": "humidity",
+      "rmse": 0.6800378188003113,
+      "mae": 0.5409809018556888,
+      "r2": 0.9633447638464749
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k4",
+      "display_name": "Backward elimination best set (k=4)",
+      "masked_total": 9,
+      "variable": "temperature",
+      "rmse": 0.1561490048723622,
+      "mae": 0.12092331510323745,
+      "r2": 0.9297914251981347
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k3",
+      "display_name": "Backward elimination best set (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7065575770573619,
+      "mae": 0.5666076747270731,
+      "r2": 0.9618466346234361
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k3",
+      "display_name": "Backward elimination best set (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16770285145863603,
+      "mae": 0.1302183557015199,
+      "r2": 0.9270716968256859
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank1",
+      "display_name": "Exhaustive top rank 1 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7065575770573619,
+      "mae": 0.5666076747270731,
+      "r2": 0.9618466346234361
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank1",
+      "display_name": "Exhaustive top rank 1 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16770285145863603,
+      "mae": 0.1302183557015199,
+      "r2": 0.9270716968256859
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank10",
+      "display_name": "Exhaustive top rank 10 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7144183783055021,
+      "mae": 0.5791557133197784,
+      "r2": 0.9595198306226046
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank10",
+      "display_name": "Exhaustive top rank 10 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16837038035891821,
+      "mae": 0.13313629306279695,
+      "r2": 0.9207826365481344
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank2",
+      "display_name": "Exhaustive top rank 2 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7045113099780536,
+      "mae": 0.5684308180442224,
+      "r2": 0.9614375236324749
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank2",
+      "display_name": "Exhaustive top rank 2 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16980244404182354,
+      "mae": 0.13762666227725837,
+      "r2": 0.9245297318866472
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank3",
+      "display_name": "Exhaustive top rank 3 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.725942594970838,
+      "mae": 0.5796981706069066,
+      "r2": 0.9601728139964257
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank3",
+      "display_name": "Exhaustive top rank 3 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.17151886990664653,
+      "mae": 0.13660113198252824,
+      "r2": 0.9255211307970165
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank4",
+      "display_name": "Exhaustive top rank 4 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7423281022751339,
+      "mae": 0.6019949316978455,
+      "r2": 0.9562353369585228
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank4",
+      "display_name": "Exhaustive top rank 4 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16430798273457223,
+      "mae": 0.13026125270586747,
+      "r2": 0.9271398807287187
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank5",
+      "display_name": "Exhaustive top rank 5 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.6956858156999854,
+      "mae": 0.557542798610834,
+      "r2": 0.9611601716405258
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank5",
+      "display_name": "Exhaustive top rank 5 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16804373500313047,
+      "mae": 0.13030888713323152,
+      "r2": 0.9220833423591487
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank6",
+      "display_name": "Exhaustive top rank 6 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7114117663297344,
+      "mae": 0.5708322502099551,
+      "r2": 0.9597953182735264
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank6",
+      "display_name": "Exhaustive top rank 6 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.17002590753880337,
+      "mae": 0.13252389373687598,
+      "r2": 0.9218724490653014
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank7",
+      "display_name": "Exhaustive top rank 7 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7096306622972277,
+      "mae": 0.5792968777509836,
+      "r2": 0.9594812250559563
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank7",
+      "display_name": "Exhaustive top rank 7 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.1650557645311888,
+      "mae": 0.1297794978779096,
+      "r2": 0.9221757572778789
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank8",
+      "display_name": "Exhaustive top rank 8 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7176236079870133,
+      "mae": 0.5769637456307044,
+      "r2": 0.9604026653832383
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank8",
+      "display_name": "Exhaustive top rank 8 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.1742524005977947,
+      "mae": 0.13657306478573725,
+      "r2": 0.9212431370854794
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank9",
+      "display_name": "Exhaustive top rank 9 (k=3)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7267654517803817,
+      "mae": 0.5863502896749057,
+      "r2": 0.95882296013535
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top3_rank9",
+      "display_name": "Exhaustive top rank 9 (k=3)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16985463783592575,
+      "mae": 0.13383381641828096,
+      "r2": 0.9228050020229492
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_central_diag_tl_br",
+      "display_name": "Central diagonal TL-BR only",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8308116098513619,
+      "mae": 0.6676732370486627,
+      "r2": 0.9417633102448442
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_central_diag_tl_br",
+      "display_name": "Central diagonal TL-BR only",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.2029017839396074,
+      "mae": 0.16019818989130166,
+      "r2": 0.8907765227189504
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_central_diag_tr_bl",
+      "display_name": "Central diagonal TR-BL only",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8219246564855228,
+      "mae": 0.6594003232625815,
+      "r2": 0.9464060471162311
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_central_diag_tr_bl",
+      "display_name": "Central diagonal TR-BL only",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.19218681863527712,
+      "mae": 0.15125611367133948,
+      "r2": 0.9042352483476068
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_corners_diag_bl_tr",
+      "display_name": "Corners diagonal BL-TR only",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8593172022850373,
+      "mae": 0.6727641637508686,
+      "r2": 0.9420778845138135
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_corners_diag_bl_tr",
+      "display_name": "Corners diagonal BL-TR only",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.2099987394092117,
+      "mae": 0.1655250552755136,
+      "r2": 0.871527762714031
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_corners_diag_br_tl",
+      "display_name": "Corners diagonal BR-TL only",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.844458792668953,
+      "mae": 0.674297422170639,
+      "r2": 0.9433262544010372
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_corners_diag_br_tl",
+      "display_name": "Corners diagonal BR-TL only",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.20913001530851183,
+      "mae": 0.1711196372142205,
+      "r2": 0.8869754273955378
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k2",
+      "display_name": "Backward elimination best set (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7921753007240023,
+      "mae": 0.6385816152279193,
+      "r2": 0.9512295988534417
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k2",
+      "display_name": "Backward elimination best set (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18517913331338626,
+      "mae": 0.1454760839159672,
+      "r2": 0.9156594983229078
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank1",
+      "display_name": "Exhaustive top rank 1 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7921753007240023,
+      "mae": 0.6385816152279193,
+      "r2": 0.9512295988534417
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank1",
+      "display_name": "Exhaustive top rank 1 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18517913331338626,
+      "mae": 0.1454760839159672,
+      "r2": 0.9156594983229078
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank10",
+      "display_name": "Exhaustive top rank 10 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8114092229177307,
+      "mae": 0.6499393089459493,
+      "r2": 0.9467152582369299
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank10",
+      "display_name": "Exhaustive top rank 10 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.192699048913313,
+      "mae": 0.14988436206029013,
+      "r2": 0.9014282658592917
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank2",
+      "display_name": "Exhaustive top rank 2 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.790686450781329,
+      "mae": 0.6330494513878455,
+      "r2": 0.9499577250734654
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank2",
+      "display_name": "Exhaustive top rank 2 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18465980310081337,
+      "mae": 0.14446993802602476,
+      "r2": 0.9130281767136482
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank3",
+      "display_name": "Exhaustive top rank 3 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7842100156615526,
+      "mae": 0.6366879985882685,
+      "r2": 0.9514808354750476
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank3",
+      "display_name": "Exhaustive top rank 3 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18788028650439928,
+      "mae": 0.1492138711305765,
+      "r2": 0.9109349581088677
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank4",
+      "display_name": "Exhaustive top rank 4 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7733468009014934,
+      "mae": 0.6262524930330423,
+      "r2": 0.9502395361864746
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank4",
+      "display_name": "Exhaustive top rank 4 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.17896594471283708,
+      "mae": 0.14097352239948052,
+      "r2": 0.9109305851831679
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank5",
+      "display_name": "Exhaustive top rank 5 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8440582586939391,
+      "mae": 0.6706151687181913,
+      "r2": 0.9450668081780222
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank5",
+      "display_name": "Exhaustive top rank 5 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.1891538396941625,
+      "mae": 0.14927014995079774,
+      "r2": 0.9120958450492243
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank6",
+      "display_name": "Exhaustive top rank 6 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8208255504373352,
+      "mae": 0.6728151990817144,
+      "r2": 0.9474078930868437
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank6",
+      "display_name": "Exhaustive top rank 6 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18960460821671654,
+      "mae": 0.14998204719561797,
+      "r2": 0.9051520953476533
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank7",
+      "display_name": "Exhaustive top rank 7 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8219246564855228,
+      "mae": 0.6594003232625815,
+      "r2": 0.9464060471162311
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank7",
+      "display_name": "Exhaustive top rank 7 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.19218681863527712,
+      "mae": 0.15125611367133948,
+      "r2": 0.9042352483476068
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank8",
+      "display_name": "Exhaustive top rank 8 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7967787582259829,
+      "mae": 0.6446134356351999,
+      "r2": 0.9508195299982627
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank8",
+      "display_name": "Exhaustive top rank 8 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.19684790881967087,
+      "mae": 0.15586602343962744,
+      "r2": 0.8983115643682661
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank9",
+      "display_name": "Exhaustive top rank 9 (k=2)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7964038573918077,
+      "mae": 0.6483423480620751,
+      "r2": 0.9522281191726074
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top2_rank9",
+      "display_name": "Exhaustive top rank 9 (k=2)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.20532065688834028,
+      "mae": 0.16193693818954322,
+      "r2": 0.8968714059070363
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_center_one_only",
+      "display_name": "Center one only",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.5291610221588858,
+      "mae": 1.2333553341718821,
+      "r2": 0.8102706510613893
+    },
+    {
+      "protocol_family": "active_only",
+      "protocol_name": "active_center_one_only",
+      "display_name": "Center one only",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.39260187992503526,
+      "mae": 0.3146294607565953,
+      "r2": 0.6349872317923665
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k1",
+      "display_name": "Backward elimination best set (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1337299217160917,
+      "mae": 0.9034290565894201,
+      "r2": 0.8641521709230471
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "backward_best_k1",
+      "display_name": "Backward elimination best set (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.2452056114038657,
+      "mae": 0.19613161253241393,
+      "r2": 0.8139559441368895
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank1",
+      "display_name": "Exhaustive top rank 1 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1337299217160917,
+      "mae": 0.9034290565894201,
+      "r2": 0.8641521709230471
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank1",
+      "display_name": "Exhaustive top rank 1 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.2452056114038657,
+      "mae": 0.19613161253241393,
+      "r2": 0.8139559441368895
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank10",
+      "display_name": "Exhaustive top rank 10 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.3044306642878114,
+      "mae": 1.0382690475537226,
+      "r2": 0.8406578383401193
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank10",
+      "display_name": "Exhaustive top rank 10 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.3128685131668376,
+      "mae": 0.24590725222459206,
+      "r2": 0.7409643085490991
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank2",
+      "display_name": "Exhaustive top rank 2 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.0989314375614645,
+      "mae": 0.8907383863742535,
+      "r2": 0.867082432774647
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank2",
+      "display_name": "Exhaustive top rank 2 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.26490594435655856,
+      "mae": 0.21241334539193374,
+      "r2": 0.7993021475657223
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank3",
+      "display_name": "Exhaustive top rank 3 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1147448998140719,
+      "mae": 0.886113201196377,
+      "r2": 0.8640252619563671
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank3",
+      "display_name": "Exhaustive top rank 3 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.2605179570057088,
+      "mae": 0.20844463545542496,
+      "r2": 0.7982113430015408
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank4",
+      "display_name": "Exhaustive top rank 4 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1775282953346953,
+      "mae": 0.951409603540714,
+      "r2": 0.854965075885687
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank4",
+      "display_name": "Exhaustive top rank 4 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.26922198402465203,
+      "mae": 0.22017938557725686,
+      "r2": 0.7870441007076878
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank5",
+      "display_name": "Exhaustive top rank 5 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1452827485504948,
+      "mae": 0.9215032022732955,
+      "r2": 0.8589665060705252
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank5",
+      "display_name": "Exhaustive top rank 5 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.272589250093624,
+      "mae": 0.22360080996384987,
+      "r2": 0.7767495600660033
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank6",
+      "display_name": "Exhaustive top rank 6 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1364993830557637,
+      "mae": 0.9073648567383106,
+      "r2": 0.8577379241519516
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank6",
+      "display_name": "Exhaustive top rank 6 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.2787873907314034,
+      "mae": 0.21653787333231705,
+      "r2": 0.7762569012099724
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank7",
+      "display_name": "Exhaustive top rank 7 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.2541699992746946,
+      "mae": 1.0269535504854643,
+      "r2": 0.8545856673809773
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank7",
+      "display_name": "Exhaustive top rank 7 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.29456925685228097,
+      "mae": 0.24272444729621595,
+      "r2": 0.7688060946495952
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank8",
+      "display_name": "Exhaustive top rank 8 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.2940739062170887,
+      "mae": 1.023170796724466,
+      "r2": 0.8375255739758768
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank8",
+      "display_name": "Exhaustive top rank 8 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.301107323302917,
+      "mae": 0.23856230997122252,
+      "r2": 0.7538161667797112
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank9",
+      "display_name": "Exhaustive top rank 9 (k=1)",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.267026180487618,
+      "mae": 1.0425068506827722,
+      "r2": 0.8400063153076844
+    },
+    {
+      "protocol_family": "active_set_search",
+      "protocol_name": "exhaustive_top1_rank9",
+      "display_name": "Exhaustive top rank 9 (k=1)",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.2903932788141729,
+      "mae": 0.23648093870052925,
+      "r2": 0.7503081461525872
+    }
+  ],
+  "sensor_importance_top": [
+    {
+      "removed_sensor": 9,
+      "score": 0.9580200778326357,
+      "delta_score_vs_reference": 0.0015527442923637391,
+      "rmse_temperature": 0.12163037449605651,
+      "mae_temperature": 0.09350294018020996,
+      "r2_temperature": 0.9412475602405714,
+      "delta_r2_temperature_vs_reference": 0.00282250865867828,
+      "rmse_humidity": 0.521565067830112,
+      "mae_humidity": 0.41112110821100384,
+      "r2_humidity": 0.9747925954246999,
+      "delta_r2_humidity_vs_reference": 0.0002829799260491983
+    },
+    {
+      "removed_sensor": 7,
+      "score": 0.957339524696794,
+      "delta_score_vs_reference": 0.0008721911565220397,
+      "rmse_temperature": 0.12490110438079711,
+      "mae_temperature": 0.09381633825027026,
+      "r2_temperature": 0.9399613609908392,
+      "delta_r2_temperature_vs_reference": 0.0015363094089460017,
+      "rmse_humidity": 0.5274834295994439,
+      "mae_humidity": 0.4091133395066628,
+      "r2_humidity": 0.9747176884027486,
+      "delta_r2_humidity_vs_reference": 0.00020807290409796675
+    },
+    {
+      "removed_sensor": 6,
+      "score": 0.9572992719446566,
+      "delta_score_vs_reference": 0.0008319384043846689,
+      "rmse_temperature": 0.12176247269280906,
+      "mae_temperature": 0.09453054603475791,
+      "r2_temperature": 0.9415943725444451,
+      "delta_r2_temperature_vs_reference": 0.003169320962551958,
+      "rmse_humidity": 0.5410881129558524,
+      "mae_humidity": 0.42580159581624544,
+      "r2_humidity": 0.973004171344868,
+      "delta_r2_humidity_vs_reference": -0.0015054441537826202
+    },
+    {
+      "removed_sensor": 10,
+      "score": 0.9565342171672937,
+      "delta_score_vs_reference": 6.688362702178541e-05,
+      "rmse_temperature": 0.1221333503398998,
+      "mae_temperature": 0.09115600557281421,
+      "r2_temperature": 0.9386077512136597,
+      "delta_r2_temperature_vs_reference": 0.00018269963176653636,
+      "rmse_humidity": 0.5216196105133378,
+      "mae_humidity": 0.40529918441405666,
+      "r2_humidity": 0.9744606831209276,
+      "delta_r2_humidity_vs_reference": -4.893237772307657e-05
+    },
+    {
+      "removed_sensor": 1,
+      "score": 0.9562155475316425,
+      "delta_score_vs_reference": -0.0002517860086294066,
+      "rmse_temperature": 0.12028385218469585,
+      "mae_temperature": 0.09124055905983998,
+      "r2_temperature": 0.9384094743321871,
+      "delta_r2_temperature_vs_reference": -1.5577249706022478e-05,
+      "rmse_humidity": 0.527956745083461,
+      "mae_humidity": 0.4109864808045901,
+      "r2_humidity": 0.9740216207310979,
+      "delta_r2_humidity_vs_reference": -0.0004879947675527907
+    },
+    {
+      "removed_sensor": 2,
+      "score": 0.9555789101306901,
+      "delta_score_vs_reference": -0.00088842340958184,
+      "rmse_temperature": 0.12664118301903599,
+      "mae_temperature": 0.09825131297111511,
+      "r2_temperature": 0.938458534050969,
+      "delta_r2_temperature_vs_reference": 3.348246907586283e-05,
+      "rmse_humidity": 0.547582343523505,
+      "mae_humidity": 0.4257511290220114,
+      "r2_humidity": 0.9726992862104111,
+      "delta_r2_humidity_vs_reference": -0.0018103292882395428
+    },
+    {
+      "removed_sensor": 11,
+      "score": 0.9554575191890211,
+      "delta_score_vs_reference": -0.001009814351250804,
+      "rmse_temperature": 0.12486947969679876,
+      "mae_temperature": 0.09386866969557908,
+      "r2_temperature": 0.9369186644476619,
+      "delta_r2_temperature_vs_reference": -0.0015063871342312352,
+      "rmse_humidity": 0.5299312911777005,
+      "mae_humidity": 0.41332170596489537,
+      "r2_humidity": 0.9739963739303804,
+      "delta_r2_humidity_vs_reference": -0.0005132415682702618
+    },
+    {
+      "removed_sensor": 13,
+      "score": 0.9550976215848941,
+      "delta_score_vs_reference": -0.001369711955377828,
+      "rmse_temperature": 0.12407412187090855,
+      "mae_temperature": 0.09418334697301571,
+      "r2_temperature": 0.9367741079743369,
+      "delta_r2_temperature_vs_reference": -0.0016509436075562434,
+      "rmse_humidity": 0.533994512213704,
+      "mae_humidity": 0.4214176145883707,
+      "r2_humidity": 0.9734211351954513,
+      "delta_r2_humidity_vs_reference": -0.0010884803031994128
+    },
+    {
+      "removed_sensor": 4,
+      "score": 0.9550465588715873,
+      "delta_score_vs_reference": -0.0014207746686846212,
+      "rmse_temperature": 0.12475739037730767,
+      "mae_temperature": 0.09348796565945332,
+      "r2_temperature": 0.9361117772378873,
+      "delta_r2_temperature_vs_reference": -0.0023132743440058556,
+      "rmse_humidity": 0.5285072400370546,
+      "mae_humidity": 0.40840917711074537,
+      "r2_humidity": 0.9739813405052874,
+      "delta_r2_humidity_vs_reference": -0.0005282749933632758
+    },
+    {
+      "removed_sensor": 12,
+      "score": 0.9541961001869572,
+      "delta_score_vs_reference": -0.0022712333533146944,
+      "rmse_temperature": 0.12261111533975748,
+      "mae_temperature": 0.09209629492117809,
+      "r2_temperature": 0.935210849443195,
+      "delta_r2_temperature_vs_reference": -0.0032142021386981634,
+      "rmse_humidity": 0.5312715092207306,
+      "mae_humidity": 0.410752806525964,
+      "r2_humidity": 0.9731813509307196,
+      "delta_r2_humidity_vs_reference": -0.0013282645679311145
+    }
+  ],
+  "backward_path": [
+    {
+      "step": 1,
+      "removed_sensor": 9,
+      "active_count": 12,
+      "active_sensors": "[1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13]",
+      "score": 0.9580200778326357,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9412475602405714,
+      "r2_humidity": 0.9747925954246999
+    },
+    {
+      "step": 2,
+      "removed_sensor": 7,
+      "active_count": 11,
+      "active_sensors": "[1, 2, 3, 4, 5, 6, 8, 10, 11, 12, 13]",
+      "score": 0.95863400910749,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9419940967567269,
+      "r2_humidity": 0.9752739214582531
+    },
+    {
+      "step": 3,
+      "removed_sensor": 1,
+      "active_count": 10,
+      "active_sensors": "[2, 3, 4, 5, 6, 8, 10, 11, 12, 13]",
+      "score": 0.9595942651610572,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9441904224174158,
+      "r2_humidity": 0.9749981079046987
+    },
+    {
+      "step": 4,
+      "removed_sensor": 13,
+      "active_count": 9,
+      "active_sensors": "[2, 3, 4, 5, 6, 8, 10, 11, 12]",
+      "score": 0.9578654950560941,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9427129793862221,
+      "r2_humidity": 0.973018010725966
+    },
+    {
+      "step": 5,
+      "removed_sensor": 12,
+      "active_count": 8,
+      "active_sensors": "[2, 3, 4, 5, 6, 8, 10, 11]",
+      "score": 0.9563271549428274,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9405134404741629,
+      "r2_humidity": 0.9721408694114919
+    },
+    {
+      "step": 6,
+      "removed_sensor": 4,
+      "active_count": 7,
+      "active_sensors": "[2, 3, 5, 6, 8, 10, 11]",
+      "score": 0.9553696064063122,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9391341490609508,
+      "r2_humidity": 0.9716050637516737
+    },
+    {
+      "step": 7,
+      "removed_sensor": 6,
+      "active_count": 6,
+      "active_sensors": "[2, 3, 5, 8, 10, 11]",
+      "score": 0.9536576742750755,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9396534904333083,
+      "r2_humidity": 0.9676618581168428
+    },
+    {
+      "step": 8,
+      "removed_sensor": 10,
+      "active_count": 5,
+      "active_sensors": "[2, 3, 5, 8, 11]",
+      "score": 0.9506284848070419,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9350279955309818,
+      "r2_humidity": 0.9662289740831019
+    },
+    {
+      "step": 9,
+      "removed_sensor": 3,
+      "active_count": 4,
+      "active_sensors": "[2, 5, 8, 11]",
+      "score": 0.9465680945223048,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9297914251981347,
+      "r2_humidity": 0.9633447638464749
+    },
+    {
+      "step": 10,
+      "removed_sensor": 11,
+      "active_count": 3,
+      "active_sensors": "[2, 5, 8]",
+      "score": 0.944459165724561,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9270716968256859,
+      "r2_humidity": 0.9618466346234361
+    },
+    {
+      "step": 11,
+      "removed_sensor": 2,
+      "active_count": 2,
+      "active_sensors": "[5, 8]",
+      "score": 0.9334445485881748,
+      "meets_thresholds": true,
+      "r2_temperature": 0.9156594983229078,
+      "r2_humidity": 0.9512295988534417
+    },
+    {
+      "step": 12,
+      "removed_sensor": 8,
+      "active_count": 1,
+      "active_sensors": "[5]",
+      "score": 0.8390540575299683,
+      "meets_thresholds": true,
+      "r2_temperature": 0.8139559441368895,
+      "r2_humidity": 0.8641521709230471
+    }
+  ],
+  "exhaustive_top_by_k": {
+    "1": [
+      {
+        "active_count": 1,
+        "active_sensors": "[5]",
+        "score": 0.8390540575299683,
+        "meets_thresholds": true,
+        "r2_temperature": 0.8139559441368895,
+        "r2_humidity": 0.8641521709230471
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[8]",
+        "score": 0.8331922901701847,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7993021475657223,
+        "r2_humidity": 0.867082432774647
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[7]",
+        "score": 0.8311183024789539,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7982113430015408,
+        "r2_humidity": 0.8640252619563671
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[10]",
+        "score": 0.8210045882966874,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7870441007076878,
+        "r2_humidity": 0.854965075885687
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[11]",
+        "score": 0.8178580330682642,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7767495600660033,
+        "r2_humidity": 0.8589665060705252
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[12]",
+        "score": 0.816997412680962,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7762569012099724,
+        "r2_humidity": 0.8577379241519516
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[9]",
+        "score": 0.8116958810152862,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7688060946495952,
+        "r2_humidity": 0.8545856673809773
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[1]",
+        "score": 0.7956708703777939,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7538161667797112,
+        "r2_humidity": 0.8375255739758768
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[4]",
+        "score": 0.7951572307301358,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7503081461525872,
+        "r2_humidity": 0.8400063153076844
+      },
+      {
+        "active_count": 1,
+        "active_sensors": "[3]",
+        "score": 0.7908110734446092,
+        "meets_thresholds": true,
+        "r2_temperature": 0.7409643085490991,
+        "r2_humidity": 0.8406578383401193
+      }
+    ],
+    "2": [
+      {
+        "active_count": 2,
+        "active_sensors": "[5, 8]",
+        "score": 0.9334445485881748,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9156594983229078,
+        "r2_humidity": 0.9512295988534417
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[5, 12]",
+        "score": 0.9314929508935568,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9130281767136482,
+        "r2_humidity": 0.9499577250734654
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[7, 8]",
+        "score": 0.9312078967919577,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9109349581088677,
+        "r2_humidity": 0.9514808354750476
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[7, 12]",
+        "score": 0.9305850606848213,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9109305851831679,
+        "r2_humidity": 0.9502395361864746
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[1, 5]",
+        "score": 0.9285813266136232,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9120958450492243,
+        "r2_humidity": 0.9450668081780222
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[3, 7]",
+        "score": 0.9262799942172485,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9051520953476533,
+        "r2_humidity": 0.9474078930868437
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[3, 5]",
+        "score": 0.9253206477319189,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9042352483476068,
+        "r2_humidity": 0.9464060471162311
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[2, 8]",
+        "score": 0.9245655471832643,
+        "meets_thresholds": true,
+        "r2_temperature": 0.8983115643682661,
+        "r2_humidity": 0.9508195299982627
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[9, 12]",
+        "score": 0.9245497625398218,
+        "meets_thresholds": true,
+        "r2_temperature": 0.8968714059070363,
+        "r2_humidity": 0.9522281191726074
+      },
+      {
+        "active_count": 2,
+        "active_sensors": "[1, 7]",
+        "score": 0.9240717620481108,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9014282658592917,
+        "r2_humidity": 0.9467152582369299
+      }
+    ],
+    "3": [
+      {
+        "active_count": 3,
+        "active_sensors": "[2, 5, 8]",
+        "score": 0.944459165724561,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9270716968256859,
+        "r2_humidity": 0.9618466346234361
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[7, 9, 12]",
+        "score": 0.9429836277595611,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9245297318866472,
+        "r2_humidity": 0.9614375236324749
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[5, 9, 12]",
+        "score": 0.9428469723967211,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9255211307970165,
+        "r2_humidity": 0.9601728139964257
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[3, 5, 7]",
+        "score": 0.9416876088436208,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9271398807287187,
+        "r2_humidity": 0.9562353369585228
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[2, 5, 12]",
+        "score": 0.9416217569998373,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9220833423591487,
+        "r2_humidity": 0.9611601716405258
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[5, 6, 8]",
+        "score": 0.9408338836694139,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9218724490653014,
+        "r2_humidity": 0.9597953182735264
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[2, 3, 5]",
+        "score": 0.9408284911669176,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9221757572778789,
+        "r2_humidity": 0.9594812250559563
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[2, 7, 8]",
+        "score": 0.9408229012343589,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9212431370854794,
+        "r2_humidity": 0.9604026653832383
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[2, 8, 10]",
+        "score": 0.9408139810791496,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9228050020229492,
+        "r2_humidity": 0.95882296013535
+      },
+      {
+        "active_count": 3,
+        "active_sensors": "[2, 8, 11]",
+        "score": 0.9401512335853695,
+        "meets_thresholds": true,
+        "r2_temperature": 0.9207826365481344,
+        "r2_humidity": 0.9595198306226046
+      }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+protocol_family,protocol_name,display_name,masked_total,variable,rmse,mae,r2
+sensor_importance,full_reference_all_active,Full reference (all sensors active),0,humidity,0.5171803697007303,0.4013638484936494,0.9745096154986507
+sensor_importance,full_reference_all_active,Full reference (all sensors active),0,temperature,0.12013166551735036,0.09023768512102273,0.9384250515818932
+active_set_search,backward_best_k12,Backward elimination best set (k=12),1,humidity,0.521565067830112,0.41112110821100384,0.9747925954246999
+active_set_search,backward_best_k12,Backward elimination best set (k=12),1,temperature,0.12163037449605651,0.09350294018020996,0.9412475602405714
+sensor_importance,drop_sensor_1,Drop sensor 1,1,humidity,0.527956745083461,0.4109864808045901,0.9740216207310979
+sensor_importance,drop_sensor_1,Drop sensor 1,1,temperature,0.12028385218469585,0.09124055905983998,0.9384094743321871
+sensor_importance,drop_sensor_10,Drop sensor 10,1,humidity,0.5216196105133378,0.40529918441405666,0.9744606831209276
+sensor_importance,drop_sensor_10,Drop sensor 10,1,temperature,0.1221333503398998,0.09115600557281421,0.9386077512136597
+sensor_importance,drop_sensor_11,Drop sensor 11,1,humidity,0.5299312911777005,0.41332170596489537,0.9739963739303804
+sensor_importance,drop_sensor_11,Drop sensor 11,1,temperature,0.12486947969679876,0.09386866969557908,0.9369186644476619
+sensor_importance,drop_sensor_12,Drop sensor 12,1,humidity,0.5312715092207306,0.410752806525964,0.9731813509307196
+sensor_importance,drop_sensor_12,Drop sensor 12,1,temperature,0.12261111533975748,0.09209629492117809,0.935210849443195
+sensor_importance,drop_sensor_13,Drop sensor 13,1,humidity,0.533994512213704,0.4214176145883707,0.9734211351954513
+sensor_importance,drop_sensor_13,Drop sensor 13,1,temperature,0.12407412187090855,0.09418334697301571,0.9367741079743369
+sensor_importance,drop_sensor_2,Drop sensor 2,1,humidity,0.547582343523505,0.4257511290220114,0.9726992862104111
+sensor_importance,drop_sensor_2,Drop sensor 2,1,temperature,0.12664118301903599,0.09825131297111511,0.938458534050969
+sensor_importance,drop_sensor_3,Drop sensor 3,1,humidity,0.5511516946148437,0.4285224343721683,0.970685072979436
+sensor_importance,drop_sensor_3,Drop sensor 3,1,temperature,0.1286579703974982,0.09767885448840949,0.9304093755009979
+sensor_importance,drop_sensor_4,Drop sensor 4,1,humidity,0.5285072400370546,0.40840917711074537,0.9739813405052874
+sensor_importance,drop_sensor_4,Drop sensor 4,1,temperature,0.12475739037730767,0.09348796565945332,0.9361117772378873
+sensor_importance,drop_sensor_5,Drop sensor 5,1,humidity,0.5321516350810855,0.4116185020941954,0.9726723308830233
+sensor_importance,drop_sensor_5,Drop sensor 5,1,temperature,0.12698436089891543,0.09478943107219842,0.9320796934034804
+sensor_importance,drop_sensor_6,Drop sensor 6,1,humidity,0.5410881129558524,0.42580159581624544,0.973004171344868
+sensor_importance,drop_sensor_6,Drop sensor 6,1,temperature,0.12176247269280906,0.09453054603475791,0.9415943725444451
+sensor_importance,drop_sensor_7,Drop sensor 7,1,humidity,0.5274834295994439,0.4091133395066628,0.9747176884027486
+sensor_importance,drop_sensor_7,Drop sensor 7,1,temperature,0.12490110438079711,0.09381633825027026,0.9399613609908392
+sensor_importance,drop_sensor_8,Drop sensor 8,1,humidity,0.5300896164463802,0.40841440512583804,0.9718823547000759
+sensor_importance,drop_sensor_8,Drop sensor 8,1,temperature,0.1271426504313278,0.09674425107928422,0.9286165811044491
+sensor_importance,drop_sensor_9,Drop sensor 9,1,humidity,0.521565067830112,0.41112110821100384,0.9747925954246999
+sensor_importance,drop_sensor_9,Drop sensor 9,1,temperature,0.12163037449605651,0.09350294018020996,0.9412475602405714
+active_set_search,backward_best_k11,Backward elimination best set (k=11),2,humidity,0.5236652632654206,0.41635532218676347,0.9752739214582531
+active_set_search,backward_best_k11,Backward elimination best set (k=11),2,temperature,0.12500907537718303,0.09636816038535191,0.9419940967567269
+active_set_search,backward_best_k10,Backward elimination best set (k=10),3,humidity,0.5318975959678494,0.4222462750398196,0.9749981079046987
+active_set_search,backward_best_k10,Backward elimination best set (k=10),3,temperature,0.12320435626659834,0.09382872770612057,0.9441904224174158
+active_set_search,backward_best_k9,Backward elimination best set (k=9),4,humidity,0.558556012440592,0.4502726598427846,0.973018010725966
+active_set_search,backward_best_k9,Backward elimination best set (k=9),4,temperature,0.1265027554731803,0.09771469579293178,0.9427129793862221
+active_set_search,backward_best_k8,Backward elimination best set (k=8),5,humidity,0.5718386598415583,0.4552103854142703,0.9721408694114919
+active_set_search,backward_best_k8,Backward elimination best set (k=8),5,temperature,0.1310037219846114,0.09860643085378867,0.9405134404741629
+active_set_search,backward_best_k7,Backward elimination best set (k=7),6,humidity,0.58132448437944,0.45995114055963665,0.9716050637516737
+active_set_search,backward_best_k7,Backward elimination best set (k=7),6,temperature,0.1346905076435491,0.10205441913925685,0.9391341490609508
+active_set_search,backward_best_k6,Backward elimination best set (k=6),7,humidity,0.6287155303939612,0.5039106836685767,0.9676618581168428
+active_set_search,backward_best_k6,Backward elimination best set (k=6),7,temperature,0.14040179185626703,0.11033022231780566,0.9396534904333083
+active_set_search,backward_best_k5,Backward elimination best set (k=5),8,humidity,0.6466246185607935,0.5207088337494776,0.9662289740831019
+active_set_search,backward_best_k5,Backward elimination best set (k=5),8,temperature,0.14773709350105457,0.11608069361402439,0.9350279955309818
+active_set_search,backward_best_k4,Backward elimination best set (k=4),9,humidity,0.6800378188003113,0.5409809018556888,0.9633447638464749
+active_set_search,backward_best_k4,Backward elimination best set (k=4),9,temperature,0.1561490048723622,0.12092331510323745,0.9297914251981347
+active_set_search,backward_best_k3,Backward elimination best set (k=3),10,humidity,0.7065575770573619,0.5666076747270731,0.9618466346234361
+active_set_search,backward_best_k3,Backward elimination best set (k=3),10,temperature,0.16770285145863603,0.1302183557015199,0.9270716968256859
+active_set_search,exhaustive_top3_rank1,Exhaustive top rank 1 (k=3),10,humidity,0.7065575770573619,0.5666076747270731,0.9618466346234361
+active_set_search,exhaustive_top3_rank1,Exhaustive top rank 1 (k=3),10,temperature,0.16770285145863603,0.1302183557015199,0.9270716968256859
+active_set_search,exhaustive_top3_rank10,Exhaustive top rank 10 (k=3),10,humidity,0.7144183783055021,0.5791557133197784,0.9595198306226046
+active_set_search,exhaustive_top3_rank10,Exhaustive top rank 10 (k=3),10,temperature,0.16837038035891821,0.13313629306279695,0.9207826365481344
+active_set_search,exhaustive_top3_rank2,Exhaustive top rank 2 (k=3),10,humidity,0.7045113099780536,0.5684308180442224,0.9614375236324749
+active_set_search,exhaustive_top3_rank2,Exhaustive top rank 2 (k=3),10,temperature,0.16980244404182354,0.13762666227725837,0.9245297318866472
+active_set_search,exhaustive_top3_rank3,Exhaustive top rank 3 (k=3),10,humidity,0.725942594970838,0.5796981706069066,0.9601728139964257
+active_set_search,exhaustive_top3_rank3,Exhaustive top rank 3 (k=3),10,temperature,0.17151886990664653,0.13660113198252824,0.9255211307970165
+active_set_search,exhaustive_top3_rank4,Exhaustive top rank 4 (k=3),10,humidity,0.7423281022751339,0.6019949316978455,0.9562353369585228
+active_set_search,exhaustive_top3_rank4,Exhaustive top rank 4 (k=3),10,temperature,0.16430798273457223,0.13026125270586747,0.9271398807287187
+active_set_search,exhaustive_top3_rank5,Exhaustive top rank 5 (k=3),10,humidity,0.6956858156999854,0.557542798610834,0.9611601716405258
+active_set_search,exhaustive_top3_rank5,Exhaustive top rank 5 (k=3),10,temperature,0.16804373500313047,0.13030888713323152,0.9220833423591487
+active_set_search,exhaustive_top3_rank6,Exhaustive top rank 6 (k=3),10,humidity,0.7114117663297344,0.5708322502099551,0.9597953182735264
+active_set_search,exhaustive_top3_rank6,Exhaustive top rank 6 (k=3),10,temperature,0.17002590753880337,0.13252389373687598,0.9218724490653014
+active_set_search,exhaustive_top3_rank7,Exhaustive top rank 7 (k=3),10,humidity,0.7096306622972277,0.5792968777509836,0.9594812250559563
+active_set_search,exhaustive_top3_rank7,Exhaustive top rank 7 (k=3),10,temperature,0.1650557645311888,0.1297794978779096,0.9221757572778789
+active_set_search,exhaustive_top3_rank8,Exhaustive top rank 8 (k=3),10,humidity,0.7176236079870133,0.5769637456307044,0.9604026653832383
+active_set_search,exhaustive_top3_rank8,Exhaustive top rank 8 (k=3),10,temperature,0.1742524005977947,0.13657306478573725,0.9212431370854794
+active_set_search,exhaustive_top3_rank9,Exhaustive top rank 9 (k=3),10,humidity,0.7267654517803817,0.5863502896749057,0.95882296013535
+active_set_search,exhaustive_top3_rank9,Exhaustive top rank 9 (k=3),10,temperature,0.16985463783592575,0.13383381641828096,0.9228050020229492
+active_only,active_central_diag_tl_br,Central diagonal TL-BR only,11,humidity,0.8308116098513619,0.6676732370486627,0.9417633102448442
+active_only,active_central_diag_tl_br,Central diagonal TL-BR only,11,temperature,0.2029017839396074,0.16019818989130166,0.8907765227189504
+active_only,active_central_diag_tr_bl,Central diagonal TR-BL only,11,humidity,0.8219246564855228,0.6594003232625815,0.9464060471162311
+active_only,active_central_diag_tr_bl,Central diagonal TR-BL only,11,temperature,0.19218681863527712,0.15125611367133948,0.9042352483476068
+active_only,active_corners_diag_bl_tr,Corners diagonal BL-TR only,11,humidity,0.8593172022850373,0.6727641637508686,0.9420778845138135
+active_only,active_corners_diag_bl_tr,Corners diagonal BL-TR only,11,temperature,0.2099987394092117,0.1655250552755136,0.871527762714031
+active_only,active_corners_diag_br_tl,Corners diagonal BR-TL only,11,humidity,0.844458792668953,0.674297422170639,0.9433262544010372
+active_only,active_corners_diag_br_tl,Corners diagonal BR-TL only,11,temperature,0.20913001530851183,0.1711196372142205,0.8869754273955378
+active_set_search,backward_best_k2,Backward elimination best set (k=2),11,humidity,0.7921753007240023,0.6385816152279193,0.9512295988534417
+active_set_search,backward_best_k2,Backward elimination best set (k=2),11,temperature,0.18517913331338626,0.1454760839159672,0.9156594983229078
+active_set_search,exhaustive_top2_rank1,Exhaustive top rank 1 (k=2),11,humidity,0.7921753007240023,0.6385816152279193,0.9512295988534417
+active_set_search,exhaustive_top2_rank1,Exhaustive top rank 1 (k=2),11,temperature,0.18517913331338626,0.1454760839159672,0.9156594983229078
+active_set_search,exhaustive_top2_rank10,Exhaustive top rank 10 (k=2),11,humidity,0.8114092229177307,0.6499393089459493,0.9467152582369299
+active_set_search,exhaustive_top2_rank10,Exhaustive top rank 10 (k=2),11,temperature,0.192699048913313,0.14988436206029013,0.9014282658592917
+active_set_search,exhaustive_top2_rank2,Exhaustive top rank 2 (k=2),11,humidity,0.790686450781329,0.6330494513878455,0.9499577250734654
+active_set_search,exhaustive_top2_rank2,Exhaustive top rank 2 (k=2),11,temperature,0.18465980310081337,0.14446993802602476,0.9130281767136482
+active_set_search,exhaustive_top2_rank3,Exhaustive top rank 3 (k=2),11,humidity,0.7842100156615526,0.6366879985882685,0.9514808354750476
+active_set_search,exhaustive_top2_rank3,Exhaustive top rank 3 (k=2),11,temperature,0.18788028650439928,0.1492138711305765,0.9109349581088677
+active_set_search,exhaustive_top2_rank4,Exhaustive top rank 4 (k=2),11,humidity,0.7733468009014934,0.6262524930330423,0.9502395361864746
+active_set_search,exhaustive_top2_rank4,Exhaustive top rank 4 (k=2),11,temperature,0.17896594471283708,0.14097352239948052,0.9109305851831679
+active_set_search,exhaustive_top2_rank5,Exhaustive top rank 5 (k=2),11,humidity,0.8440582586939391,0.6706151687181913,0.9450668081780222
+active_set_search,exhaustive_top2_rank5,Exhaustive top rank 5 (k=2),11,temperature,0.1891538396941625,0.14927014995079774,0.9120958450492243
+active_set_search,exhaustive_top2_rank6,Exhaustive top rank 6 (k=2),11,humidity,0.8208255504373352,0.6728151990817144,0.9474078930868437
+active_set_search,exhaustive_top2_rank6,Exhaustive top rank 6 (k=2),11,temperature,0.18960460821671654,0.14998204719561797,0.9051520953476533
+active_set_search,exhaustive_top2_rank7,Exhaustive top rank 7 (k=2),11,humidity,0.8219246564855228,0.6594003232625815,0.9464060471162311
+active_set_search,exhaustive_top2_rank7,Exhaustive top rank 7 (k=2),11,temperature,0.19218681863527712,0.15125611367133948,0.9042352483476068
+active_set_search,exhaustive_top2_rank8,Exhaustive top rank 8 (k=2),11,humidity,0.7967787582259829,0.6446134356351999,0.9508195299982627
+active_set_search,exhaustive_top2_rank8,Exhaustive top rank 8 (k=2),11,temperature,0.19684790881967087,0.15586602343962744,0.8983115643682661
+active_set_search,exhaustive_top2_rank9,Exhaustive top rank 9 (k=2),11,humidity,0.7964038573918077,0.6483423480620751,0.9522281191726074
+active_set_search,exhaustive_top2_rank9,Exhaustive top rank 9 (k=2),11,temperature,0.20532065688834028,0.16193693818954322,0.8968714059070363
+active_only,active_center_one_only,Center one only,12,humidity,1.5291610221588858,1.2333553341718821,0.8102706510613893
+active_only,active_center_one_only,Center one only,12,temperature,0.39260187992503526,0.3146294607565953,0.6349872317923665
+active_set_search,backward_best_k1,Backward elimination best set (k=1),12,humidity,1.1337299217160917,0.9034290565894201,0.8641521709230471
+active_set_search,backward_best_k1,Backward elimination best set (k=1),12,temperature,0.2452056114038657,0.19613161253241393,0.8139559441368895
+active_set_search,exhaustive_top1_rank1,Exhaustive top rank 1 (k=1),12,humidity,1.1337299217160917,0.9034290565894201,0.8641521709230471
+active_set_search,exhaustive_top1_rank1,Exhaustive top rank 1 (k=1),12,temperature,0.2452056114038657,0.19613161253241393,0.8139559441368895
+active_set_search,exhaustive_top1_rank10,Exhaustive top rank 10 (k=1),12,humidity,1.3044306642878114,1.0382690475537226,0.8406578383401193
+active_set_search,exhaustive_top1_rank10,Exhaustive top rank 10 (k=1),12,temperature,0.3128685131668376,0.24590725222459206,0.7409643085490991
+active_set_search,exhaustive_top1_rank2,Exhaustive top rank 2 (k=1),12,humidity,1.0989314375614645,0.8907383863742535,0.867082432774647
+active_set_search,exhaustive_top1_rank2,Exhaustive top rank 2 (k=1),12,temperature,0.26490594435655856,0.21241334539193374,0.7993021475657223
+active_set_search,exhaustive_top1_rank3,Exhaustive top rank 3 (k=1),12,humidity,1.1147448998140719,0.886113201196377,0.8640252619563671
+active_set_search,exhaustive_top1_rank3,Exhaustive top rank 3 (k=1),12,temperature,0.2605179570057088,0.20844463545542496,0.7982113430015408
+active_set_search,exhaustive_top1_rank4,Exhaustive top rank 4 (k=1),12,humidity,1.1775282953346953,0.951409603540714,0.854965075885687
+active_set_search,exhaustive_top1_rank4,Exhaustive top rank 4 (k=1),12,temperature,0.26922198402465203,0.22017938557725686,0.7870441007076878
+active_set_search,exhaustive_top1_rank5,Exhaustive top rank 5 (k=1),12,humidity,1.1452827485504948,0.9215032022732955,0.8589665060705252
+active_set_search,exhaustive_top1_rank5,Exhaustive top rank 5 (k=1),12,temperature,0.272589250093624,0.22360080996384987,0.7767495600660033
+active_set_search,exhaustive_top1_rank6,Exhaustive top rank 6 (k=1),12,humidity,1.1364993830557637,0.9073648567383106,0.8577379241519516
+active_set_search,exhaustive_top1_rank6,Exhaustive top rank 6 (k=1),12,temperature,0.2787873907314034,0.21653787333231705,0.7762569012099724
+active_set_search,exhaustive_top1_rank7,Exhaustive top rank 7 (k=1),12,humidity,1.2541699992746946,1.0269535504854643,0.8545856673809773
+active_set_search,exhaustive_top1_rank7,Exhaustive top rank 7 (k=1),12,temperature,0.29456925685228097,0.24272444729621595,0.7688060946495952
+active_set_search,exhaustive_top1_rank8,Exhaustive top rank 8 (k=1),12,humidity,1.2940739062170887,1.023170796724466,0.8375255739758768
+active_set_search,exhaustive_top1_rank8,Exhaustive top rank 8 (k=1),12,temperature,0.301107323302917,0.23856230997122252,0.7538161667797112
+active_set_search,exhaustive_top1_rank9,Exhaustive top rank 9 (k=1),12,humidity,1.267026180487618,1.0425068506827722,0.8400063153076844
+active_set_search,exhaustive_top1_rank9,Exhaustive top rank 9 (k=1),12,temperature,0.2903932788141729,0.23648093870052925,0.7503081461525872
