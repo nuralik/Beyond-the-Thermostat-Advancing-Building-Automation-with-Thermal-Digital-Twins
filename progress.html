@@ -322,6 +322,7 @@
   <a href="#physics">Physics</a>
   <a href="#lstm-pinn">LSTM-PINN</a>
   <a href="#uncertainty">Uncertainty</a>
+  <a href="#latest-lab1">Latest Results</a>
 </nav>
 
 <!-- HERO -->
@@ -1210,6 +1211,284 @@
 
 <footer>
   ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
+<footer>
+
+
+<!-- ===================== SECTION 10: LATEST LAB1 RESULTS ===================== -->
+<section id="latest-lab1">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">10</div>
+      <span class="section-cat">Latest Results</span>
+    </div>
+    <h2>Latest Lab 1 Reconstruction Pipeline (v0.1 &rarr; v0.4.1)</h2>
+    <p>
+      After the early single-sensor experiments above, the project was refactored into a cleaner
+      masked-reconstruction pipeline focused on <strong>Lab 1</strong> at <strong>5-minute resolution</strong>.
+      The newer versions move from a temperature-only baseline to a joint temperature&nbsp;+&nbsp;humidity model,
+      then to targeted sparsity tests and finally to a minimal active sensor study.
+      Across all newer versions, the branch input uses an explicit observed/missing mask,
+      test windows remain blocked in time, and evaluation is reported under controlled masking protocols.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Repository Layout for These Runs</div>
+      <p>
+        Data files live under <strong>./data</strong>, model code under <strong>./deepOnet</strong>, and run outputs under
+        <strong>./deepOnet/runs</strong>. On GitHub, the multi-output run is stored under
+        <strong>lab1data_v0.2.2</strong>, the targeted sparsity run for DeepONet <strong>v0.3.2</strong>
+        is stored under <strong>lab1data_v0.3.1</strong>, and the sensor-importance study is stored under
+        <strong>lab1data_v0.4.1</strong>.
+      </p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">What Changed in the New Pipeline</div>
+        <p style="font-size:0.9rem;">
+          The original single-target experiments were consolidated into a single reproducible workflow.
+          Missing sensors are no longer represented only by zero-fill; instead the model also receives an
+          explicit observed/missing mask. Later versions add joint temperature-humidity outputs,
+          early stopping, structured masking protocols, and sensor-subset search.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">How These New Models Are Evaluated</div>
+        <p style="font-size:0.9rem;">
+          Every evaluation masks the target sensor and varies how many additional sensors are hidden.
+          The analysis now goes beyond random masking: we also test central removal, perimeter removal,
+          spread-out removal, and leave-only-k-active subsets to understand not just <em>how many</em>
+          sensors matter, but also <em>which ones</em> matter most.
+        </p>
+      </div>
+    </div>
+
+    <h3>Version v0.1 &mdash; Temperature-Only Masked Reconstruction Baseline</h3>
+    <p>
+      The first consolidated baseline predicts <strong>temperature only</strong> and evaluates how well the model
+      reconstructs masked sensors from the remaining Lab 1 measurements. This version established the new
+      train/validation/test workflow and showed that the model was already strong at low masking levels,
+      but still fragile when too many sensors were removed.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Masked Total</th>
+          <th>Variable</th>
+          <th>RMSE</th>
+          <th>MAE</th>
+          <th>R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Temperature</td><td>0.1253</td><td>0.1000</td><td>0.9596</td></tr>
+        <tr><td>3</td><td>Temperature</td><td>0.1699</td><td>0.1306</td><td>0.8965</td></tr>
+        <tr><td>6</td><td>Temperature</td><td>0.4045</td><td>0.3283</td><td>0.3795</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn-box">
+      <div class="ib-title">Takeaway from v0.1</div>
+      <p>
+        The baseline worked well when only a few sensors were missing, but performance collapsed at
+        <strong>6 masked sensors</strong>. This motivated the next redesign: joint temperature-humidity training,
+        wider masking during training, and stronger control over evaluation protocols.
+      </p>
+    </div>
+
+    <h3>Version v0.2.2 &mdash; Joint Temperature + Humidity Reconstruction</h3>
+    <p>
+      The next major upgrade predicts <strong>temperature and relative humidity together</strong> in a single model.
+      This version also introduced early stopping and a wider masking distribution during training.
+      The result was a large jump in robustness: the joint model remained accurate not only at low masking,
+      but even in the severe-sparsity regime.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Masked Total</th>
+          <th>Temp RMSE</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity RMSE</th>
+          <th>Humidity R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>0.0975</td><td>0.9616</td><td>0.4214</td><td>0.9845</td></tr>
+        <tr><td>3</td><td>0.1067</td><td>0.9564</td><td>0.4651</td><td>0.9809</td></tr>
+        <tr><td>6</td><td>0.1334</td><td>0.9454</td><td>0.5709</td><td>0.9725</td></tr>
+        <tr><td>9</td><td>0.2182</td><td>0.8659</td><td>0.9856</td><td>0.9241</td></tr>
+        <tr><td>12</td><td>0.5103</td><td>0.3652</td><td>2.8315</td><td>0.4482</td></tr>
+      </tbody>
+    </table>
+
+    <div class="green-box">
+      <div class="ib-title">Takeaway from v0.2.2</div>
+      <p>
+        The multi-output model stayed strong all the way to <strong>9 masked sensors</strong>, and only really broke down
+        at <strong>12 masked sensors</strong>. This was the point where the question shifted from
+        &ldquo;can the model reconstruct missing sensors?&rdquo; to &ldquo;which remaining sensors are the most valuable?&rdquo;
+      </p>
+    </div>
+
+    <h3>Version v0.3.2 &mdash; Targeted Sparsity Characterisation</h3>
+    <p>
+      To probe the sparsity boundary more carefully, v0.3.2 evaluated structured masking protocols for
+      <strong>8, 9, 10, 11, and 12 masked sensors</strong>. Instead of only using random masks, we also tested
+      central removal, perimeter removal, spatially spread removal, and leave-only-k-active subsets.
+      This reveals whether performance depends only on the number of active sensors or also on their spatial arrangement.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Masked Total</th>
+          <th>Best Protocol</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+          <th>Weakest Protocol</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>8</td>
+          <td>Spread removed / Perimeter removed</td>
+          <td>0.9332</td>
+          <td>0.9674</td>
+          <td>Central removed</td>
+          <td>0.9019</td>
+          <td>0.9551</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Spread removed / Perimeter removed</td>
+          <td>0.9255</td>
+          <td>0.9621</td>
+          <td>Central removed</td>
+          <td>0.8897</td>
+          <td>0.9520</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Spread removed</td>
+          <td>0.9239</td>
+          <td>0.9553</td>
+          <td>Central removed / Random</td>
+          <td>0.9000</td>
+          <td>0.9523</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Active central diagonal / Perimeter removed</td>
+          <td>0.9042</td>
+          <td>0.9535</td>
+          <td>Corner diagonal only / Random</td>
+          <td>0.8715</td>
+          <td>0.9399</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Spread removed</td>
+          <td>0.8643</td>
+          <td>0.9289</td>
+          <td>Center one only</td>
+          <td>0.6350</td>
+          <td>0.8103</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box">
+      <div class="ib-title">Main Interpretation from v0.3.2</div>
+      <p>
+        Even with <strong>11 masked sensors</strong>, the model still performs fairly well under multiple protocols.
+        The real performance cliff appears at <strong>12 masked sensors</strong>, where the exact spatial arrangement of the
+        remaining sensors becomes decisive. Spread-out coverage is much more informative than relying on a single central point.
+      </p>
+    </div>
+
+    <h3>Version v0.4.1 &mdash; Sensor Importance and Minimal Active Sets</h3>
+    <p>
+      Once the sparsity boundary was understood, the next step was to determine <strong>which sensors are actually necessary</strong>.
+      Version v0.4.1 adds three analyses: a one-at-a-time drop test, a greedy backward elimination path,
+      and an exhaustive search over all active subsets of size 1, 2, and 3.
+      The results show that the room contains a large amount of redundancy and that only a small,
+      well-placed subset of sensors is enough for strong reconstruction.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Most Expendable Sensors</div>
+        <p style="font-size:0.9rem;">
+          In the single-sensor drop study, removing sensors <strong>9</strong>, <strong>7</strong>, <strong>6</strong>, or <strong>10</strong>
+          had the smallest effect on the overall score. This suggests these locations are more redundant than the others.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Most Informative Sensors</div>
+        <p style="font-size:0.9rem;">
+          Sensors <strong>5</strong>, <strong>8</strong>, and <strong>3</strong> are the hardest to remove without hurting performance.
+          Sensor <strong>5</strong> is especially important: it survives until the very end of the backward elimination path
+          and is also the best single active sensor in the exhaustive search.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Main Practical Result</div>
+        <p style="font-size:0.9rem;">
+          The best <strong>2-sensor</strong> set already delivers strong reconstruction, and the best <strong>3-sensor</strong> set
+          comes surprisingly close to the full 13-sensor reference. In other words: the minimal useful set is much smaller than expected.
+        </p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Active Count</th>
+          <th>Best Active Sensors</th>
+          <th>Composite Score</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>[5]</td><td>0.8391</td><td>0.8140</td><td>0.8642</td></tr>
+        <tr><td>2</td><td>[5, 8]</td><td>0.9334</td><td>0.9157</td><td>0.9512</td></tr>
+        <tr><td>3</td><td>[2, 5, 8]</td><td>0.9445</td><td>0.9271</td><td>0.9618</td></tr>
+      </tbody>
+    </table>
+
+    <div class="arch-box">
+      <span class="hl">BACKWARD ELIMINATION ORDER</span><br/>
+      <span class="arrow">  9 &rarr; 7 &rarr; 1 &rarr; 13 &rarr; 12 &rarr; 4 &rarr; 6 &rarr; 10 &rarr; 3 &rarr; 11 &rarr; 2 &rarr; 8</span><br/>
+      <span class="arrow">  Sensor 5 is the final remaining sensor.</span><br/>
+      <br/>
+      <span class="hl">BEST FULL-REFERENCE PERFORMANCE</span><br/>
+      <span class="arrow">  All 13 active sensors:  R&sup2;<sub>temperature</sub> = 0.9384   |   R&sup2;<sub>humidity</sub> = 0.9745</span><br/>
+      <span class="arrow">  Best 3-sensor subset:  R&sup2;<sub>temperature</sub> = 0.9271   |   R&sup2;<sub>humidity</sub> = 0.9618</span><br/>
+      <span class="arrow">  Best 2-sensor subset:  R&sup2;<sub>temperature</sub> = 0.9157   |   R&sup2;<sub>humidity</sub> = 0.9512</span><br/>
+      <span class="arrow">  Best 1-sensor subset:  R&sup2;<sub>temperature</sub> = 0.8140   |   R&sup2;<sub>humidity</sub> = 0.8642</span>
+    </div>
+
+    <div class="green-box">
+      <div class="ib-title">Current Conclusion</div>
+      <p>
+        The newer DeepONet pipeline shows that Lab 1 is highly redundant spatially.
+        Strong temperature-humidity reconstruction is possible with only <strong>2&ndash;3 strategically placed sensors</strong>,
+        and even a single well-chosen sensor can recover much of the room state.
+        The next natural step is transfer: testing whether a model trained on Lab 1 can adapt to Lab 2.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, Entire Dataset &nbsp;·&nbsp; Built with DeepONet
 </footer>
 
 </body>
