@@ -1,0 +1,208 @@
+{
+  "checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1data_v0.5.1\\thermodt_best.pt",
+  "overall": [
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m6",
+      "display_name": "Comparison random masks (m=6)",
+      "masked_total": 6,
+      "variable": "humidity",
+      "rmse": 0.6225454779815863,
+      "mae": 0.4826591901290111,
+      "r2": 0.9670203786482733
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m6",
+      "display_name": "Comparison random masks (m=6)",
+      "masked_total": 6,
+      "variable": "temperature",
+      "rmse": 0.15065836747663153,
+      "mae": 0.11351585655640332,
+      "r2": 0.9262674301650099
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m9",
+      "display_name": "Comparison random masks (m=9)",
+      "masked_total": 9,
+      "variable": "humidity",
+      "rmse": 0.7295477709930959,
+      "mae": 0.5671381575938983,
+      "r2": 0.9580629034843275
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m9",
+      "display_name": "Comparison random masks (m=9)",
+      "masked_total": 9,
+      "variable": "temperature",
+      "rmse": 0.1797237845953047,
+      "mae": 0.13550114860901466,
+      "r2": 0.912683288236212
+    },
+    {
+      "protocol_family": "comparison_active_only",
+      "protocol_name": "cmp_active_sensor2_5_8",
+      "display_name": "Comparison active set [2, 5, 8]",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7065575770573619,
+      "mae": 0.5666076747270731,
+      "r2": 0.9618466346234361
+    },
+    {
+      "protocol_family": "comparison_active_only",
+      "protocol_name": "cmp_active_sensor2_5_8",
+      "display_name": "Comparison active set [2, 5, 8]",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.16770285145863603,
+      "mae": 0.1302183557015199,
+      "r2": 0.9270716968256859
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m10",
+      "display_name": "Comparison random masks (m=10)",
+      "masked_total": 10,
+      "variable": "humidity",
+      "rmse": 0.7953544656065571,
+      "mae": 0.6186429575467721,
+      "r2": 0.951203757800731
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m10",
+      "display_name": "Comparison random masks (m=10)",
+      "masked_total": 10,
+      "variable": "temperature",
+      "rmse": 0.19476331430757238,
+      "mae": 0.1470614364131903,
+      "r2": 0.9020865319546664
+    },
+    {
+      "protocol_family": "comparison_active_only",
+      "protocol_name": "cmp_active_sensor5_8",
+      "display_name": "Comparison active set [5, 8]",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7921753007240023,
+      "mae": 0.6385816152279193,
+      "r2": 0.9512295988534417
+    },
+    {
+      "protocol_family": "comparison_active_only",
+      "protocol_name": "cmp_active_sensor5_8",
+      "display_name": "Comparison active set [5, 8]",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18517913331338626,
+      "mae": 0.1454760839159672,
+      "r2": 0.9156594983229078
+    },
+    {
+      "protocol_family": "comparison_central_removed",
+      "protocol_name": "cmp_central_removed_m11",
+      "display_name": "Comparison central removed (m=11)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8408064929819972,
+      "mae": 0.6563709194843586,
+      "r2": 0.9446426598004776
+    },
+    {
+      "protocol_family": "comparison_central_removed",
+      "protocol_name": "cmp_central_removed_m11",
+      "display_name": "Comparison central removed (m=11)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.20444305564479348,
+      "mae": 0.15949561561529452,
+      "r2": 0.8782120849569007
+    },
+    {
+      "protocol_family": "comparison_perimeter_removed",
+      "protocol_name": "cmp_perimeter_removed_m11",
+      "display_name": "Comparison perimeter removed (m=11)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.7702508444976469,
+      "mae": 0.6167102777040921,
+      "r2": 0.9535293408945686
+    },
+    {
+      "protocol_family": "comparison_perimeter_removed",
+      "protocol_name": "cmp_perimeter_removed_m11",
+      "display_name": "Comparison perimeter removed (m=11)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.18807538820017827,
+      "mae": 0.14769783959938929,
+      "r2": 0.8956672555782195
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m11",
+      "display_name": "Comparison random masks (m=11)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8899067289008377,
+      "mae": 0.694448322057724,
+      "r2": 0.9406992063390319
+    },
+    {
+      "protocol_family": "comparison_random",
+      "protocol_name": "cmp_random_m11",
+      "display_name": "Comparison random masks (m=11)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.2224192327210424,
+      "mae": 0.169345423579216,
+      "r2": 0.8792157274819195
+    },
+    {
+      "protocol_family": "comparison_spread_removed",
+      "protocol_name": "cmp_spread_removed_m11",
+      "display_name": "Comparison spread removed (m=11)",
+      "masked_total": 11,
+      "variable": "humidity",
+      "rmse": 0.8099435331010135,
+      "mae": 0.645412109219111,
+      "r2": 0.9479596939150798
+    },
+    {
+      "protocol_family": "comparison_spread_removed",
+      "protocol_name": "cmp_spread_removed_m11",
+      "display_name": "Comparison spread removed (m=11)",
+      "masked_total": 11,
+      "variable": "temperature",
+      "rmse": 0.19595160234143988,
+      "mae": 0.15260902018501207,
+      "r2": 0.8986475938869309
+    },
+    {
+      "protocol_family": "comparison_active_only",
+      "protocol_name": "cmp_active_sensor5_only",
+      "display_name": "Comparison active set [5]",
+      "masked_total": 12,
+      "variable": "humidity",
+      "rmse": 1.1337299217160917,
+      "mae": 0.9034290565894201,
+      "r2": 0.8641521709230471
+    },
+    {
+      "protocol_family": "comparison_active_only",
+      "protocol_name": "cmp_active_sensor5_only",
+      "display_name": "Comparison active set [5]",
+      "masked_total": 12,
+      "variable": "temperature",
+      "rmse": 0.2452056114038657,
+      "mae": 0.19613161253241393,
+      "r2": 0.8139559441368895
+    }
+  ],
+  "sensor_importance_top": [],
+  "backward_path": [],
+  "exhaustive_top_by_k": {}
+}

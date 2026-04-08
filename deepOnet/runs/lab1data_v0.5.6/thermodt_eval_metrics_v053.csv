@@ -1,0 +1,469 @@
+protocol_family,protocol_name,display_name,selection_mode,masked_total,effective_masked_total,active_total_nominal,active_total_effective,target_in_active_seed,repeat,sensor,variable,rmse,mae,r2
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,1,temperature,0.14459769551632443,0.108111172914505,0.9547041157390892
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,1,humidity,0.5164801413437999,0.3965076208114624,0.9829674390927101
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,2,temperature,0.11548623750769509,0.07501044124364853,0.9788868935519541
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,2,humidity,0.532328996512667,0.3676462173461914,0.980402666578807
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,3,temperature,0.10142669401119896,0.07487976551055908,0.9739988215167302
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,3,humidity,0.494541593567004,0.3785375952720642,0.9833015798602952
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,4,temperature,0.0802870821204232,0.06392886489629745,0.9839279066735245
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,4,humidity,0.4412004615651152,0.3562987744808197,0.984736984441913
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,5,temperature,0.06599007653867757,0.049771662801504135,0.9897948917560673
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,5,humidity,0.3603175904509103,0.2671453356742859,0.9910669821261775
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,6,temperature,0.1689204765542809,0.1044447273015976,0.9712410928674268
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,6,humidity,0.7017201694634707,0.473245769739151,0.9744862109059885
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,7,temperature,0.06047686058858487,0.04397724196314812,0.9914889406628786
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,7,humidity,0.3521843602566021,0.2517603635787964,0.9903450677551839
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,8,temperature,0.08899882282191146,0.05793549492955208,0.9805298993343176
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,8,humidity,0.2937827056574398,0.2062685340642929,0.9944122620652922
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,9,temperature,0.10629148479815219,0.07887574285268784,0.9715041348270252
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,9,humidity,0.4367276595133223,0.32342734932899475,0.9887628241215949
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,10,temperature,0.06094295785988849,0.04827155917882919,0.9919646728337501
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,10,humidity,0.3393057587804683,0.2634515166282654,0.9910958097060282
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,11,temperature,0.0704248742317005,0.05264255777001381,0.9894625252432016
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,11,humidity,0.3154828880017691,0.24517366290092468,0.9921275690396617
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,12,temperature,0.07400312912594108,0.0522245354950428,0.987020866451446
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,12,humidity,0.3462816128948766,0.262999951839447,0.9919883978853855
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,13,temperature,0.29417896806068977,0.17762964963912964,0.7663539607610792
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,0,13,humidity,1.044963457937931,0.6897979378700256,0.926385200540129
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,1,temperature,0.14495321485034082,0.10831184685230255,0.9544811031370102
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,1,humidity,0.5295587152431148,0.40174856781959534,0.9820939029109923
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,2,temperature,0.09351985717062725,0.06782276183366776,0.986154796710825
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,2,humidity,0.49196068517877134,0.33892977237701416,0.9832622314731481
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,3,temperature,0.1002275554465961,0.07510430365800858,0.9746099952535265
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,3,humidity,0.4863357543346882,0.3780532479286194,0.9838511308186128
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,4,temperature,0.08063090372556765,0.06300480663776398,0.9837899573218768
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,4,humidity,0.4229596816895649,0.33680522441864014,0.985972948907776
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,5,temperature,0.0697933909247091,0.04940486699342728,0.9885846567789602
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,5,humidity,0.38491899560897,0.2903369963169098,0.9898054998817698
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,6,temperature,0.14872142340943878,0.09795286506414413,0.9777077016866588
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,6,humidity,0.6757420434769152,0.4742639362812042,0.9763403162246654
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,7,temperature,0.06487974308316449,0.048307955265045166,0.9902045729205028
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,7,humidity,0.3637893364142484,0.25858715176582336,0.9896982966678016
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,8,temperature,0.07681328368272158,0.05343411862850189,0.9854965174548567
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,8,humidity,0.2710012624436706,0.1983729749917984,0.9952452663629763
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,9,temperature,0.10514775631570088,0.07759799063205719,0.972114084202981
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,9,humidity,0.4440652714588462,0.3353058993816376,0.9883820526051191
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,10,temperature,0.06338330166920762,0.04902152344584465,0.9913082700763582
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,10,humidity,0.3266452962691436,0.2498086541891098,0.9917478942358882
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,11,temperature,0.07086257868446319,0.05540701374411583,0.9893311329019382
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,11,humidity,0.31909438864042844,0.24847787618637085,0.9919462973713152
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,12,temperature,0.0745179238741683,0.0509045384824276,0.986839662502888
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,12,humidity,0.3475730453535026,0.26100701093673706,0.9919285288418362
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,13,temperature,0.26309441805554334,0.17267875373363495,0.8131218828525438
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,1,13,humidity,0.9605511454657543,0.6587249040603638,0.9377980618862314
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,1,temperature,0.14185515748128627,0.10746327042579651,0.9564060453341524
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,1,humidity,0.5130935139817286,0.39911773800849915,0.9831900768208587
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,2,temperature,0.11821794463631292,0.07588838040828705,0.9778762621334062
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,2,humidity,0.5336903452535485,0.3622165322303772,0.9803023039057513
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,3,temperature,0.10159715189704639,0.07437095791101456,0.973911352561472
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,3,humidity,0.4869341463980427,0.3830375373363495,0.9838113664784612
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,4,temperature,0.0792615297309705,0.060508277267217636,0.9843358803272769
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,4,humidity,0.446023006140926,0.34955447912216187,0.9844014949750464
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,5,temperature,0.06560017309140566,0.04826592281460762,0.9899151298334941
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,5,humidity,0.36307462332972,0.28341418504714966,0.9909297543736147
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,6,temperature,0.17352726971550617,0.10250905901193619,0.9696510793915858
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,6,humidity,0.6887229965371909,0.4658738672733307,0.9754225835330451
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,7,temperature,0.06280789309185039,0.04691142216324806,0.9908201918333761
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,7,humidity,0.3656383870600267,0.2544251084327698,0.9895933086724392
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,8,temperature,0.07937765211833502,0.05271623656153679,0.9845119714564919
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,8,humidity,0.27289337788047063,0.20057103037834167,0.9951786398597542
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,9,temperature,0.10909977839397797,0.08018390089273453,0.9699784825595403
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,9,humidity,0.4613357052353888,0.35006189346313477,0.9874607972353897
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,10,temperature,0.06660447268126866,0.051014624536037445,0.9904023850714208
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,10,humidity,0.34050209032725065,0.26378440856933594,0.9910329100988823
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,11,temperature,0.0683532337427397,0.053741149604320526,0.9900733537323917
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,11,humidity,0.32723240699935835,0.2601444125175476,0.991530264154351
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,12,temperature,0.07191233688824518,0.049827687442302704,0.987743898811766
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,12,humidity,0.3474740826252185,0.25764819979667664,0.9919331244862931
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,13,temperature,0.2511112282301082,0.16494446992874146,0.8297577252188431
+comparison_random,cmp_random_m6,Comparison random masks (m=6),random,6,6,7,7,False,2,13,humidity,0.9210493949066025,0.6425905227661133,0.9428088576643195
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,1,temperature,0.15312589479691002,0.11714683473110199,0.9492035578829737
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,1,humidity,0.6143368911177881,0.47921499609947205,0.9759017283001711
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,2,temperature,0.15861664404778564,0.1084509938955307,0.960171935980504
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,2,humidity,0.7937056401390106,0.5528169274330139,0.9564331978778616
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,3,temperature,0.16411748032982532,0.10405835509300232,0.9319233498438833
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,3,humidity,0.6679074443324023,0.49573346972465515,0.9695419370846783
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,4,temperature,0.10061358562585912,0.07655488699674606,0.9747597085068462
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,4,humidity,0.49583052613027356,0.3959353268146515,0.9807231987629411
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,5,temperature,0.08967898124850737,0.06640961766242981,0.9811530230507594
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,5,humidity,0.4536552122382366,0.3581911325454712,0.9858394844992399
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,6,temperature,0.3170877816685674,0.18558624386787415,0.898663287987737
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,6,humidity,1.036257233910798,0.7198668718338013,0.9443606327550367
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,7,temperature,0.0859424714254379,0.06011585518717766,0.9828121796350501
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,7,humidity,0.42675564763198753,0.30762675404548645,0.9858235439943489
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,8,temperature,0.12618524433319186,0.07921095937490463,0.9608603643372166
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,8,humidity,0.4440964944432691,0.3051103353500366,0.9872315473857984
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,9,temperature,0.15730810716320795,0.11511286348104477,0.937585270137667
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,9,humidity,0.6769315598404826,0.4976778030395508,0.9730023915935453
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,10,temperature,0.08080810935040808,0.061736300587654114,0.9858724648255016
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,10,humidity,0.4014165249315397,0.3099247217178345,0.9875375779053636
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,11,temperature,0.08701976231602855,0.06371161341667175,0.9839113285409711
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,11,humidity,0.4028819660101757,0.3094843327999115,0.9871615403100811
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,12,temperature,0.11801871905645372,0.07369082421064377,0.966989862561402
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,12,humidity,0.4886574021108899,0.358273983001709,0.9840460038930711
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,13,temperature,0.3815366347572912,0.2588951587677002,0.6069863439492705
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,0,13,humidity,1.4553167569895011,0.9994824528694153,0.8572165123141764
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,1,temperature,0.1462739322920686,0.11114786565303802,0.9536478484275006
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,1,humidity,0.6098399222720778,0.46551811695098877,0.9762532375181328
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,2,temperature,0.17935840905450567,0.11351180076599121,0.9490745169283096
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,2,humidity,0.8240843749226029,0.55793696641922,0.9530343727737082
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,3,temperature,0.16705377458084691,0.10452696681022644,0.9294655818407117
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,3,humidity,0.680064787232681,0.5012337565422058,0.9684230407200733
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,4,temperature,0.10228232986772919,0.07937179505825043,0.9739155120585481
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,4,humidity,0.5044526087956345,0.4025578498840332,0.9800469542761725
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,5,temperature,0.08442698881499741,0.06272780150175095,0.9832959041169316
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,5,humidity,0.4309211015797055,0.3266059160232544,0.9872231796713514
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,6,temperature,0.31447687710921207,0.18593090772628784,0.9003252336244982
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,6,humidity,1.1135962325103652,0.7563562989234924,0.9357456444153458
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,7,temperature,0.07944520140460151,0.05614583194255829,0.9853127503970908
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,7,humidity,0.4184667169970067,0.30246567726135254,0.9863688986186336
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,8,temperature,0.12600695812601004,0.08050738275051117,0.9609708848911419
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,8,humidity,0.41871745353160367,0.2862145006656647,0.9886492202481112
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,9,temperature,0.1517954275285048,0.10875450074672699,0.9418831247795897
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,9,humidity,0.6669779785787509,0.49327632784843445,0.9737904985929775
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,10,temperature,0.08345932178670591,0.062331900000572205,0.9849302441940371
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,10,humidity,0.4331570221539242,0.330655574798584,0.9854888209163363
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,11,temperature,0.09586300923858485,0.06946173310279846,0.980475203268277
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,11,humidity,0.4001521447033304,0.3112194240093231,0.9873349319225192
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,12,temperature,0.11827961733483669,0.07310693711042404,0.9668437543948206
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,12,humidity,0.5366106249245407,0.3840142488479614,0.9807611526352765
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,13,temperature,0.3945331762285705,0.2449812889099121,0.5797553113896833
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,1,13,humidity,1.4770988015179625,0.9794455766677856,0.8529103881553847
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,1,temperature,0.15093291960848818,0.11719955503940582,0.9506480913005092
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,1,humidity,0.6119767425705536,0.4840407967567444,0.9760865340896789
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,2,temperature,0.1797229483095321,0.11030188202857971,0.9488672943456222
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,2,humidity,0.8191253791667329,0.5682091116905212,0.953597911143196
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,3,temperature,0.16559332261261622,0.10734648257493973,0.9306934740643625
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,3,humidity,0.6304914505853109,0.4783262610435486,0.972858856412232
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,4,temperature,0.10789361455837372,0.08161667734384537,0.9709749758930758
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,4,humidity,0.5126270939082607,0.4104040563106537,0.979395049730417
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,5,temperature,0.08017649946460265,0.05949217826128006,0.9849355060626337
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,5,humidity,0.4414575260053558,0.34474679827690125,0.9865907306413002
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,6,temperature,0.2983824079901986,0.17530615627765656,0.910266583331758
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,6,humidity,1.1103404505030223,0.735823392868042,0.9361208149803633
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,7,temperature,0.08994039230520694,0.06042829528450966,0.9811758795329771
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,7,humidity,0.44204173297122284,0.3143559694290161,0.9847897751155428
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,8,temperature,0.12199629637766812,0.0770648866891861,0.9634158530135564
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,8,humidity,0.41971224498159915,0.2867155075073242,0.9885952213561818
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,9,temperature,0.16398934595316644,0.11826345324516296,0.9321708815730376
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,9,humidity,0.6848218730449744,0.5091660618782043,0.9723693544797573
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,10,temperature,0.08520556452483895,0.06358357518911362,0.9842930296922113
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,10,humidity,0.41808837889912176,0.32539811730384827,0.9864808880670554
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,11,temperature,0.0895355733772954,0.0670788586139679,0.982967608849698
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,11,humidity,0.3983016249906303,0.31136783957481384,0.9874518006477254
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,12,temperature,0.12002914582642515,0.07612686604261398,0.9658556417568233
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,12,humidity,0.531064786601029,0.3823517858982086,0.9811567621351492
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,13,temperature,0.3907009813798735,0.25850802659988403,0.5878795451330266
+comparison_random,cmp_random_m9,Comparison random masks (m=9),random,9,9,4,4,False,2,13,humidity,1.3459980811662302,0.9275357723236084,0.8778617198585168
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,1,temperature,0.15632579872272592,0.11838915944099426,0.947058368547624
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,1,humidity,0.7121202879219649,0.533990740776062,0.9676198084688332
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,2,temperature,0.20663547473395194,0.1433498114347458,0.9324070401936849
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,2,humidity,0.9473153327405747,0.6731604337692261,0.937937981518055
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,3,temperature,0.16585744165775226,0.1082775890827179,0.9304722113363784
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,3,humidity,0.6817348163747831,0.5079691410064697,0.9682677635491839
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,4,temperature,0.11680144457346299,0.08870486170053482,0.9659844470955805
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,4,humidity,0.5652064012671845,0.45248550176620483,0.9749514505624434
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,5,temperature,0.10059665882044351,0.07252518832683563,0.976284761729812
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,5,humidity,0.4836370938648231,0.3756653070449829,0.983905908618932
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,6,temperature,0.3694608197829618,0.2378813922405243,0.8624234027449149
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,6,humidity,1.3521472349578918,0.9771404266357422,0.9052683671939245
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,7,temperature,0.10346748024182399,0.06679363548755646,0.9750877549527073
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,7,humidity,0.4816426922954116,0.3540381193161011,0.9819424400972381
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,8,temperature,0.14460844478586213,0.09106028825044632,0.94859717769999
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,8,humidity,0.49897177591181013,0.34622013568878174,0.983881094937341
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,9,temperature,0.18648290942814372,0.13128097355365753,0.9122872000799658
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,9,humidity,0.7734761854573187,0.5764359831809998,0.9647523883721572
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,10,temperature,0.09081930754731084,0.06945174187421799,0.982155151576025
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,10,humidity,0.47288959827623595,0.368984580039978,0.9827045646839071
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,11,temperature,0.11011532588087448,0.07884374260902405,0.9742379778901074
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,11,humidity,0.46845646250429634,0.34613317251205444,0.9826421587858578
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,12,temperature,0.1436970971035604,0.09195654094219208,0.9510625302928708
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,12,humidity,0.5798886692962958,0.41649532318115234,0.9775327588652096
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,13,temperature,0.4131594292668616,0.30123981833457947,0.5391384339248061
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,0,13,humidity,1.6073091451205899,1.1583199501037598,0.8258346475754661
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,1,temperature,0.16494117745834752,0.12504200637340546,0.9410621649592097
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,1,humidity,0.7280376594779724,0.54701167345047,0.966156101825189
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,2,temperature,0.22824721589850389,0.15175138413906097,0.9175287355357788
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,2,humidity,0.924578984562493,0.6571234464645386,0.9408813108265731
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,3,temperature,0.17149165600763,0.11013838648796082,0.9256682273317729
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,3,humidity,0.714504891215321,0.5377289652824402,0.9651437930630531
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,4,temperature,0.1292368233667532,0.09355077892541885,0.9583558828325872
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,4,humidity,0.5627665418026464,0.447762131690979,0.9751672406112551
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,5,temperature,0.10125697011121165,0.07240469008684158,0.9759724094823348
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,5,humidity,0.5029421314070343,0.39490410685539246,0.9825954311099165
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,6,temperature,0.3575370269554073,0.23500853776931763,0.8711602583798681
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,6,humidity,1.277701138303485,0.8770797252655029,0.9154126153677489
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,7,temperature,0.11018968203337415,0.07515715062618256,0.9717455413521144
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,7,humidity,0.4773386435227786,0.3459964990615845,0.9822637295309135
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,8,temperature,0.13792370731653086,0.08559440076351166,0.9532396799296107
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,8,humidity,0.5040878146224578,0.3432324528694153,0.9835488606876953
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,9,temperature,0.17405676003585177,0.12688367068767548,0.9235870990002543
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,9,humidity,0.7249996645696456,0.5466263294219971,0.9690321274287269
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,10,temperature,0.09343183690072479,0.06936205923557281,0.9811137255050862
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,10,humidity,0.49373715782365174,0.38009631633758545,0.9811459964215655
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,11,temperature,0.10647868586936529,0.0753968134522438,0.9759114990803257
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,11,humidity,0.44445512451644764,0.34259286522865295,0.98437524934565
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,12,temperature,0.13557710832595135,0.08768347650766373,0.9564369525309144
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,12,humidity,0.5719639109717514,0.413200318813324,0.9781426370798705
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,13,temperature,0.45324930590656914,0.3066577911376953,0.44536220811799
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,1,13,humidity,1.7088280480956455,1.1939541101455688,0.8031390108517272
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,1,temperature,0.15979058110412564,0.1240881159901619,0.9446855790248626
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,1,humidity,0.718967487767348,0.5503575801849365,0.9669941284885357
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,2,temperature,0.21442245444736746,0.14630068838596344,0.927216620615107
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,2,humidity,0.9191412721851306,0.6624007225036621,0.9415746563742707
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,3,temperature,0.1744435111427811,0.11280054599046707,0.923087286367685
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,3,humidity,0.6917125863799563,0.530768632888794,0.9673321105245575
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,4,temperature,0.11786474196569018,0.08841764181852341,0.9653623096173863
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,4,humidity,0.5718748822238154,0.4566486179828644,0.9743569021176605
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,5,temperature,0.09323947201767173,0.06853628903627396,0.9796267662634555
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,5,humidity,0.500617242341055,0.38072505593299866,0.9827559671566076
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,6,temperature,0.37153643254372937,0.2384192943572998,0.8608732618402479
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,6,humidity,1.248576927754381,0.8813809752464294,0.919224869238245
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,7,temperature,0.10815387493249293,0.072414331138134,0.972779925222544
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,7,humidity,0.47767167697560614,0.34877321124076843,0.9822389721311605
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,8,temperature,0.13421876496569157,0.08763132989406586,0.9557181143399516
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,8,humidity,0.48462568994511845,0.3382177948951721,0.9847946495116038
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,9,temperature,0.18090353894109162,0.1328289806842804,0.9174572372284969
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,9,humidity,0.7537601309581003,0.5627059936523438,0.966526424323049
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,10,temperature,0.09383980105866405,0.07132801413536072,0.9809484344489715
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,10,humidity,0.4647031298883945,0.36386072635650635,0.9832982048247236
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,11,temperature,0.11392864675595167,0.07934292405843735,0.9724227925988171
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,11,humidity,0.4602493548153028,0.3524625301361084,0.9832450315176254
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,12,temperature,0.13542455106181603,0.08496774733066559,0.9565349334875287
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,12,humidity,0.5602858463975202,0.3987399637699127,0.9790260698582418
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,13,temperature,0.46054296257292054,0.3141768276691437,0.42736820242464313
+comparison_random,cmp_random_m10,Comparison random masks (m=10),random,10,10,3,3,False,2,13,humidity,1.7119854369791914,1.21059250831604,0.8024108580364754
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,1,temperature,0.19270410189407663,0.14521530270576477,0.9195515081885851
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,1,humidity,0.8310628637321796,0.6362473368644714,0.9558998101467946
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,2,temperature,0.2794247047960644,0.20191951096057892,0.8763992019369836
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,2,humidity,1.1170729998620834,0.8274886012077332,0.9137021712193432
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,3,temperature,0.1969986705027173,0.12629668414592743,0.9019121830101962
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,3,humidity,0.783343485671734,0.5821332931518555,0.9581038426579845
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,4,temperature,0.15170936056482717,0.1132497489452362,0.9426140150679257
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,4,humidity,0.634750107795613,0.49951043725013733,0.9684082271808919
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,5,temperature,0.11998008253534333,0.08744413405656815,0.9662651579809705
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,5,humidity,0.5820593859125257,0.44702181220054626,0.9766889498879934
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,6,temperature,0.42523727315082954,0.3017226457595825,0.8177487816154413
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,6,humidity,1.503594542067786,1.1151748895645142,0.8828591018974938
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,7,temperature,0.13715449104432775,0.0953461155295372,0.9562250943703059
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,7,humidity,0.548458422835017,0.40784552693367004,0.9765848736287955
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,8,temperature,0.17536646330320182,0.11438056081533432,0.9244050562510386
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,8,humidity,0.642456414195255,0.4501970112323761,0.9732778804074012
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,9,temperature,0.19821706152227933,0.15018248558044434,0.9009015257236774
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,9,humidity,0.8323445334770078,0.6394236087799072,0.959182907873692
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,10,temperature,0.12044352110167506,0.08823537826538086,0.9686149093793505
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,10,humidity,0.5733122384779693,0.44739702343940735,0.9745788963499706
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,11,temperature,0.13484278142587847,0.09959545731544495,0.9613686571179637
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,11,humidity,0.5474800305230205,0.4172993302345276,0.9762920605461861
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,12,temperature,0.17331903896934286,0.11295505613088608,0.9288068721182533
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,12,humidity,0.7181442859739189,0.5186734795570374,0.9655424861905176
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,13,temperature,0.4490585041332921,0.3357745409011841,0.4555712750467854
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,0,13,humidity,1.7600984756056537,1.3283346891403198,0.7911488564093221
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,1,temperature,0.16696720047891622,0.1284995824098587,0.9396053680903432
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,1,humidity,0.7891563133143344,0.6060841679573059,0.9602352055231992
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,2,temperature,0.2485047117521508,0.18186435103416443,0.9022400587677395
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,2,humidity,1.0353066964854707,0.7634021639823914,0.925873275070831
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,3,temperature,0.1947210511983952,0.12774570286273956,0.9041671679957662
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,3,humidity,0.8066735434107688,0.6251963376998901,0.9555711227827614
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,4,temperature,0.14840844145992474,0.10964824259281158,0.9450840748591746
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,4,humidity,0.6283477767714376,0.5017631649971008,0.9690423057005529
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,5,temperature,0.11905935517360519,0.08754955232143402,0.9667809337909771
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,5,humidity,0.5761842370727587,0.4417060613632202,0.9771571645308814
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,6,temperature,0.4484166987841574,0.3239706754684448,0.7973384573141681
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,6,humidity,1.5201562218945932,1.1360822916030884,0.8802643460190457
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,7,temperature,0.12800813410057665,0.08936368674039841,0.9618688190177449
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,7,humidity,0.5404357005433801,0.3937773108482361,0.9772648834740171
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,8,temperature,0.174734650332372,0.1095990240573883,0.9249487867711602
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,8,humidity,0.6167503692121757,0.4342738687992096,0.9753735159180192
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,9,temperature,0.20903409384288427,0.15585921704769135,0.8897904747472439
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,9,humidity,0.8870073428618804,0.6854075193405151,0.9536456787150247
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,10,temperature,0.12322588796182479,0.09061012417078018,0.9671481052853592
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,10,humidity,0.5859453073617221,0.4556139409542084,0.9734462342353506
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,11,temperature,0.127804265165048,0.09421295672655106,0.96529635293429
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,11,humidity,0.5309068188438307,0.40663740038871765,0.9777056995168847
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,12,temperature,0.1750086069119252,0.11542582511901855,0.927412081613075
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,12,humidity,0.678693768400758,0.4845620393753052,0.9692242797116264
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,13,temperature,0.47653276319436766,0.352756142616272,0.3869150004570183
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,1,13,humidity,1.8041010973191454,1.340311884880066,0.7805757317789348
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,1,temperature,0.17348637901625355,0.13017280399799347,0.9347971195444823
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,1,humidity,0.7572688089215441,0.5784591436386108,0.96338383906727
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,2,temperature,0.2597005231922169,0.18987879157066345,0.8932329243265966
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,2,humidity,1.0404337389340585,0.7818456292152405,0.9251372796923725
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,3,temperature,0.19883129364666463,0.1355411410331726,0.9000787245705627
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,3,humidity,0.7923528224130031,0.6085636615753174,0.9571345947798684
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,4,temperature,0.14123068284978768,0.10704664140939713,0.9502676250034594
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,4,humidity,0.5842535616921608,0.46872127056121826,0.9732347577215814
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,5,temperature,0.11491532122935161,0.08220139890909195,0.9690531662155041
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,5,humidity,0.5447999551214292,0.4224405884742737,0.9795778532275689
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,6,temperature,0.45326659851169554,0.3183414041996002,0.7929309345524601
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,6,humidity,1.5351504260236617,1.1400941610336304,0.8778906449507704
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,7,temperature,0.14425855118381375,0.09547749906778336,0.9515729213966891
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,7,humidity,0.5739644843554805,0.4150886535644531,0.9743563921519331
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,8,temperature,0.1613190990167553,0.1037333682179451,0.9360307554819758
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,8,humidity,0.5931104679156386,0.4075779914855957,0.9772251916896348
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,9,temperature,0.2041638657968136,0.15522557497024536,0.8948661255080211
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,9,humidity,0.8873389675564328,0.6919889450073242,0.9536110144555924
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,10,temperature,0.11393329801569131,0.08545166254043579,0.9719160720191014
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,10,humidity,0.5686084424432322,0.4495243430137634,0.974994324693427
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,11,temperature,0.130609622727821,0.0949414074420929,0.9637561131041765
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,11,humidity,0.5246383499926447,0.4030565619468689,0.9782290529874006
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,12,temperature,0.1700714811990853,0.11072692275047302,0.9314498309249716
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,12,humidity,0.7043870408011467,0.5050455927848816,0.966850024473289
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,13,temperature,0.4500944475559073,0.33862337470054626,0.4530564941874279
+comparison_random,cmp_random_m11,Comparison random masks (m=11),random,11,11,2,2,False,2,13,humidity,1.70291703380596,1.298039197921753,0.804498577098103
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,1,temperature,0.20178602045442284,0.15343385934829712,0.9117899307444631
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,1,humidity,0.8872069640676571,0.6864955425262451,0.9497399904193821
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,2,temperature,0.2574184180159272,0.18249624967575073,0.8951011094813764
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,2,humidity,0.8615269161232835,0.6777673363685608,0.9486696242687679
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,3,temperature,0.17832542487312722,0.12890133261680603,0.9196260985468051
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,3,humidity,0.7704482448358105,0.6070542931556702,0.9594718589510146
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,4,temperature,0.19501939715293434,0.14868654310703278,0.9051719730742218
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,4,humidity,0.709020986741394,0.588047981262207,0.9605827221996082
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,5,temperature,0.05955358958417665,0.04484371840953827,0.991688560721879
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,5,humidity,0.4246612657495992,0.3348442316055298,0.9875916922316959
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,6,temperature,0.5223872052510539,0.339741975069046,0.7249619076271573
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,6,humidity,1.3973710239789596,0.9523528218269348,0.8988256258691865
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,7,temperature,0.0887395130261228,0.06080659106373787,0.9816752019235429
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,7,humidity,0.45440215959669583,0.32087069749832153,0.983927261415046
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,8,temperature,0.11952161843633408,0.08525606989860535,0.9648850079951178
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,8,humidity,0.5243418837446511,0.3789152204990387,0.9822003016048638
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,9,temperature,0.22696593965736192,0.18800456821918488,0.870070952572047
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,9,humidity,1.0949912521152223,0.8779827356338501,0.9293589589851858
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,10,temperature,0.0898482642905526,0.07508514821529388,0.9825347059636027
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,10,humidity,0.6209840737679416,0.49834978580474854,0.9701755181780274
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,11,temperature,0.09455313488340265,0.07407188415527344,0.98100513285466
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,11,humidity,0.42807108546572875,0.3298877477645874,0.9855059742463408
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,12,temperature,0.16478473773146723,0.11808080226182938,0.9356454131570885
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,12,humidity,0.6728742842028228,0.528742790222168,0.9697497920535043
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,13,temperature,0.6438076465684086,0.48744168877601624,-0.11904469009795071
+comparison_central_removed,cmp_central_removed_m11,Comparison central removed (m=11),ordered_removed,11,11,2,2,False,0,13,humidity,2.031908603414985,1.6221065521240234,0.721662775565086
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,1,temperature,0.19474785247397294,0.15198728442192078,0.9178360382224267
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,1,humidity,0.6688933637732658,0.5269421935081482,0.9714315648883886
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,2,temperature,0.11263315016886481,0.08721011132001877,0.9799172061621415
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,2,humidity,0.42057336348597485,0.32232344150543213,0.987767358012118
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,3,temperature,0.09581723028234002,0.07939251512289047,0.9767953130700631
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,3,humidity,0.5409223290161107,0.423351913690567,0.9800225727608023
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,4,temperature,0.13730703218935236,0.10329517722129822,0.9529925545453218
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,4,humidity,0.5454042821993021,0.4489419162273407,0.9766758662144237
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,5,temperature,0.11195249064173267,0.08073067665100098,0.9706283815461817
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,5,humidity,0.5135176684618797,0.4144808351993561,0.9818557903566121
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,6,temperature,0.16073423854970048,0.1296059489250183,0.9739609832723567
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,6,humidity,0.6014196548296061,0.463543564081192,0.981258589468923
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,7,temperature,0.11529462257709969,0.08287298679351807,0.9690669147176252
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,7,humidity,0.49606282595873313,0.3848404288291931,0.9808449857666603
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,8,temperature,0.28530320861662084,0.22443965077400208,0.7999157152576384
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,8,humidity,1.1353690927787132,0.8321723937988281,0.9165439776168633
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,9,temperature,0.09076937405747919,0.07058528810739517,0.9792191383489129
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,9,humidity,0.4480740100788576,0.3133147954940796,0.9881713474414986
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,10,temperature,0.12606483885534447,0.1015576422214508,0.9656169457147262
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,10,humidity,0.4573133853050339,0.3685706555843353,0.9838251672842712
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,11,temperature,0.13773778165779288,0.10851426422595978,0.9596920631941177
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,11,humidity,0.48890585051118224,0.3968351185321808,0.9810936489626282
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,12,temperature,0.09780150101827209,0.07514173537492752,0.9773307793931882
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,12,humidity,0.43622889812008253,0.34269434213638306,0.9872857898701652
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,13,temperature,0.5178658027817444,0.36454012989997864,0.27594823434297433
+comparison_perimeter_removed,cmp_perimeter_removed_m11,Comparison perimeter removed (m=11),ordered_removed,11,11,2,2,False,0,13,humidity,1.8215091684819067,1.3156800270080566,0.7763207704815465
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,1,temperature,0.16575898360702454,0.12880080938339233,0.9404762668249244
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,1,humidity,0.8112154489809564,0.6383641362190247,0.9579810573050859
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,2,temperature,0.22682559423840765,0.18820351362228394,0.9185528704167487
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,2,humidity,1.1662717502769582,0.9776639938354492,0.9059332260765813
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,3,temperature,0.23158906745629332,0.1371285319328308,0.8644421681815677
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,3,humidity,0.7975440862781129,0.5971404910087585,0.9565710715892256
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,4,temperature,0.08013953784815855,0.06349854171276093,0.9839869241774072
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,4,humidity,0.4299312073826164,0.3471662402153015,0.9855067304028869
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,5,temperature,0.1078643874377368,0.08758185803890228,0.9727343089614513
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,5,humidity,0.703579564977658,0.5401031970977783,0.9659392904050823
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,6,temperature,0.36167659967086785,0.2990761995315552,0.8681595662184651
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,6,humidity,1.5588201296279194,1.3246771097183228,0.8740961360791932
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,7,temperature,0.06900467113953085,0.0513884574174881,0.9889194297909213
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,7,humidity,0.32272181733743127,0.24811188876628876,0.9918928955005952
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,8,temperature,0.2015115777090119,0.13077592849731445,0.9001841162705531
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,8,humidity,0.5993166031696505,0.4408634305000305,0.9767460790818875
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,9,temperature,0.25338727291063695,0.20273742079734802,0.8380598688823488
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,9,humidity,1.0801931806266085,0.8800570964813232,0.9312553889579004
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,10,temperature,0.09180629965916969,0.07305924594402313,0.9817651805277507
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,10,humidity,0.4853249740225653,0.37985309958457947,0.9817829829968635
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,11,temperature,0.07031527818383464,0.05527006462216377,0.989495296378262
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,11,humidity,0.4981240455828896,0.3937525451183319,0.9803739787472687
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,12,temperature,0.19146775211256614,0.11747518926858902,0.9131166011838391
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,12,humidity,0.6444659344494612,0.4551486372947693,0.9722501624661645
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,13,temperature,0.36353766713315133,0.29736050963401794,0.6431924939711487
+comparison_spread_removed,cmp_spread_removed_m11,Comparison spread removed (m=11),ordered_removed,11,11,2,2,False,0,13,humidity,1.3911222790326332,1.0871219635009766,0.8695351463283554
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,1,temperature,0.1818088962103353,0.1381286084651947,0.9283912219886846
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,1,humidity,0.9150149607868415,0.69955974817276,0.9465399862244788
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,2,temperature,0.2648956439284711,0.21738964319229126,0.8889186100189987
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,2,humidity,1.1688676009961296,0.938470184803009,0.9055140192778408
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,3,temperature,0.23949519467709646,0.15492016077041626,0.8550286807113805
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,3,humidity,1.0373519929770096,0.8401423692703247,0.9265279722173926
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,4,temperature,0.08792380130644627,0.07674799859523773,0.9807250163657597
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,4,humidity,0.3803054498287011,0.31647300720214844,0.9886594652235376
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,13,1,0,True,0,5,temperature,0.656605329137934,0.5742847919464111,-0.010343794046392851
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,13,1,0,True,0,5,humidity,3.815604774865137,3.156937837600708,-0.0017376987180854897
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,6,temperature,0.4654891238278787,0.38914868235588074,0.7816129582098341
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,6,humidity,1.5973734337183862,1.3239398002624512,0.867791324786276
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,7,temperature,0.07589425333125233,0.056815095245838165,0.9865963552740415
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,7,humidity,0.33879936265060734,0.2573038339614868,0.9910650057639416
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,8,temperature,0.1905690587930316,0.10726694762706757,0.9107302255303034
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,8,humidity,0.7154692117956554,0.5019211173057556,0.966859011457198
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,9,temperature,0.24018143636587116,0.19620557129383087,0.8544997376123566
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,9,humidity,1.035536901195014,0.826893150806427,0.9368218478441971
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,10,temperature,0.08658105565697584,0.07321979105472565,0.9837818145163832
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,10,humidity,0.6895853191435496,0.5702073574066162,0.9632220096338432
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,11,temperature,0.09588667725593115,0.07276266068220139,0.9804655611814156
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,11,humidity,0.5437979370120847,0.44679805636405945,0.9766098840548595
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,12,temperature,0.19128803573061745,0.11114770919084549,0.9132796254859415
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,12,humidity,0.724171879145655,0.5136153697967529,0.9649616349618351
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,13,temperature,0.34754955068830046,0.3022554814815521,0.6738866025258022
+comparison_active_only,cmp_active_sensor5_only,Comparison active set [5],active_only,12,12,1,1,False,0,13,humidity,1.436230721074551,1.185168743133545,0.8609370710234813
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,1,temperature,0.1600932893044617,0.1269920915365219,0.9444758054982042
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,1,humidity,0.705792179086386,0.5741937160491943,0.9681927307738109
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,2,temperature,0.29031495096344384,0.23836392164230347,0.8665770685375365
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,2,humidity,1.208476365053611,0.9717092514038086,0.8990019324037409
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,3,temperature,0.11680673091984763,0.09066417813301086,0.9655154752844252
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,3,humidity,0.6264500248286885,0.5029788613319397,0.9732056897230699
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,4,temperature,0.10870477846046993,0.08887418359518051,0.9705369057376494
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,4,humidity,0.40624952316256197,0.32829749584198,0.9870594069788357
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,12,2,1,True,0,5,temperature,0.14522955357560186,0.09873325377702713,0.9505723035661251
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,12,2,1,True,0,5,humidity,0.561642151598488,0.44274401664733887,0.9782956573601328
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,6,temperature,0.5252166800445406,0.4177018404006958,0.7219743783870493
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,6,humidity,1.7869092485281914,1.3918277025222778,0.8345556116406841
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,7,temperature,0.10225513294418422,0.0691593587398529,0.9756681356475208
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,7,humidity,0.348603522515542,0.25595489144325256,0.9905404029381255
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,12,2,1,True,0,8,temperature,0.1905690587930316,0.10726694762706757,0.9107302255303034
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,12,2,1,True,0,8,humidity,0.7154692117956554,0.5019211173057556,0.966859011457198
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,9,temperature,0.18323282517566322,0.15378673374652863,0.9153179293679458
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,9,humidity,0.8969573391856155,0.7533520460128784,0.9525998887547282
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,10,temperature,0.10476889470777717,0.08794048428535461,0.9762523168831287
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,10,humidity,0.5156634923265563,0.44691550731658936,0.9794342420052345
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,11,temperature,0.11723665954720942,0.09263893961906433,0.9707980886506341
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,11,humidity,0.46797306523697757,0.3618394136428833,0.9826779629353851
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,12,temperature,0.10040537822242823,0.0788763090968132,0.9761076164439121
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,12,humidity,0.4581391689092264,0.3752816915512085,0.9859765338624005
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,13,temperature,0.34918145144843116,0.299204021692276,0.6708169270431401
+comparison_active_only,cmp_active_sensor5_8,"Comparison active set [5, 8]",active_only,11,11,2,2,False,0,13,humidity,1.4076678016468929,1.1398741006851196,0.8664132831075291
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,1,temperature,0.17249876322510233,0.14376096427440643,0.9355373743224004
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,1,humidity,0.6609754727324563,0.5457804203033447,0.9721039064022344
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,11,3,2,True,0,2,temperature,0.29031495096344384,0.23836392164230347,0.8665770685375365
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,11,3,2,True,0,2,humidity,1.208476365053611,0.9717092514038086,0.8990019324037409
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,3,temperature,0.09670256334413829,0.07855219393968582,0.9763645173759159
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,3,humidity,0.48345409034417364,0.38653790950775146,0.9840419363467274
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,4,temperature,0.09335056786115434,0.0736495852470398,0.9782722371390823
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,4,humidity,0.42669411888816794,0.3397168815135956,0.9857241572389934
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,11,3,2,True,0,5,temperature,0.12319133997292844,0.09498652815818787,0.9644351723700796
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,11,3,2,True,0,5,humidity,0.5295721372936054,0.43425944447517395,0.9807035467730377
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,6,temperature,0.13487956855423727,0.10428536683320999,0.9816641891405525
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,6,humidity,0.5713742706137278,0.42779508233070374,0.9830843615366959
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,7,temperature,0.06639865873928086,0.050016507506370544,0.9897405580993992
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,7,humidity,0.32559337824858736,0.24141857028007507,0.9917479808882607
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,11,3,2,True,0,8,temperature,0.18548026646095167,0.10293197631835938,0.9154341375639519
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,11,3,2,True,0,8,humidity,0.597942159244395,0.3702102303504944,0.976852615628461
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,9,temperature,0.12077476033101299,0.09153801947832108,0.9632093661965337
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,9,humidity,0.507675710007482,0.38731494545936584,0.9848152189265396
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,10,temperature,0.08669487768512613,0.07006633281707764,0.9837391448938876
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,10,humidity,0.406364644820122,0.3436163365840912,0.9872284437514424
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,11,temperature,0.09650806645789431,0.07680287957191467,0.9802115567428897
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,11,humidity,0.35166038633941266,0.2822275757789612,0.9902185295030131
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,12,temperature,0.07262357777041704,0.05789317563176155,0.9875002648664226
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,12,humidity,0.4315404646300784,0.36054933071136475,0.9875576169742224
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,13,temperature,0.4103694543292401,0.24799871444702148,0.5453415815008138
+comparison_active_only,cmp_active_sensor2_5_8,"Comparison active set [2, 5, 8]",active_only,10,10,3,3,False,0,13,humidity,1.5378294522010583,1.0136133432388306,0.8405666084734957
