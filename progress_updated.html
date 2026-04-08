@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThermoDT — Thermal Digital Twin with DeepONet</title>
+  <style>
+    :root {
+      --bg: #f8f9fc;
+      --surface: #ffffff;
+      --surface2: #f0f2f8;
+      --border: #dde1ee;
+      --accent: #111827;
+      --accent2: #374151;
+      --text: #111827;
+      --muted: #5a6380;
+      --green: #16a34a;
+      --orange: #ea580c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,249,252,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      height: 56px;
+      overflow-x: auto;
+    }
+    nav .logo { font-weight: 700; font-size: 1.05rem; color: var(--accent); white-space: nowrap; margin-right: auto; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #eef2ff 0%, #f0e9ff 50%, #e0f2fe 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero .tag {
+      display: inline-block;
+      background: rgba(17,24,39,0.08);
+      border: 1px solid rgba(17,24,39,0.2);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #111827, #374151, #111827);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 620px;
+      margin: 0 auto 2rem;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
+    .pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* LAYOUT */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+    section {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.5rem;
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .section-cat {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+    p { color: var(--muted); margin-bottom: 0.8rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    /* GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 1.5rem; }
+    @media (max-width: 700px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* FIGURES */
+    figure {
+      margin: 1.5rem 0 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    figure img {
+      width: 100%;
+      display: block;
+      border-bottom: 1px solid var(--border);
+    }
+    figcaption {
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    figcaption strong { color: var(--text); }
+
+    /* INFO BOXES */
+    .info-box {
+      background: rgba(17,24,39,0.04);
+      border: 1px solid rgba(17,24,39,0.15);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      margin-top: 1.2rem;
+    }
+    .info-box .ib-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .info-box p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+
+    .warn-box {
+      background: rgba(234,88,12,0.05);
+      border: 1px solid rgba(234,88,12,0.2);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      margin-top: 1.2rem;
+    }
+    .warn-box .ib-title { color: var(--orange); }
+
+    .green-box {
+      background: rgba(22,163,74,0.05);
+      border: 1px solid rgba(22,163,74,0.2);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      margin-top: 1.2rem;
+    }
+    .green-box .ib-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+    }
+    .green-box p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+
+    /* STAT ROW */
+    .stat-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.4rem;
+      flex: 1 1 140px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .stat .val { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+    .stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ARCHITECTURE DIAGRAM */
+    .arch-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: var(--muted);
+      overflow-x: auto;
+      line-height: 1.9;
+    }
+    .arch-box .hl { color: var(--accent); font-weight: 700; }
+    .arch-box .hl2 { color: var(--green); font-weight: 700; }
+    .arch-box .hl3 { color: #9333ea; font-weight: 700; }
+    .arch-box .arrow { color: var(--accent2); }
+
+    /* COMPARISON TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+    }
+    th {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    td {
+      border: 1px solid var(--border);
+      padding: 0.7rem 1rem;
+      color: var(--text);
+      background: var(--surface);
+    }
+    tr:nth-child(even) td { background: var(--surface2); }
+    .better { color: var(--green); font-weight: 700; }
+    .worse { color: #dc2626; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">ThermoDT</span>
+  <a href="#data">Data</a>
+  <a href="#deeponet">DeepONet</a>
+  <a href="#baseline">Baseline</a>
+  <a href="#sgfilter">SG Filter</a>
+  <a href="#humidity">Humidity &amp; PCA</a>
+  <a href="#lstm">LSTM</a>
+  <a href="#physics">Physics</a>
+  <a href="#lstm-pinn">LSTM-PINN</a>
+  <a href="#uncertainty">Uncertainty</a>
+  <a href="#latest-lab1">Latest Results</a>
+  <a href="#final-model">Final Model</a>
+  <a href="#lab2-transfer">Lab2 Transfer</a>
+  <a href="#phase2-transfer">Phase 2 Transfer</a>
+  <a href="#unified-transfer">Unified Benchmark</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="tag">Research Progress</div>
+    <h1>Thermal Digital Twin<br/>with DeepONet</h1>
+    <p>Building a neural operator-based surrogate for indoor temperature field reconstruction from sparse wireless sensor data.</p>
+    <div class="pill-row">
+      <span class="pill">DeepONet</span>
+      <span class="pill">LSTM Branch</span>
+      <span class="pill">SG Filtering</span>
+      <span class="pill">Humidity PCA</span>
+      <span class="pill">LSTM-PINN DeepONet</span>
+      <span class="pill">Physics-Informed (PINN)</span>
+      <span class="pill">Uncertainty Quantification</span>
+      <span class="pill">13 Sensors · Lab 1</span>
+      <span class="pill">40 Days</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SECTION 1: DATA ===================== -->
+<section id="data">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">1</div>
+      <span class="section-cat">Dataset</span>
+    </div>
+    <h2>Data Source &amp; Experimental Setup</h2>
+
+    <figure style="margin-top:0;">
+      <a href="https://osf.io/zbn8w/overview" target="_blank" rel="noopener">
+        <img src="paper%20title.png" alt="Paper: Exploring Spatial Patterns in Sensor Data for Humidity, Temperature, and RSSI Measurements" style="border-bottom:none;" />
+      </a>
+      <figcaption>
+        <strong>Data Source Paper.</strong>
+        Botero-Valencia et al., <em>MDPI Data</em> — "Exploring Spatial Patterns in Sensor Data for Humidity, Temperature, and RSSI Measurements."
+        Raw dataset available at: <a href="https://osf.io/zbn8w/overview" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">osf.io/zbn8w</a>
+      </figcaption>
+    </figure>
+
+    <p style="margin-top:1.5rem;">
+      All experiments use data collected from <strong>Lab 1</strong>, a real indoor office environment
+      instrumented with a wireless sensor network of <strong>13 IoT nodes</strong>.
+      Each node logs temperature, relative humidity, and RSSI at approximately <strong>10-second intervals</strong>.
+      The dataset covers <strong>40 days</strong> of continuous measurements,
+      providing both short-term dynamics and longer seasonal drift.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="val">13</div><div class="lbl">Sensors</div></div>
+      <div class="stat"><div class="val">40</div><div class="lbl">Days</div></div>
+      <div class="stat"><div class="val">~10s</div><div class="lbl">Raw Sample Rate</div></div>
+      <div class="stat"><div class="val">3</div><div class="lbl">Channels (T, RH, RSSI)</div></div>
+    </div>
+
+    <div class="grid-2">
+      <figure>
+        <img src="lab1_layout.png" alt="Lab 1 floor plan" />
+        <figcaption><strong>Lab 1 Layout.</strong> Floor plan of the instrumented room showing walls, furniture, and general sensor deployment zones.</figcaption>
+      </figure>
+      <figure>
+        <img src="sensor_cordinate.png" alt="Sensor coordinate map" />
+        <figcaption><strong>Sensor Positions.</strong> Exact (x, y) coordinates of all 13 sensor nodes used as the trunk-net inputs for DeepONet.</figcaption>
+      </figure>
+    </div>
+
+    <figure>
+      <img src="data_analysis/sensor6_temperature.png" alt="Sensor 6 temperature time series" />
+      <figcaption><strong>Figure 1-3 — Sensor 6 Temperature Time Series.</strong> Raw 10-second measurements (gray) overlaid with 5-minute resampled means (blue). The high-frequency noise present in the raw data motivates our resampling and filtering investigations.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="data_analysis/heatmaps_lab1.png" alt="Spatial heatmaps" />
+      <figcaption><strong>Figure 1-4 — Spatial Field Heatmaps.</strong> Mean Temperature (°C), Relative Humidity (%), and RSSI (dBm) across the room, interpolated from the 13 sensor positions using RBF thin-plate spline interpolation. These maps reveal the spatial gradients the model must learn to reproduce.</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION 2: DEEPONET ===================== -->
+<section id="deeponet">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">2</div>
+      <span class="section-cat">Model Architecture</span>
+    </div>
+    <h2>Operator Network &amp; DeepONet</h2>
+
+    <h3>What is an Operator Network?</h3>
+    <p>
+      Standard neural networks map one fixed-size vector to another. An <strong>operator network</strong>
+      goes one level higher: it learns a mapping between <em>functions</em>.
+      In our case, the input function is the temperature field observed at 12 sensor locations at a given time,
+      and the output function is the full spatial temperature field — so we can query it at <em>any</em> (x, y) coordinate in the room.
+      This means the model generalises to locations where we have no sensors,
+      effectively reconstructing the continuous temperature field from sparse measurements.
+    </p>
+
+    <h3>How DeepONet Works</h3>
+    <p>
+      <strong>DeepONet</strong> (Deep Operator Network, Lu et al. 2021) implements this idea with two coupled sub-networks:
+    </p>
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="card">
+        <div class="card-title">Branch Network</div>
+        <p style="font-size:0.88rem;">Encodes the <em>input function</em> — the sensor readings at a fixed set of measurement locations. Produces a latent vector that summarises the current state of the room.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Trunk Network</div>
+        <p style="font-size:0.88rem;">Encodes the <em>query location</em> — the (x, y) coordinate where we want to predict the temperature. Produces a basis vector for that position.</p>
+      </div>
+    </div>
+    <p style="margin-top:1rem;">
+      The final prediction is the <strong>dot product</strong> of the branch and trunk outputs
+      (plus a bias), giving a single temperature value at the queried location.
+      By sweeping the query over a dense grid, we reconstruct the entire 2D temperature field.
+    </p>
+
+    <h3>Our Architecture</h3>
+    <div class="arch-box">
+      <span class="hl">INPUT</span><br/>
+      <span class="arrow">├─</span> Branch input: <span class="hl2">12 sensor temperatures</span> at time t  (shape: [12])<br/>
+      <span class="arrow">└─</span> Trunk input:  <span class="hl3">(x, y) query coordinate</span>              (shape: [2])<br/>
+      <br/>
+      <span class="hl">BRANCH NET</span>  (MLP)<br/>
+      <span class="arrow">  12 → 128 → 128 → 128 → p</span>   (ReLU activations)<br/>
+      <span class="arrow">  └─</span> output: latent vector b ∈ ℝ<sup>p</sup><br/>
+      <br/>
+      <span class="hl">TRUNK NET</span>  (MLP)<br/>
+      <span class="arrow">  2 → 128 → 128 → 128 → p</span>    (ReLU activations)<br/>
+      <span class="arrow">  └─</span> output: basis vector t ∈ ℝ<sup>p</sup><br/>
+      <br/>
+      <span class="hl">OUTPUT</span><br/>
+      <span class="arrow">  T̂(x,y) = b · t + bias</span>        (dot product + scalar bias)<br/>
+      <br/>
+      <span class="hl">TRAINING STRATEGY</span><br/>
+      <span class="arrow">  ├─</span> Sensor 7 withheld from branch input (used as test target)<br/>
+      <span class="arrow">  ├─</span> Loss: MSE on withheld sensor temperature<br/>
+      <span class="arrow">  └─</span> Optimiser: Adam, lr=1e-3, cosine annealing
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <div class="ib-title">Why Sensor 7?</div>
+      <p>Sensor 7 is withheld from the branch input in all experiments. The model sees only the other 12 sensors during inference and must reconstruct the temperature at Sensor 7's (x, y) location. This simulates a real-world scenario where a sensor goes offline or is not deployed.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION 3: BASELINE ===================== -->
+<section id="baseline">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">3</div>
+      <span class="section-cat">Baseline Results</span>
+    </div>
+    <h2>Raw 10s Data vs. 5-Min Resampled Data</h2>
+    <p>
+      As a first experiment we trained two identical DeepONet models —
+      one on the raw 10-second data and one on 5-minute mean-resampled data —
+      to understand whether input noise level affects reconstruction accuracy.
+    </p>
+
+    <div class="grid-2">
+      <figure>
+        <img src="DeepOnet_resample/results_raw.png" alt="DeepONet raw results" />
+        <figcaption><strong>Raw (10s) Training.</strong> Loss curve, predicted vs. actual time series for Sensor 7, scatter plot, and residual distribution for the model trained on high-frequency raw data.</figcaption>
+      </figure>
+      <figure>
+        <img src="DeepOnet_resample/results_resampled.png" alt="DeepONet resampled results" />
+        <figcaption><strong>5-Min Resampled Training.</strong> Same four diagnostics for the model trained on 5-minute averages. Noise reduction in the input leads to visibly smoother predictions and lower residuals.</figcaption>
+      </figure>
+    </div>
+
+    <figure>
+      <img src="DeepOnet_resample/predict_compare.png" alt="Multi-resolution comparison" />
+      <figcaption><strong>Figure 3-3 — Multi-Resolution Prediction Comparison.</strong> Both trained models are evaluated at four input resolutions (10s, 5min, 20min, 60min). Each row shows the predicted vs. actual time series for Sensor 7, with RMSE and MAE bar charts on the right. The resampled model generalises more robustly across resolutions.</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION 4: SG FILTER ===================== -->
+<section id="sgfilter">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">4</div>
+      <span class="section-cat">Noise Analysis</span>
+    </div>
+    <h2>Noisy Data &amp; Savitzky-Golay Filtering</h2>
+    <p>
+      To better understand the effect of noise, we compared the raw 5-minute data with
+      a smoothed version produced by a <strong>Savitzky-Golay (SG) filter</strong>,
+      then trained a DeepONet on the filtered signal.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">What is a Savitzky-Golay Filter?</div>
+      <p>
+        The Savitzky-Golay filter is a digital smoothing technique that fits a low-degree polynomial
+        to a sliding window of data points using least squares, then replaces each point with the
+        polynomial's value at that position.
+        Unlike a simple moving average, it preserves the shape of peaks and edges —
+        important for temperature data where ramp-up and cool-down dynamics carry physical meaning.
+        We use a <strong>window of 21 points (~105 minutes) and polynomial order 3</strong>.
+      </p>
+    </div>
+
+    <figure>
+      <img src="data_analysis/sensor1_sg.png" alt="SG filter comparison" />
+      <figcaption><strong>Figure 4-2 — Sensor 1: 5-min Resampled vs. SG-Filtered.</strong> The SG filter removes short-term fluctuations while following the overall temperature trend faithfully, including daily cycles.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="sg_filter/results_sg.png" alt="DeepONet SG results" />
+      <figcaption><strong>Figure 4-3 — DeepONet Trained on SG-Filtered Data.</strong> Loss curve, time series, scatter, and residuals for the model trained on smoothed inputs. Training is more stable and the residual distribution is tighter than the raw model.</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION 5: HUMIDITY & PCA ===================== -->
+<section id="humidity">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">5</div>
+      <span class="section-cat">Feature Engineering</span>
+    </div>
+    <h2>Humidity–Temperature Correlation &amp; PCA Feature</h2>
+    <p>
+      Temperature and humidity in a room are physically coupled — HVAC systems control both,
+      and occupancy affects both. We investigated whether humidity carries additional information
+      that could improve temperature reconstruction.
+    </p>
+
+    <div class="grid-2">
+      <figure>
+        <img src="temp_rh/fig1_scatter_per_sensor.png" alt="Per-sensor T-RH scatter" />
+        <figcaption><strong>Figure 5-1 — Per-Sensor T vs. RH Scatter.</strong> Linear regression fit for each of the 13 sensors individually. Most sensors show a strong negative correlation (higher temperature → lower relative humidity).</figcaption>
+      </figure>
+      <figure>
+        <img src="temp_rh/fig2_correlation_summary.png" alt="Correlation summary" />
+        <figcaption><strong>Figure 5-2 — Pearson Correlation Summary.</strong> Bar chart of Pearson r per sensor and joint scatter. The consistently negative r values confirm a room-wide anti-correlation between T and RH.</figcaption>
+      </figure>
+    </div>
+
+    <figure>
+      <img src="temp_rh/humidity_pca.png" alt="Humidity PCA" />
+      <figcaption><strong>Figure 5-3 — PCA on Humidity Signals.</strong> Scree plot (left) and PC1 time series (right). PC1 captures the dominant shared variance across all 13 humidity sensors, essentially tracking the room-level humidity mode.</figcaption>
+    </figure>
+
+    <div class="info-box">
+      <div class="ib-title">What is PCA?</div>
+      <p>
+        Principal Component Analysis (PCA) is a linear dimensionality reduction technique.
+        Given N correlated signals (here: 13 humidity time series), PCA finds a set of orthogonal
+        directions — principal components — ordered by the amount of variance they explain.
+        <strong>PC1</strong> is the first principal component:
+        a single time series that is the linear combination of all 13 humidity channels
+        that explains the most variance. Because all sensors are in the same room and
+        strongly correlated, PC1 alone captures the dominant room-wide humidity pattern,
+        compressing 13 channels into 1 without losing much information.
+      </p>
+    </div>
+
+    <h3>Adding Humidity PC1 to the Model</h3>
+    <p>
+      The branch network input is extended from 12 to <strong>13 features</strong>
+      by appending the humidity PC1 value at each timestep alongside the 12 sensor temperatures.
+      Everything else (trunk net, training procedure, withheld sensor) stays the same.
+    </p>
+
+    <figure>
+      <img src="temp_rh/results_temp_humPC1.png" alt="DeepONet with humidity PC1" />
+      <figcaption><strong>Figure 5-5 — DeepONet with Humidity PC1 as Extra Input.</strong> Adding the humidity principal component improves the model's ability to track abrupt temperature changes, reducing residual spread.</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION 6: LSTM ===================== -->
+<section id="lstm">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">6</div>
+      <span class="section-cat">Sequence Modelling</span>
+    </div>
+    <h2>LSTM Branch Network</h2>
+    <p>
+      The baseline DeepONet branch network processes a single timestep snapshot of the sensor array.
+      It has no memory of past states. To exploit temporal dependencies in the temperature signal,
+      we replace the MLP branch with a <strong>Long Short-Term Memory (LSTM)</strong> network
+      that encodes a sliding window of recent history.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">What is LSTM?</div>
+      <p>
+        LSTM (Long Short-Term Memory) is a type of recurrent neural network designed to learn
+        long-range dependencies in sequential data. Unlike a simple RNN, an LSTM cell maintains
+        two state vectors: a <strong>cell state</strong> (long-term memory)
+        and a <strong>hidden state</strong> (short-term output).
+        Three gates — input, forget, and output — learn to write, erase, and read from the cell state,
+        preventing the gradient from vanishing over long sequences.
+        This makes LSTMs well-suited for temperature time series, where a room's thermal inertia
+        means the current temperature depends on what happened in the past hour or more.
+      </p>
+    </div>
+
+    <h3>LSTM Branch Architecture</h3>
+    <div class="arch-box">
+      <span class="hl">LSTM BRANCH NET</span><br/>
+      <span class="arrow">  ├─</span> Input: sliding window of <span class="hl2">48 timesteps × 12 sensors</span>  (= last 4 hours at 5-min resolution)<br/>
+      <span class="arrow">  ├─</span> LSTM Layer 1:  hidden_size = 128,  dropout = 0.1<br/>
+      <span class="arrow">  ├─</span> LSTM Layer 2:  hidden_size = 128<br/>
+      <span class="arrow">  ├─</span> Take last hidden state  h_T ∈ ℝ<sup>128</sup><br/>
+      <span class="arrow">  └─</span> Linear projection:  128 → p   (same p as trunk net output)<br/>
+      <br/>
+      <span class="hl">TRUNK NET</span>  (unchanged MLP)<br/>
+      <span class="arrow">  2 → 128 → 128 → 128 → p</span><br/>
+      <br/>
+      <span class="hl">OUTPUT</span><br/>
+      <span class="arrow">  T̂(x,y) = b_LSTM · t_trunk + bias</span><br/>
+      <br/>
+      <span class="hl">KEY DIFFERENCE vs. BASELINE</span><br/>
+      <span class="arrow">  Branch sees 48 past timesteps instead of just the current snapshot.</span><br/>
+      <span class="arrow">  The LSTM learns which part of recent history matters most.</span>
+    </div>
+
+    <figure>
+      <img src="lstm/results_lstm.png" alt="LSTM DeepONet results" />
+      <figcaption><strong>Figure 6-2 — DeepONet-LSTM Results.</strong> Loss curve, predicted vs. actual time series for the withheld Sensor 7, scatter plot, and residual distribution. The LSTM branch captures temporal dynamics that the snapshot-based MLP branch misses, leading to improved tracking of temperature ramps.</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION 7: PHYSICS ===================== -->
+<section id="physics">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">7</div>
+      <span class="section-cat">Physics-Informed Learning</span>
+    </div>
+    <h2>Physics-Informed DeepONet — Advection-Diffusion PINN</h2>
+    <p>
+      A purely data-driven model can fit sensor observations accurately but has no guarantee that its
+      spatial temperature field obeys the governing equations of heat transfer.
+      To constrain the solution to physically plausible dynamics, we add a
+      <strong>PDE residual loss</strong> derived from the <strong>advection-diffusion-source equation</strong>
+      for indoor thermal fields. The key departure from an RC-circuit approach is that this formulation
+      is fully continuous in space — it reasons about the temperature field at every point in the room,
+      not just at sensor locations.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Why Advection-Diffusion instead of a Lumped RC Model?</div>
+      <p>
+        An RC network is a <em>lumped</em> model: it treats the room as a small number of discrete
+        zones connected by resistors. It cannot represent how heat spreads continuously across the
+        floor plan. The advection-diffusion PDE operates on the continuous spatial field
+        T(x,&nbsp;y,&nbsp;t) that the DeepONet trunk already represents, so the physics loss
+        directly penalises the network output at any queried coordinate — including the withheld
+        Sensor&nbsp;7 location.
+      </p>
+    </div>
+
+    <h3>Governing Equation</h3>
+    <p>
+      The temperature field satisfies the following PDE at every interior point of the room:
+    </p>
+    <div class="arch-box">
+      <span class="hl">ADVECTION-DIFFUSION-SOURCE PDE</span><br/>
+      <br/>
+      <span class="arrow">  ∂T/∂t  +  v(x,y) · ∇T  =  α ∇²T  +  S(T̄, x, y)</span><br/>
+      <br/>
+      where:<br/>
+      <span class="arrow">  T(x,y,t)</span>  = temperature field at position (x,y) at time t<br/>
+      <span class="arrow">  v(x,y)</span>     = spatially-varying air velocity field  <span class="hl2">(learned by v-net)</span><br/>
+      <span class="arrow">  α</span>           = thermal diffusivity scalar              <span class="hl2">(learned, log-space for positivity)</span><br/>
+      <span class="arrow">  S(T̄, x, y)</span> = spatially-varying heat source/sink       <span class="hl2">(learned by source-net)</span><br/>
+      <span class="arrow">  T̄</span>           = mean sensor temperature (scalar context for S)<br/>
+      <br/>
+      <span class="hl">TOTAL TRAINING LOSS</span><br/>
+      <span class="arrow">  L = λ_data · L_data  +  λ_pde · ( L_pde  +  λ_div · L_div</span><br/>
+      <span class="arrow">                           +  λ_noslip · L_noslip  +  λ_sparse · L_sparse</span><br/>
+      <span class="arrow">                           +  λ_neumann · L_neumann )</span><br/>
+      <br/>
+      <span class="arrow">  λ_data=1.0  λ_pde=0.1  λ_div=0.1  λ_noslip=0.1  λ_sparse=1e-3  λ_neumann=0.1</span>
+    </div>
+
+    <h3>Spatial Derivative Computation</h3>
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="card">
+        <div class="card-title">∂T/∂t — Temporal Derivative</div>
+        <p style="font-size:0.88rem;">
+          Approximated by a <strong>finite difference</strong> between consecutive 5-minute timesteps:
+          model(u<sub>t+1</sub>,&nbsp;xy) − model(u<sub>t</sub>,&nbsp;xy).
+          Both evaluations share the same spatial coordinates; only the branch input changes.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">∇T and ∇²T — Spatial Derivatives</div>
+        <p style="font-size:0.88rem;">
+          Computed via <strong>automatic differentiation</strong> through the SIREN trunk with respect
+          to the input coordinates (x,&nbsp;y). The SIREN activation (sin(ω₀··)) guarantees
+          non-vanishing second derivatives everywhere, keeping the Laplacian ∇²T meaningful.
+          ω₀ = 5 is used (reduced from the standard 30) since thermal fields are spatially smooth —
+          large ω₀ causes ∇²T&nbsp;~&nbsp;ω₀² blow-up in the PDE residual.
+        </p>
+      </div>
+    </div>
+
+    <h3>Learned Physics Sub-networks</h3>
+    <div class="arch-box">
+      <span class="hl">V-NET  —  Spatially-Varying Velocity Field</span><br/>
+      <span class="arrow">  Input  : (x, y)  [normalised room coordinates ∈ [0,1]²]</span><br/>
+      <span class="arrow">  Hidden : Linear(2→16) → Tanh → Linear(16→2)</span><br/>
+      <span class="arrow">  Output : (v_x, v_y)  [air velocity at each point]</span><br/>
+      <br/>
+      A global scalar velocity cannot represent AC-driven circulation patterns.
+      The v-net learns the full 2-D velocity field from data.<br/>
+      Kept shallow (1 hidden layer, width 16) to prevent memorising PDE residuals.<br/>
+      <br/>
+      <span class="hl">SOURCE-NET  —  Spatially-Varying Heat Source/Sink</span><br/>
+      <span class="arrow">  Input  : (T̄, x, y)  [mean sensor temperature + coordinates]</span><br/>
+      <span class="arrow">  Hidden : Linear(3→32) → Tanh → Linear(32→1)</span><br/>
+      <span class="arrow">  Output : S(T̄, x, y)  [local heat injection/extraction rate]</span><br/>
+      <br/>
+      Uses only the mean temperature T̄ (not all 12 sensor readings) as temporal context.
+      Giving the net all 12 readings allows it to reconstruct ∂T/∂t exactly and zero the PDE
+      residual without learning any physics — a known failure mode called the "source fudge factor."<br/>
+      <br/>
+      <span class="hl">THERMAL DIFFUSIVITY  α</span><br/>
+      <span class="arrow">  α = exp(log_α)  —  single learnable scalar, initialised at exp(−2) ≈ 0.135</span>
+    </div>
+
+    <h3>Collocation Strategy</h3>
+    <p>
+      The PDE residual is evaluated at <strong>512 collocation points per training step</strong>,
+      split equally between:
+    </p>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card">
+        <div class="card-title">50 % — Sensor Locations</div>
+        <p style="font-size:0.88rem;">
+          Randomly sampled from the 12 training sensor coordinates.
+          The data loss anchors the field here, so the PDE is better conditioned at these points.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">50 % — Random Interior</div>
+        <p style="font-size:0.88rem;">
+          Uniformly sampled from the room interior [0,1]².
+          These enforce the PDE in regions with no sensor, including the neighbourhood
+          of withheld Sensor&nbsp;7.
+        </p>
+      </div>
+    </div>
+
+    <h3>Boundary Condition Losses</h3>
+    <p>
+      Without geometric constraints, spatially-varying MLPs can learn degenerate solutions —
+      for example, inventing wind that blows through solid walls, or room-wide heat sinks that
+      absorb the entire PDE residual. Four additional loss terms enforce real-world geometry:
+    </p>
+    <div class="grid-2" style="margin-top:0.5rem;">
+      <div class="card">
+        <div class="card-title">Fix 1 — No-Slip Boundary Condition</div>
+        <p style="font-size:0.88rem;">
+          <strong>L_noslip = ‖v(x_wall)‖²</strong><br/>
+          Air velocity must be zero at solid walls. 64 points are sampled on each of the four
+          walls at every training step and the v-net output is penalised directly.
+          This prevents the learned circulation from passing through walls.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Fix 2 — L1 Sparsity on Source</div>
+        <p style="font-size:0.88rem;">
+          <strong>L_sparse = mean(|S(x,y)|)</strong><br/>
+          Real heat sources are localised (AC vents, windows).
+          L1 on the source output pushes S to exactly zero for most of the room,
+          forcing the network to concentrate heating/cooling into a small distinct region
+          rather than spreading a diffuse bias across the entire field.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Fix 3 — Reduced Network Capacity</div>
+        <p style="font-size:0.88rem;">
+          v-net and source-net are deliberately shallow (1 hidden layer) and narrow
+          (width 16 and 32 respectively). A deeper, wider network has enough capacity to
+          memorise the PDE residual as a function of its inputs — effectively becoming
+          another fudge factor. Reducing capacity forces the networks to learn smooth,
+          generalisable spatial patterns instead.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Fix 4 — Neumann (Insulated Wall) Condition</div>
+        <p style="font-size:0.88rem;">
+          <strong>L_neumann = (∂T/∂n)<sup>2</sup> at walls</strong><br/>
+          Concrete walls have low thermal conductivity, so the normal heat flux at the
+          perimeter is approximately zero: ∂T/∂n ≈ 0.
+          The normal gradient of T is computed via autograd at 64 wall points per wall
+          and penalised. This prevents the temperature field from developing sharp gradients
+          at the room boundary.
+        </p>
+      </div>
+    </div>
+
+    <div class="green-box">
+      <div class="ib-title">Key Design Principle — The Blind Inverse Problem</div>
+      <p>
+        The exact AC vent locations, airflow rates, and occupancy patterns are unknown.
+        Rather than prescribing these from engineering drawings, the model
+        <strong>discovers them from data</strong> subject to physical constraints.
+        The no-slip and Neumann boundary conditions act as geometric priors that rule out
+        unphysical solutions, while the L1 sparsity and reduced capacity prevent the physics
+        sub-networks from finding degenerate mathematical shortcuts.
+        The result is a spatial field that is not only accurate at sensor locations but
+        physically consistent everywhere in the room.
+      </p>
+    </div>
+
+    <h3>Results</h3>
+    <figure>
+      <img src="pinn/results_pinn.png" alt="PINN DeepONet results" />
+      <figcaption>
+        <strong>Figure 7 — Physics-Informed DeepONet Results.</strong>
+        Top row (left to right): training loss curves showing the data loss (blue dashed)
+        and PDE physics loss (red dashed) converging together;
+        learned velocity field v(x,&nbsp;y) as a quiver plot coloured by speed — arrows reflect
+        a leftward circulation pattern consistent with AC-driven airflow;
+        learned source field S(T̄,&nbsp;x,&nbsp;y) at mean thermal state showing a warm region
+        (red) on the right side of the room and a cooling zone (blue) on the left,
+        consistent with a localised heat source near sensors 1 and 9.
+        Bottom row: full time-series reconstruction of withheld Sensor&nbsp;7 (α = 0.00546,
+        RMSE = 0.2160°C, MAE = 0.1558°C); predicted vs. actual scatter; residual histogram.
+        This result uses the SIREN trunk at ω₀ = 5 and mean-temperature-only source context.
+        The additional boundary condition losses (no-slip, Neumann, L1 sparsity) are implemented
+        in the code and will further constrain the velocity and source fields in the next training run.
+      </figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- ===================== SECTION 8: LSTM-PINN ===================== -->
+<section id="lstm-pinn">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">8</div>
+      <span class="section-cat">LSTM-PINN DeepONet</span>
+    </div>
+    <h2>LSTM-Branch DeepONet with Advection-Diffusion PINN</h2>
+    <p>
+      The previous physics section used a snapshot MLP branch — it treated every timestep
+      independently, with no memory of how the room arrived at its current state.
+      This section upgrades the branch network to an <strong>LSTM encoder</strong>,
+      giving the model a 4-hour sliding window of sensor history,
+      and combines it with a richer <strong>Advection-Diffusion-Source PDE</strong>
+      that simultaneously learns the air-velocity field, thermal diffusivity, and
+      spatial heat sources from data.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Why replace the snapshot branch with an LSTM?</div>
+      <p>
+        A plain MLP branch encodes only the <em>current</em> sensor snapshot — it has no memory of
+        recent occupancy ramps, AC cycles, or thermal inertia.
+        An LSTM branch encodes the full <em>trajectory</em> of how the room got to its current
+        thermal state.  This matters for two reasons:
+      </p>
+      <ul style="margin:0.5rem 0 0 1.2rem;">
+        <li><strong>∂T/∂t</strong> is estimated from consecutive LSTM embeddings whose hidden state
+          already reflects recent history — not just an instantaneous finite difference.</li>
+        <li><strong>The velocity field v(x,y)</strong> is fitted against a model that already understands
+          directionality-over-time, so it converges to more physically plausible circulation patterns.</li>
+      </ul>
+    </div>
+
+    <h3>Architecture Overview</h3>
+    <div class="arch-box">
+      <span class="hl">BRANCH NET — LSTM ENCODER</span><br/>
+      <span class="arrow">  ├─</span> Input: sliding window of 12 sensor temperatures over 48 timesteps (4 h)<br/>
+      <span class="arrow">  │        Shape: (batch, seq=48, n_sensors=12)</span><br/>
+      <span class="arrow">  ├─</span> LSTM: hidden=128, layers=2, dropout=0.1 between layers<br/>
+      <span class="arrow">  ├─</span> Take last hidden state of final layer  → (batch, 128)<br/>
+      <span class="arrow">  └─</span> Linear projection → (batch, p=128)   <em>branch embedding b</em><br/>
+      <br/>
+      <span class="hl">TRUNK NET — SIREN MLP</span><br/>
+      <span class="arrow">  ├─</span> Input: normalised spatial query point (x, y) ∈ [0,1]²<br/>
+      <span class="arrow">  ├─</span> SIREN layers: 2 → 128 → 128 → 128 → 128 → 128 (depth=4)<br/>
+      <span class="arrow">  │        activation: sin(ω₀ · Wx + b),  ω₀ = 5</span><br/>
+      <span class="arrow">  │        ω₀ reduced from 30 — thermal fields are smooth;</span><br/>
+      <span class="arrow">  │        large ω₀ causes ∇²T ~ ω₀² blow-up in the PDE residual</span><br/>
+      <span class="arrow">  └─</span> Final linear layer (no sin) → (batch, p=128)  <em>trunk embedding t</em><br/>
+      <br/>
+      <span class="hl">OUTPUT</span><br/>
+      <span class="arrow">  T̂(x,y,t) = b · t  +  bias   (inner product + scalar bias)</span><br/>
+      <br/>
+      <span class="hl">PHYSICS MODULE — AdvectionDiffusionPINN</span><br/>
+      <span class="arrow">  ├─</span> log_α  : learnable scalar,  α = exp(log_α) > 0   (thermal diffusivity)<br/>
+      <span class="arrow">  ├─</span> v_net  : MLP  2 → 16 → 2   (x,y) → (vx, vy)   spatially-varying velocity<br/>
+      <span class="arrow">  └─</span> source_net : MLP  3 → 32 → 1   (T_mean, x, y) → S   heat source/sink
+    </div>
+
+    <h3>Physics: Advection-Diffusion-Source PDE</h3>
+    <p>
+      Instead of the simple heat equation used earlier, this model enforces a full
+      advection-diffusion-source PDE at a set of collocation points every training step:
+    </p>
+    <div class="arch-box" style="font-size:1.05rem; text-align:center; letter-spacing:0.02em;">
+      ∂T/∂t + v(x,y) · ∇T = α ∇²T + S(T<sub>mean</sub>, x, y)
+    </div>
+    <p style="margin-top:1rem;">Each term has a concrete physical role:</p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>∂T/∂t</strong> — temporal rate of change, estimated by a finite difference between
+        the model output at window [t−48:t] and window [t−47:t+1].
+        The LSTM hidden state encodes history, so these consecutive embeddings capture genuine dynamics.</li>
+      <li><strong>v(x,y) · ∇T</strong> — advective transport by the spatially-varying air-circulation field.
+        <code>v_net</code> is a shallow MLP (2→16→2) that outputs (v<sub>x</sub>, v<sub>y</sub>)
+        at any room location.  A soft divergence-free penalty ‖∇·v‖² ≈ 0 encourages mass conservation.</li>
+      <li><strong>α ∇²T</strong> — diffusion.  α = exp(log_α) is learned end-to-end; it starts near
+        e<sup>−2</sup> ≈ 0.135 (normalised units) and converges to the physically meaningful value.</li>
+      <li><strong>S(T<sub>mean</sub>, x, y)</strong> — spatially-varying source/sink conditioned on the
+        mean sensor temperature of the last window step only.  Using only T<sub>mean</sub>
+        (a single scalar) as temporal context prevents the network from absorbing the full PDE residual
+        as a fudge factor.  An L1 sparsity penalty forces S to localise into small distinct regions
+        (like real AC vents or equipment racks).</li>
+    </ul>
+
+    <h3>Derivative Computation</h3>
+    <div class="arch-box">
+      <span class="hl">∂T/∂t  (finite difference over LSTM windows)</span><br/>
+      <span class="arrow">  dT_dt = [ model(seq[t-48:t], xy) − model(seq[t-47:t+1], xy) ] / Δt</span><br/>
+      <span class="arrow">  Both sequences share the same spatial coords; only the LSTM history shifts by one step.</span><br/>
+      <br/>
+      <span class="hl">∇T  (1st-order autograd through SIREN trunk)</span><br/>
+      <span class="arrow">  grad1 = ∂T̂/∂(x,y)   via torch.autograd.grad with create_graph=True</span><br/>
+      <br/>
+      <span class="hl">∇²T  (Laplacian via 2nd-order autograd)</span><br/>
+      <span class="arrow">  d²T/dx² = ∂(dT/dx)/∂x</span><br/>
+      <span class="arrow">  d²T/dy² = ∂(dT/dy)/∂y</span><br/>
+      <span class="arrow">  Laplacian = d²T/dx² + d²T/dy²</span><br/>
+      <span class="arrow">  SIREN activations (sin) have non-vanishing 2nd derivatives — this is why</span><br/>
+      <span class="arrow">  ReLU/Tanh trunks fail: their Laplacians are zero or extremely sparse.</span>
+    </div>
+
+    <h3>Boundary Conditions</h3>
+    <p>
+      Four physics-motivated boundary conditions are enforced at 64 sampled wall points per edge
+      (256 total) each training iteration:
+    </p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>No-slip (Fix 1)</strong> — v(x<sub>wall</sub>) = 0.
+        Air velocity is zero at solid walls; penalised as ‖v_wall‖².</li>
+      <li><strong>Neumann thermal BC (Fix 4)</strong> — ∂T/∂n = 0 at each wall (insulated boundary).
+        The normal gradient is extracted from autograd: ∂T/∂y for bottom/top walls,
+        ∂T/∂x for left/right walls.</li>
+      <li><strong>Divergence-free penalty (λ_div)</strong> — ‖∂v<sub>x</sub>/∂x + ∂v<sub>y</sub>/∂y‖²
+        encourages mass conservation throughout the domain (not just at walls).</li>
+      <li><strong>L1 source sparsity (Fix 2, λ_sparse)</strong> — ‖S‖₁ penalty localises heat
+        sources to compact regions, preventing diffuse room-wide compensation.</li>
+    </ul>
+
+    <h3>Collocation Strategy</h3>
+    <p>
+      Each training step draws <strong>512 collocation points</strong> using a mixed strategy:
+      half (256) from the actual sensor locations (high-information zones), half (256) uniformly
+      random from the room interior [0,1]².  This ensures the PDE residual is enforced both
+      where data is dense <em>and</em> in sparsely covered regions.
+    </p>
+
+    <h3>Loss Function</h3>
+    <div class="arch-box">
+      <span class="hl">TOTAL LOSS</span><br/>
+      <span class="arrow">  L = λ_data · MSE_data</span><br/>
+      <span class="arrow">    + λ_pde  · ( MSE_pde  +  λ_div · MSE_div  +  λ_noslip · MSE_noslip</span><br/>
+      <span class="arrow">                          +  λ_sparse · L1_source  +  λ_neumann · MSE_neumann )</span><br/>
+      <br/>
+      <span class="hl">HYPER-PARAMETERS</span><br/>
+      <span class="arrow">  λ_data   = 1.0   (primary data-fitting objective)</span><br/>
+      <span class="arrow">  λ_pde    = 0.1   (physics regularisation — strong enough without overwhelming data)</span><br/>
+      <span class="arrow">  λ_div    = 0.1   (divergence-free penalty on v_net)</span><br/>
+      <span class="arrow">  λ_noslip = 0.1   (no-slip BC at walls)</span><br/>
+      <span class="arrow">  λ_sparse = 0.001 (L1 sparsity on source field)</span><br/>
+      <span class="arrow">  λ_neumann= 0.1   (Neumann ∂T/∂n = 0 at walls)</span>
+    </div>
+
+    <h3>Training Configuration</h3>
+    <div class="arch-box">
+      <span class="hl">DATASET</span><br/>
+      <span class="arrow">  ├─</span> Source: Temperature_5min.xlsx  (40-day, 5-min resampled, Lab 1)<br/>
+      <span class="arrow">  ├─</span> 12 training sensors (sensor 7 fully withheld as held-out test)<br/>
+      <span class="arrow">  ├─</span> Sliding window: 48 steps = 4 hours look-back per sample<br/>
+      <span class="arrow">  └─</span> Training pairs: (N − 48) × 12  ≈ 127,000 samples<br/>
+      <br/>
+      <span class="hl">OPTIMISER</span><br/>
+      <span class="arrow">  Adam  lr=1e-3  |  CosineAnnealingLR  T_max=300</span><br/>
+      <br/>
+      <span class="hl">PARAMETERS</span><br/>
+      <span class="arrow">  DeepONet (branch + trunk + bias) + Physics module (log_α, v_net, source_net)</span><br/>
+      <span class="arrow">  v_net: 2→16→2  (50 params)   source_net: 3→32→1  (129 params)   log_α: 1 param</span><br/>
+      <br/>
+      <span class="hl">HARDWARE</span><br/>
+      <span class="arrow">  Auto-detects: Apple MPS → CUDA → CPU   (MPS used on Mac M-series)</span><br/>
+      <br/>
+      <span class="hl">CHECKPOINTING</span><br/>
+      <span class="arrow">  Best epoch saved to deeponet_lstm_pinn_best.pth  (lowest total loss)</span><br/>
+      <span class="arrow">  Final model   saved to deeponet_lstm_pinn.pth</span>
+    </div>
+
+    <h3>Withheld-Sensor Evaluation (Sensor 7)</h3>
+    <p>
+      Sensor 7 (location: x=1.92 m, y=3.91 m) is <strong>completely excluded from training</strong> —
+      it does not appear in the branch input, in the data loss, or in the collocation set.
+      After training, the model is queried at the sensor 7 coordinates for every valid timestep
+      and the prediction is compared against the true sensor 7 readings.
+      This tests spatial generalisation: the model must reconstruct temperature at an
+      unobserved location purely from the physics constraints and the 12 surrounding sensors.
+    </p>
+    <p>
+      Inference uses 512-sample chunks over the full time series
+      (first 48 timesteps are excluded as LSTM warm-up).
+      Predictions are de-normalised with the global mean and standard deviation from training.
+    </p>
+
+    <h3>Visualised Results</h3>
+    <p>
+      The 6-panel result figure provides a complete diagnostic view of the trained model:
+    </p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>Training losses</strong> (log scale) — total, data, and PDE physics components over 300 epochs.</li>
+      <li><strong>Learned velocity field v(x,y)</strong> — quiver plot coloured by speed; shows the
+        air-circulation pattern the model discovered. Sensor positions are overlaid; sensor 7 (withheld) is
+        marked with a red star.</li>
+      <li><strong>Source field S(T<sub>mean</sub>, x, y)</strong> — heatmap of the learned heat source/sink
+        distribution (red = heating, blue = cooling) at the mean thermal state.</li>
+      <li><strong>Sensor 7 full time series</strong> — predicted vs actual temperature over the 40-day dataset
+        (first 48 steps skipped for LSTM warm-up).</li>
+      <li><strong>Predicted vs Actual scatter</strong> — ideal line in red; clustering around the diagonal
+        indicates low bias.</li>
+      <li><strong>Residual histogram</strong> — centred near zero with RMSE and MAE annotations.</li>
+    </ul>
+
+    <figure>
+      <img src="lstm_pinn_results.png" alt="LSTM-PINN DeepONet results — 6-panel diagnostic" />
+      <figcaption>
+        <strong>Figure 8-1 — LSTM-PINN DeepONet Diagnostic (6 Panels).</strong>
+        Top row (left to right): training loss curves (total, data, PDE physics) on a log scale;
+        learned spatially-varying velocity field v(x,y) from v_net — colour encodes flow speed,
+        sensor locations shown as white dots, withheld sensor 7 as a red star;
+        source/sink field S(T<sub>mean</sub>, x, y) from source_net — red regions indicate
+        net heat input, blue regions net cooling.
+        Bottom row: full 40-day time-series reconstruction of withheld sensor 7 (predicted vs actual);
+        predicted vs actual scatter plot; residual histogram with RMSE and MAE.
+        Sensor 7 is excluded entirely from training — the reconstruction is driven purely by
+        physics constraints and the 12 surrounding sensors.
+      </figcaption>
+    </figure>
+
+    <h3>Learned Physics Parameters</h3>
+    <p>
+      After training the model reports the following learned PDE parameters:
+    </p>
+    <ul style="margin:0.5rem 0 0.5rem 1.2rem; line-height:2;">
+      <li><strong>Thermal diffusivity α</strong> — a single positive scalar (learned in log-space to
+        ensure positivity).  The converged value reflects the effective thermal diffusivity of
+        the room in normalised units.</li>
+      <li><strong>Velocity at each sensor location</strong> — (v<sub>x</sub>, v<sub>y</sub>) and speed
+        printed per sensor, giving a point-sample of the learned circulation field.</li>
+    </ul>
+
+    <div class="green-box">
+      <div class="ib-title">Key Improvements over the Snapshot PINN (Section 7)</div>
+      <p>
+        The LSTM-PINN model differs from Section 7 in three fundamental ways:
+      </p>
+      <ul style="margin:0.5rem 0 0 1.2rem;">
+        <li><strong>Temporal memory</strong>: the LSTM branch encodes a 4-hour history of all 12 sensors;
+          the Section 7 branch encoded only the current snapshot.</li>
+        <li><strong>Richer PDE</strong>: full advection + diffusion + spatially-varying source vs. a
+          simpler heat equation with learned α only.</li>
+        <li><strong>Additional boundary conditions</strong>: no-slip for velocity, Neumann for temperature,
+          and L1 source sparsity are all active — physically grounding the sub-networks and
+          preventing unphysical solutions.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SECTION 9: UNCERTAINTY ===================== -->
+<section id="uncertainty">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">9</div>
+      <span class="section-cat">Uncertainty Quantification</span>
+    </div>
+    <h2>Spatial Uncertainty Maps</h2>
+    <p>
+      Knowing <em>how well</em> the model knows the temperature at each room location is as important as
+      the prediction itself. A model that is confident everywhere — even where sensor coverage is sparse —
+      cannot be trusted for decision making (e.g. HVAC placement, fault detection).
+      We extend DeepONet to output both a <strong>mean prediction</strong> and a
+      <strong>predictive variance</strong> at every queried location.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">What is Uncertainty Quantification?</div>
+      <p>
+        Uncertainty quantification (UQ) means estimating not just a single prediction value but
+        also a confidence measure for that prediction. In a probabilistic neural network,
+        the model outputs the parameters of a probability distribution — here a Gaussian with
+        mean <em>μ</em> and variance <em>σ²</em> — instead of a single number.
+        A high <em>σ²</em> at a location signals that the model lacks confidence there,
+        typically because no training sensor is nearby. This spatial uncertainty can guide
+        decisions such as where to add new sensors to maximally reduce overall uncertainty.
+      </p>
+    </div>
+
+    <h3>Probabilistic DeepONet Architecture</h3>
+    <div class="arch-box">
+      <span class="hl">PROBABILISTIC BRANCH NET</span><br/>
+      <span class="arrow">  ├─</span> Input: 13 sensor temperatures  (all sensors used — no withholding)<br/>
+      <span class="arrow">  ├─</span> MLP: 13 → 128 → 128 → 128 → <span class="hl2">2p</span>   (double output width)<br/>
+      <span class="arrow">  ├─</span> Split output into two halves:<br/>
+      <span class="arrow">  │    b_mean    ∈ ℝ<sup>p</sup>   (mean latent)</span><br/>
+      <span class="arrow">  │    b_logvar  ∈ ℝ<sup>p</sup>   (log-variance latent)</span><br/>
+      <br/>
+      <span class="hl">TRUNK NET</span>  (unchanged MLP)<br/>
+      <span class="arrow">  2 → 128 → 128 → 128 → p</span><br/>
+      <br/>
+      <span class="hl">OUTPUT AT QUERY POINT (x, y)</span><br/>
+      <span class="arrow">  μ(x,y)  = b_mean   · t_trunk + bias_mean</span><br/>
+      <span class="arrow">  σ²(x,y) = exp( b_logvar · t_trunk + bias_var )</span><br/>
+      <br/>
+      <span class="hl">TRAINING LOSS</span><br/>
+      <span class="arrow">  Gaussian NLL:  L = Σ [ log σ²  +  (T_true − μ)² / σ² ]</span><br/>
+      <span class="arrow">  The model is penalised for both inaccurate means and mis-calibrated variances.</span>
+    </div>
+
+    <h3>Full-Coverage Uncertainty Map</h3>
+    <p>
+      In the first experiment all 13 sensors are used as branch inputs. After training,
+      we query the model on a dense grid spanning the entire room and plot the predicted
+      variance <em>σ²</em> at each grid point as a heatmap.
+      Regions with low σ² are well-constrained by nearby sensors;
+      regions with high σ² represent locations the model is uncertain about.
+    </p>
+
+    <figure>
+      <img src="Uncertainty_Map/uncertainty_map.png" alt="Uncertainty map — all sensors" />
+      <figcaption><strong>Figure 9-1 — Predictive Uncertainty Map (All 13 Sensors).</strong> Spatial heatmap of predicted variance σ² across the room when all sensors are active. Low uncertainty near sensor locations, elevated uncertainty in corners and areas with sparse coverage.</figcaption>
+    </figure>
+
+    <h3>Uncertainty with Withheld Sensors</h3>
+    <p>
+      In the second experiment, <strong>4 sensors are removed</strong> from the branch input,
+      simulating sensor failure or a sparser deployment.
+      The model receives only 9 sensor readings at inference time.
+      We expect σ² to spike at — or near — the withheld sensor locations,
+      since the model now has no direct information about those zones.
+    </p>
+
+    <figure>
+      <img src="Uncertainty_Map/uncertainty_map_withheld.png" alt="Uncertainty map — withheld sensors" />
+      <figcaption><strong>Figure 9-2 — Predictive Uncertainty Map (4 Sensors Withheld).</strong> Removing 4 sensors from the branch input causes σ² to rise at their locations, confirming the model correctly identifies its own ignorance. This property can be used to guide optimal sensor placement.</figcaption>
+    </figure>
+
+    <div class="green-box">
+      <div class="ib-title">Practical Application</div>
+      <p>
+        The uncertainty map answers the question: <em>"If I can only afford N sensors, where should I place them?"</em>
+        By iteratively adding a virtual sensor at the highest-σ² grid point and re-evaluating,
+        one can derive a greedy optimal sensor placement strategy purely from the trained probabilistic model —
+        no additional data collection required.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
+
+
+<!-- ===================== SECTION 10: LATEST LAB1 RESULTS ===================== -->
+<section id="latest-lab1">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">10</div>
+      <span class="section-cat">Latest Results</span>
+    </div>
+    <h2>Latest Lab 1 Reconstruction Pipeline (v0.1 &rarr; v0.4.1)</h2>
+    <p>
+      After the early single-sensor experiments above, the project was refactored into a cleaner
+      masked-reconstruction pipeline focused on <strong>Lab 1</strong> at <strong>5-minute resolution</strong>.
+      The newer versions move from a temperature-only baseline to a joint temperature&nbsp;+&nbsp;humidity model,
+      then to targeted sparsity tests and finally to a minimal active sensor study.
+      Across all newer versions, the branch input uses an explicit observed/missing mask,
+      test windows remain blocked in time, and evaluation is reported under controlled masking protocols.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Repository Layout for These Runs</div>
+      <p>
+        Data files live under <strong>./data</strong>, model code under <strong>./deepOnet</strong>, and run outputs under
+        <strong>./deepOnet/runs</strong>. On GitHub, the multi-output run is stored under
+        <strong>lab1data_v0.2.2</strong>, the targeted sparsity run for DeepONet <strong>v0.3.2</strong>
+        is stored under <strong>lab1data_v0.3.1</strong>, and the sensor-importance study is stored under
+        <strong>lab1data_v0.4.1</strong>.
+      </p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">What Changed in the New Pipeline</div>
+        <p style="font-size:0.9rem;">
+          The original single-target experiments were consolidated into a single reproducible workflow.
+          Missing sensors are no longer represented only by zero-fill; instead the model also receives an
+          explicit observed/missing mask. Later versions add joint temperature-humidity outputs,
+          early stopping, structured masking protocols, and sensor-subset search.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">How These New Models Are Evaluated</div>
+        <p style="font-size:0.9rem;">
+          Every evaluation masks the target sensor and varies how many additional sensors are hidden.
+          The analysis now goes beyond random masking: we also test central removal, perimeter removal,
+          spread-out removal, and leave-only-k-active subsets to understand not just <em>how many</em>
+          sensors matter, but also <em>which ones</em> matter most.
+        </p>
+      </div>
+    </div>
+
+    <h3>Version v0.1 &mdash; Temperature-Only Masked Reconstruction Baseline</h3>
+    <p>
+      The first consolidated baseline predicts <strong>temperature only</strong> and evaluates how well the model
+      reconstructs masked sensors from the remaining Lab 1 measurements. This version established the new
+      train/validation/test workflow and showed that the model was already strong at low masking levels,
+      but still fragile when too many sensors were removed.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Masked Total</th>
+          <th>Variable</th>
+          <th>RMSE</th>
+          <th>MAE</th>
+          <th>R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Temperature</td><td>0.1253</td><td>0.1000</td><td>0.9596</td></tr>
+        <tr><td>3</td><td>Temperature</td><td>0.1699</td><td>0.1306</td><td>0.8965</td></tr>
+        <tr><td>6</td><td>Temperature</td><td>0.4045</td><td>0.3283</td><td>0.3795</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn-box">
+      <div class="ib-title">Takeaway from v0.1</div>
+      <p>
+        The baseline worked well when only a few sensors were missing, but performance collapsed at
+        <strong>6 masked sensors</strong>. This motivated the next redesign: joint temperature-humidity training,
+        wider masking during training, and stronger control over evaluation protocols.
+      </p>
+    </div>
+
+    <h3>Version v0.2.2 &mdash; Joint Temperature + Humidity Reconstruction</h3>
+    <p>
+      The next major upgrade predicts <strong>temperature and relative humidity together</strong> in a single model.
+      This version also introduced early stopping and a wider masking distribution during training.
+      The result was a large jump in robustness: the joint model remained accurate not only at low masking,
+      but even in the severe-sparsity regime.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Masked Total</th>
+          <th>Temp RMSE</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity RMSE</th>
+          <th>Humidity R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>0.0975</td><td>0.9616</td><td>0.4214</td><td>0.9845</td></tr>
+        <tr><td>3</td><td>0.1067</td><td>0.9564</td><td>0.4651</td><td>0.9809</td></tr>
+        <tr><td>6</td><td>0.1334</td><td>0.9454</td><td>0.5709</td><td>0.9725</td></tr>
+        <tr><td>9</td><td>0.2182</td><td>0.8659</td><td>0.9856</td><td>0.9241</td></tr>
+        <tr><td>12</td><td>0.5103</td><td>0.3652</td><td>2.8315</td><td>0.4482</td></tr>
+      </tbody>
+    </table>
+
+    <div class="green-box">
+      <div class="ib-title">Takeaway from v0.2.2</div>
+      <p>
+        The multi-output model stayed strong all the way to <strong>9 masked sensors</strong>, and only really broke down
+        at <strong>12 masked sensors</strong>. This was the point where the question shifted from
+        &ldquo;can the model reconstruct missing sensors?&rdquo; to &ldquo;which remaining sensors are the most valuable?&rdquo;
+      </p>
+    </div>
+
+    <h3>Version v0.3.2 &mdash; Targeted Sparsity Characterisation</h3>
+    <p>
+      To probe the sparsity boundary more carefully, v0.3.2 evaluated structured masking protocols for
+      <strong>8, 9, 10, 11, and 12 masked sensors</strong>. Instead of only using random masks, we also tested
+      central removal, perimeter removal, spatially spread removal, and leave-only-k-active subsets.
+      This reveals whether performance depends only on the number of active sensors or also on their spatial arrangement.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Masked Total</th>
+          <th>Best Protocol</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+          <th>Weakest Protocol</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>8</td>
+          <td>Spread removed / Perimeter removed</td>
+          <td>0.9332</td>
+          <td>0.9674</td>
+          <td>Central removed</td>
+          <td>0.9019</td>
+          <td>0.9551</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Spread removed / Perimeter removed</td>
+          <td>0.9255</td>
+          <td>0.9621</td>
+          <td>Central removed</td>
+          <td>0.8897</td>
+          <td>0.9520</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Spread removed</td>
+          <td>0.9239</td>
+          <td>0.9553</td>
+          <td>Central removed / Random</td>
+          <td>0.9000</td>
+          <td>0.9523</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Active central diagonal / Perimeter removed</td>
+          <td>0.9042</td>
+          <td>0.9535</td>
+          <td>Corner diagonal only / Random</td>
+          <td>0.8715</td>
+          <td>0.9399</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Spread removed</td>
+          <td>0.8643</td>
+          <td>0.9289</td>
+          <td>Center one only</td>
+          <td>0.6350</td>
+          <td>0.8103</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box">
+      <div class="ib-title">Main Interpretation from v0.3.2</div>
+      <p>
+        Even with <strong>11 masked sensors</strong>, the model still performs fairly well under multiple protocols.
+        The real performance cliff appears at <strong>12 masked sensors</strong>, where the exact spatial arrangement of the
+        remaining sensors becomes decisive. Spread-out coverage is much more informative than relying on a single central point.
+      </p>
+    </div>
+
+    <h3>Version v0.4.1 &mdash; Sensor Importance and Minimal Active Sets</h3>
+    <p>
+      Once the sparsity boundary was understood, the next step was to determine <strong>which sensors are actually necessary</strong>.
+      Version v0.4.1 adds three analyses: a one-at-a-time drop test, a greedy backward elimination path,
+      and an exhaustive search over all active subsets of size 1, 2, and 3.
+      The results show that the room contains a large amount of redundancy and that only a small,
+      well-placed subset of sensors is enough for strong reconstruction.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Most Expendable Sensors</div>
+        <p style="font-size:0.9rem;">
+          In the single-sensor drop study, removing sensors <strong>9</strong>, <strong>7</strong>, <strong>6</strong>, or <strong>10</strong>
+          had the smallest effect on the overall score. This suggests these locations are more redundant than the others.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Most Informative Sensors</div>
+        <p style="font-size:0.9rem;">
+          Sensors <strong>5</strong>, <strong>8</strong>, and <strong>3</strong> are the hardest to remove without hurting performance.
+          Sensor <strong>5</strong> is especially important: it survives until the very end of the backward elimination path
+          and is also the best single active sensor in the exhaustive search.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Main Practical Result</div>
+        <p style="font-size:0.9rem;">
+          The best <strong>2-sensor</strong> set already delivers strong reconstruction, and the best <strong>3-sensor</strong> set
+          comes surprisingly close to the full 13-sensor reference. In other words: the minimal useful set is much smaller than expected.
+        </p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Active Count</th>
+          <th>Best Active Sensors</th>
+          <th>Composite Score</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>[5]</td><td>0.8391</td><td>0.8140</td><td>0.8642</td></tr>
+        <tr><td>2</td><td>[5, 8]</td><td>0.9334</td><td>0.9157</td><td>0.9512</td></tr>
+        <tr><td>3</td><td>[2, 5, 8]</td><td>0.9445</td><td>0.9271</td><td>0.9618</td></tr>
+      </tbody>
+    </table>
+
+    <div class="arch-box">
+      <span class="hl">BACKWARD ELIMINATION ORDER</span><br/>
+      <span class="arrow">  9 &rarr; 7 &rarr; 1 &rarr; 13 &rarr; 12 &rarr; 4 &rarr; 6 &rarr; 10 &rarr; 3 &rarr; 11 &rarr; 2 &rarr; 8</span><br/>
+      <span class="arrow">  Sensor 5 is the final remaining sensor.</span><br/>
+      <br/>
+      <span class="hl">BEST FULL-REFERENCE PERFORMANCE</span><br/>
+      <span class="arrow">  All 13 active sensors:  R&sup2;<sub>temperature</sub> = 0.9384   |   R&sup2;<sub>humidity</sub> = 0.9745</span><br/>
+      <span class="arrow">  Best 3-sensor subset:  R&sup2;<sub>temperature</sub> = 0.9271   |   R&sup2;<sub>humidity</sub> = 0.9618</span><br/>
+      <span class="arrow">  Best 2-sensor subset:  R&sup2;<sub>temperature</sub> = 0.9157   |   R&sup2;<sub>humidity</sub> = 0.9512</span><br/>
+      <span class="arrow">  Best 1-sensor subset:  R&sup2;<sub>temperature</sub> = 0.8140   |   R&sup2;<sub>humidity</sub> = 0.8642</span>
+    </div>
+
+    <div class="green-box">
+      <div class="ib-title">Current Conclusion</div>
+      <p>
+        The newer DeepONet pipeline shows that Lab 1 is highly redundant spatially.
+        Strong temperature-humidity reconstruction is possible with only <strong>2&ndash;3 strategically placed sensors</strong>,
+        and even a single well-chosen sensor can recover much of the room state.
+        The next natural step is transfer: testing whether a model trained on Lab 1 can adapt to Lab 2.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- ===================== SECTION 11: FINAL MODEL ===================== -->
+<section id="final-model">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">11</div>
+      <span class="section-cat">Final Model Design</span>
+    </div>
+    <h2>Chosen Final Model (v0.5.3) — Why It Won and How It Works</h2>
+    <p>
+      The Step-5 architecture benchmark compared six closely related models: the compact comparison baseline (v0.5.1),
+      a wider snapshot model (v0.5.2), a deeper snapshot model (v0.5.3), a short-history LSTM branch model (v0.5.4),
+      a deep+wide model (v0.5.5), and a deep+GELU variant (v0.5.6). The strongest average score was achieved by the
+      LSTM model v0.5.4, but only by a tiny margin over v0.5.3. Because the gain was negligible while the architecture
+      was more complex, the project standardised on <strong>v0.5.3</strong>: the deep snapshot DeepONet with explicit masking.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Main Change</th>
+          <th>Mean R&sup2; (all comparison protocols)</th>
+          <th>Decision</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>v0.5.1</td><td>Compact benchmark reference</td><td>0.9195</td><td>Baseline only</td></tr>
+        <tr><td>v0.5.2</td><td>Wider snapshot MLP</td><td>0.9227</td><td>Small gain</td></tr>
+        <tr><td>v0.5.3</td><td>Deeper snapshot MLP (depth = 6)</td><td>0.9301</td><td><strong>Chosen final model</strong></td></tr>
+        <tr><td>v0.5.4</td><td>Short-window LSTM branch</td><td>0.9310</td><td>Tiny edge, but more complex</td></tr>
+        <tr><td>v0.5.5</td><td>Deep + wide</td><td>No clear gain</td><td>Rejected</td></tr>
+        <tr><td>v0.5.6</td><td>Deep + GELU</td><td>No clear gain</td><td>Rejected</td></tr>
+      </tbody>
+    </table>
+
+    <div class="green-box">
+      <div class="ib-title">Selection Logic</div>
+      <p>
+        Step 5 showed that <strong>depth mattered more than width</strong>, and that moving from tanh to GELU did not unlock a better model.
+        Because v0.5.3 stayed essentially tied with v0.5.4 while keeping a simpler operator structure and a cheaper transfer pipeline,
+        it became the model carried forward into the Lab1&rarr;Lab2 transfer study.
+      </p>
+    </div>
+
+    <h3>Architecture</h3>
+    <div class="arch-box">
+      <span class="hl">INPUTS</span><br/>
+      <span class="arrow">  Branch values:</span> 13 sensors &times; 2 channels (temperature, humidity) = <span class="hl2">26</span> scalar values<br/>
+      <span class="arrow">  Observed-mask:</span> 13 binary indicators showing which sensors are visible = <span class="hl2">13</span><br/>
+      <span class="arrow">  Trunk input:</span> query coordinate (x, y), normalised by room width and height = <span class="hl3">2</span><br/>
+      <br/>
+      <span class="hl">BRANCH MLP</span><br/>
+      <span class="arrow">  39 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 256</span>  (depth = 6, tanh activations)<br/>
+      <span class="arrow">  Output reshaped as</span> [batch, 2 variables, 128 latent channels]<br/>
+      <br/>
+      <span class="hl">TRUNK MLP</span><br/>
+      <span class="arrow">  2 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 256</span>  (depth = 6, tanh activations)<br/>
+      <span class="arrow">  Output reshaped as</span> [batch, 2 variables, 128 latent channels]<br/>
+      <br/>
+      <span class="hl">OUTPUT</span><br/>
+      <span class="arrow">  For each variable, prediction = inner product(branch, trunk) + learned bias</span><br/>
+      <span class="arrow">  Final output dimension = 2  (temperature and humidity at the queried coordinate)</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Why Keep the Trunk This Simple?</div>
+        <p style="font-size:0.9rem;">
+          The trunk sees only normalised coordinates. That is intentional: all temporal and sensor-state information lives in the branch,
+          while the trunk learns a purely spatial basis. This keeps the operator decomposition clean and makes transfer to a new room easier
+          to interpret because geometry enters only through the coordinate system.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Why Keep the Snapshot Branch?</div>
+        <p style="font-size:0.9rem;">
+          The LSTM branch gave only a tiny average gain. The project therefore chose the deeper snapshot branch instead: it captures the
+          spatial state very well, remains fast, and is easier to fine-tune in transfer experiments because there is no recurrent state to adapt.
+        </p>
+      </div>
+    </div>
+
+    <h3>Data Loading and Normalisation Strategy</h3>
+    <p>
+      The data pipeline is deliberately conservative to avoid leakage. For each run, the code reads the common time file
+      <strong>Time_5min.xlsx</strong> plus one file per variable (<strong>Temperature_5min.xlsx</strong> and <strong>Humidity_5min.xlsx</strong>),
+      extracts the 13 sensor columns, and stacks them into a tensor of shape <strong>[time, sensor, variable]</strong>.
+      Every raw value is divided by <strong>100</strong> before modelling so that the two channels live on similar numeric scales.
+      Any timestep containing a NaN anywhere in the full sensor-variable tensor is dropped completely, which guarantees that the operator
+      never sees partially missing raw data before masking is applied on purpose.
+    </p>
+
+    <div class="arch-box">
+      <span class="hl">NORMALISATION PIPELINE</span><br/>
+      <span class="arrow">  1.</span> Read all sensors for all selected variables at 5-minute resolution<br/>
+      <span class="arrow">  2.</span> Remove any timestep with a NaN in any sensor / variable entry<br/>
+      <span class="arrow">  3.</span> Build the blocked train / val / test split first<br/>
+      <span class="arrow">  4.</span> Compute one global mean and one global std <em>per variable</em> from the <strong>training split only</strong><br/>
+      <span class="arrow">  5.</span> Apply z-score normalisation to all splits using those training-only statistics<br/>
+      <span class="arrow">  6.</span> Denormalise back to physical units only for evaluation and reporting
+    </div>
+
+    <div class="info-box">
+      <div class="ib-title">Subtle but Important Detail</div>
+      <p>
+        The mean and standard deviation are computed across <strong>all training timesteps and all 13 sensors</strong> for each variable.
+        This means the model is not trying to learn separate sensor-wise calibration offsets inside the network. Instead, the network sees a
+        common standardised variable space and must learn spatial structure from the coordinates and masking pattern.
+      </p>
+    </div>
+
+    <h3>How Masking is Implemented</h3>
+    <p>
+      Earlier versions simply zero-filled missing sensors. That turned out to be ambiguous, because after z-score normalisation a value near zero
+      can also mean &ldquo;this sensor is close to the mean.&rdquo; The final design fixes that by feeding the model <strong>both</strong> the masked values and an
+      explicit observed/missing mask. During training, every sample chooses one target sensor and always hides it, then hides a random number of
+      additional sensors chosen uniformly between <strong>1 and 12</strong>. The branch therefore sees a broad sparsity distribution during training rather than
+      only one carefully scripted masking level.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Always Hide the Target</div>
+        <p style="font-size:0.9rem;">
+          Each sample is indexed by a timestep and a target sensor. The target sensor is always masked in the branch input and becomes the supervision target.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Random Extra Masks</div>
+        <p style="font-size:0.9rem;">
+          Extra missing sensors are sampled from the remaining 12 sensors. This makes the operator robust to a wide range of sparse deployment regimes.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Observed-Mask Channel</div>
+        <p style="font-size:0.9rem;">
+          The explicit 13-dimensional mask tells the network which zeros are true missingness and which are genuine near-mean standardised values.
+        </p>
+      </div>
+    </div>
+
+    <h3>Split Strategy: Benchmark vs. Transfer</h3>
+    <p>
+      The project uses <strong>two different blocked split policies</strong> for two different questions. In the architecture benchmark (v0.5.x), the model kept the
+      earlier blocked-window split so that all candidate architectures were compared under exactly the same conditions. Once the architecture was chosen,
+      the transfer study upgraded the split to a larger blocked design that is closer to a real held-out deployment scenario.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Purpose</th>
+          <th>Split Logic</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>v0.5.x benchmark</td>
+          <td>Compare architectures fairly</td>
+          <td>Compact blocked validation and test windows inherited from the earlier pipeline</td>
+          <td>Preserves strict comparability with all previous Lab 1 runs</td>
+        </tr>
+        <tr>
+          <td>v0.6.1 transfer</td>
+          <td>Train final Lab 1 source model</td>
+          <td><strong>Blocked 80/10/10</strong> on Lab 1 using 6-hour windows</td>
+          <td>Provides a stronger held-out source split for transfer</td>
+        </tr>
+        <tr>
+          <td>v0.6.1 transfer</td>
+          <td>Adapt / test on Lab 2</td>
+          <td><strong>Blocked 16/4/10</strong> on Lab 2 (adapt-train / adapt-val / test)</td>
+          <td>Keeps a clean unseen Lab 2 test set while reserving a small adaptation budget</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Optimisation Details</h3>
+    <div class="arch-box">
+      <span class="hl">TRAINING SETUP</span><br/>
+      <span class="arrow">  Batch size:</span> 4096<br/>
+      <span class="arrow">  Optimiser:</span> Adam<br/>
+      <span class="arrow">  Initial learning rate:</span> 1e-3<br/>
+      <span class="arrow">  Weight decay:</span> 0<br/>
+      <span class="arrow">  Scheduler:</span> cosine annealing over the full epoch budget<br/>
+      <span class="arrow">  Max epochs:</span> 150<br/>
+      <span class="arrow">  Early stopping:</span> patience = 20, min_delta = 1e-4<br/>
+      <span class="arrow">  Model selection:</span> save the best checkpoint on validation loss, evaluate that checkpoint only
+    </div>
+
+    <div class="warn-box">
+      <div class="ib-title">What We Learned from Step 5</div>
+      <p>
+        The project explicitly tested whether more width, recurrent temporal context, deeper+wide capacity, or GELU activations gave meaningful gains.
+        They did not. The practical sweet spot was the deep tanh snapshot model. That result is useful in itself: the bottleneck is not simply &ldquo;make the
+        network bigger,&rdquo; but rather choosing a masking formulation and split policy that expose the right reconstruction problem.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 12: LAB2 TRANSFER ===================== -->
+<section id="lab2-transfer">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">12</div>
+      <span class="section-cat">Transfer Learning</span>
+    </div>
+    <h2>Lab 1 &rarr; Lab 2 Transfer (v0.6.1 Phase 1)</h2>
+    <p>
+      After selecting v0.5.3 as the final source architecture, the next question was whether the model learned anything that generalises beyond Lab 1.
+      Lab 2 is a different room with a different aspect ratio, different sensor geometry, different equipment layout, and a different air-conditioning structure.
+      In the source paper, LAB2 is described as having <strong>two thermal focal points</strong> due to its two AC outlets, so transfer is a genuine domain-shift test,
+      not just another split of the same room.
+    </p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Phase 1 Transfer Modes</div>
+        <p style="font-size:0.9rem;">
+          Phase 1 evaluates the two transfer endpoints: <strong>zero-shot</strong> (no Lab 2 training at all) and <strong>full fine-tuning</strong>
+          (adapt the entire network on a small blocked Lab 2 adaptation split with a lower learning rate).
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Sensor Regimes</div>
+        <p style="font-size:0.9rem;">
+          Instead of only testing all 13 sensors, the transfer study also evaluates sparse deployment regimes on Lab 2:
+          all 13 active sensors, a 5-sensor subset, and a 3-sensor subset. This separates true domain transfer from sheer sensor-count effects.
+        </p>
+      </div>
+    </div>
+
+    <h3>Phase 1 Results</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Transfer Mode</th>
+          <th>Lab2 Protocol</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+          <th>Main Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Zero-shot</td><td>All 13 active</td><td>0.9029</td><td>0.8710</td><td>Strong transfer without any Lab 2 training</td></tr>
+        <tr><td>Zero-shot</td><td>5 active</td><td>0.8929</td><td>0.8425</td><td>Still meaningful under sparse deployment</td></tr>
+        <tr><td>Zero-shot</td><td>3 active</td><td>0.9113</td><td>0.8705</td><td>Chosen 3-sensor subset was surprisingly informative</td></tr>
+        <tr><td>Full fine-tune</td><td>All 13 active</td><td>0.9854</td><td>0.9721</td><td>Closes almost the entire transfer gap</td></tr>
+        <tr><td>Full fine-tune</td><td>5 active</td><td>0.9816</td><td>0.9692</td><td>High-quality sparse transfer</td></tr>
+        <tr><td>Full fine-tune</td><td>3 active</td><td>0.9818</td><td>0.9633</td><td>Excellent adaptation even under strong sparsity</td></tr>
+      </tbody>
+    </table>
+
+    <div class="green-box">
+      <div class="ib-title">Main Transfer Takeaway</div>
+      <p>
+        The source-trained Lab 1 model transfers to Lab 2 <strong>better than expected even zero-shot</strong>, and full fine-tuning becomes extremely strong.
+        For temperature, the fine-tuned Lab 2 model even reaches or exceeds the corresponding Lab 1 reference averages. This is strong evidence that the operator
+        is learning a transferable representation of indoor thermo-hygrometric structure rather than only memorising one room.
+      </p>
+    </div>
+
+    <div class="info-box">
+      <div class="ib-title">Why This Result Matters</div>
+      <p>
+        A digital twin is most useful when it can be deployed to a room that was never part of training. The zero-shot result shows that the model already carries
+        non-trivial cross-room information. The fine-tuning result then answers the practical question: if zero-shot is not enough, a relatively small amount of new
+        Lab 2 data is sufficient to adapt the model into a high-quality room-specific surrogate.
+      </p>
+    </div>
+
+    <h3>Phase 2 (Ongoing)</h3>
+    <p>
+      The next transfer stage is now running. Phase 2 tests <strong>head-only</strong> and <strong>partial fine-tune</strong> adaptation across many Lab 2 sensor subsets,
+      focusing on <strong>5</strong>, <strong>3</strong>, and <strong>2</strong> active sensors. The goal is no longer just to show transfer works; it is to determine
+      how much adaptation capacity is needed and which sparse Lab 2 sensor layouts are most informative.
+    </p>
+
+    <div class="arch-box">
+      <span class="hl">STEP 6 ROADMAP</span><br/>
+      <span class="arrow">  Phase 1:</span> zero-shot  +  full fine-tune  &nbsp;&nbsp;→&nbsp; completed<br/>
+      <span class="arrow">  Phase 2:</span> head-only + partial fine-tune across many 5/3/2-sensor subsets  &nbsp;&nbsp;→&nbsp; running<br/>
+      <span class="arrow">  Final question:</span> what is the minimum Lab 2 adaptation budget and minimum sensor set needed for reliable transfer?
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
+
+
+<!-- ===================== SECTION 13: PHASE 2 TRANSFER ===================== -->
+<section id="phase2-transfer">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">13</div>
+      <span class="section-cat">Transfer Adaptation Capacity</span>
+    </div>
+    <h2>Lab 2 Phase 2 — Head-Only vs. Partial Fine-Tune on Sparse Subsets</h2>
+    <p>
+      After Phase 1 established that <strong>zero-shot transfer is already meaningful</strong> and <strong>full fine-tuning is extremely strong</strong>,
+      the next question was not whether transfer works, but <em>how much adaptation capacity is actually needed</em>.
+      Phase 2 therefore compared two cheaper adaptation modes on many LAB2 sparse subsets: <strong>head-only</strong>, which updates only the final prediction head,
+      and <strong>partial fine-tune</strong>, which unfreezes a limited part of the pretrained operator.
+    </p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Phase 2 Goal</div>
+        <p style="font-size:0.9rem;">
+          Determine whether the strong Phase 1 full-fine-tune result can be approximated with a much cheaper adaptation strategy,
+          especially when only <strong>5</strong>, <strong>3</strong>, or <strong>2</strong> LAB2 sensors remain active.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Important Outcome</div>
+        <p style="font-size:0.9rem;">
+          Under the current partial recipe, <strong>head-only consistently outperformed partial fine-tuning</strong>. That means the useful low-cost adaptation mode is the most constrained one,
+          while the partially unfrozen variant destabilises the transferred representation rather than improving it.
+        </p>
+      </div>
+    </div>
+
+    <h3>Mean Phase 2 Results Across All Tested Subsets</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Active Sensors</th>
+          <th>Head-Only Temp R&sup2;</th>
+          <th>Head-Only Humidity R&sup2;</th>
+          <th>Partial FT Temp R&sup2;</th>
+          <th>Partial FT Humidity R&sup2;</th>
+          <th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>5 active</td><td>0.926</td><td>0.873</td><td>0.894</td><td>0.808</td><td>Head-only clearly better</td></tr>
+        <tr><td>3 active</td><td>0.919</td><td>0.860</td><td>0.888</td><td>0.799</td><td>Gap remains significant</td></tr>
+        <tr><td>2 active</td><td>0.905</td><td>0.843</td><td>0.876</td><td>0.780</td><td>Head-only remains preferable even under extreme sparsity</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn-box">
+      <div class="ib-title">Why Partial Fine-Tune Is Not Used in the Final Transfer Benchmark</div>
+      <p>
+        The current partial setup unfroze part of the pretrained operator but did <strong>not</strong> outperform head-only adaptation on any of the sparse regimes tested.
+        In practice, it landed in an unhelpful middle ground: more fragile than head-only, but not as powerful as full fine-tuning.
+        Because of that, the final transfer comparison below focuses on the three modes that matter most for the scientific story:
+        <strong>zero-shot</strong>, <strong>head-only</strong>, and <strong>full fine-tune</strong>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 14: UNIFIED BENCHMARK ===================== -->
+<section id="unified-transfer">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">14</div>
+      <span class="section-cat">Unified Benchmark</span>
+    </div>
+    <h2>Unified LAB1/LAB2 Transfer Benchmark on Selected Sparse Subsets</h2>
+    <p>
+      To make the transfer comparison fully consistent, the final benchmark re-evaluates the same saved models on a <strong>single unified protocol set</strong>:
+      <strong>all 13 active sensors</strong>, plus the <strong>top 5 subsets</strong> for <strong>k=5</strong>, <strong>k=3</strong>, and <strong>k=2</strong>.
+      These sparse subsets were selected from the head-only Phase 2 sweep and then re-evaluated for <strong>LAB1 reference</strong>, <strong>LAB2 zero-shot</strong>,
+      <strong>LAB2 head-only</strong>, and <strong>LAB2 full fine-tune</strong>. This removes the earlier apples-to-oranges problem between fixed and sampled protocols.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Selected Sparse Subsets</div>
+      <p>
+        <strong>Top 5 for k=5:</strong> [2,4,5,6,9], [3,4,5,6,7], [6,7,8,10,12], [4,6,8,10,12], [1,6,7,8,9].<br/>
+        <strong>Top 5 for k=3:</strong> [4,6,7], [4,6,9], [2,4,7], [5,6,9], [6,9,10].<br/>
+        <strong>Top 5 for k=2:</strong> [5,9], [2,7], [8,10], [5,7], [10,12].
+      </p>
+    </div>
+
+    <figure>
+      <img src="transfer_overview_top5_subsets_v063a.png" alt="Unified transfer overview on selected sparse subsets" />
+      <figcaption>
+        <strong>Unified transfer overview.</strong> Mean R&sup2; across the common evaluation set: all 13 active sensors and the top-5 subsets for k=5, k=3, and k=2.
+        The LAB1 reference acts as the in-domain upper bound; zero-shot establishes the raw transfer baseline; head-only shows the best low-cost adaptation;
+        and full fine-tuning gives the strongest final performance.
+      </figcaption>
+    </figure>
+
+    <h3>Key Numbers from the Unified Benchmark</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Protocol Group</th>
+          <th>Mode</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+          <th>Reading</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>All 13 active</td><td>LAB1 reference</td><td>0.966</td><td>0.986</td><td>In-domain upper bound</td></tr>
+        <tr><td>All 13 active</td><td>LAB2 zero-shot</td><td>0.903</td><td>0.871</td><td>Already strong across rooms</td></tr>
+        <tr><td>All 13 active</td><td>LAB2 head-only</td><td>0.943</td><td>0.899</td><td>Meaningful recovery with very cheap adaptation</td></tr>
+        <tr><td>All 13 active</td><td>LAB2 full fine-tune</td><td>0.985</td><td>0.972</td><td>Best overall transfer result</td></tr>
+        <tr><td>Top 5 (k=5) mean</td><td>LAB2 zero-shot</td><td>0.895</td><td>0.860</td><td>Sparse transfer remains viable</td></tr>
+        <tr><td>Top 5 (k=5) mean</td><td>LAB2 head-only</td><td>0.938</td><td>0.889</td><td>Best cheap sparse adaptation</td></tr>
+        <tr><td>Top 5 (k=5) mean</td><td>LAB2 full fine-tune</td><td>0.981</td><td>0.968</td><td>Near-reference quality under sparse sensing</td></tr>
+        <tr><td>Top 5 (k=3) mean</td><td>LAB2 zero-shot</td><td>0.893</td><td>0.845</td><td>Still useful under stronger sparsity</td></tr>
+        <tr><td>Top 5 (k=3) mean</td><td>LAB2 head-only</td><td>0.938</td><td>0.895</td><td>Consistent improvement over zero-shot</td></tr>
+        <tr><td>Top 5 (k=2) mean</td><td>LAB2 head-only</td><td>0.934</td><td>0.872</td><td>Even 2-sensor transfer is workable with adaptation</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Per-Sensor All-13 Transfer Maps</h3>
+    <p>
+      The all-13 transfer maps make the spatial story visible. The zero-shot model already transfers well on many LAB2 locations,
+      but the weak zones are concentrated in the lower portion of the room, especially around sensors <strong>7</strong> and <strong>9</strong>.
+      Head-only adaptation recovers much of that local degradation, while full fine-tuning restores near-uniform high performance.
+    </p>
+
+    <div class="grid-2">
+      <figure>
+        <img src="sensor_map_all13_temperature_v063a.png" alt="All-13 temperature transfer map" />
+        <figcaption>
+          <strong>All-13 temperature transfer map.</strong> The biggest zero-shot temperature errors in LAB2 appear around sensor 7 (R&sup2; = 0.650) and sensor 9 (R&sup2; = 0.771).
+          Head-only lifts these to 0.903 and 0.861, and full fine-tuning raises them further to 0.971 and 0.982.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="sensor_map_all13_humidity_v063a.png" alt="All-13 humidity transfer map" />
+        <figcaption>
+          <strong>All-13 humidity transfer map.</strong> The zero-shot humidity transfer is hardest around sensors 7 and 9 (R&sup2; = 0.673 and 0.568).
+          Head-only improves those to 0.893 and 0.747, and full fine-tuning reaches 0.975 and 0.967. Some already-strong sensors change only slightly,
+          showing that head-only mostly corrects the difficult spatial regions instead of uniformly shifting the whole map.
+        </figcaption>
+      </figure>
+    </div>
+
+    <h3>Subset-Level Comparisons</h3>
+    <p>
+      The next three figures show the exact top-5 subsets for each sparsity level. These are not averages over all possible subsets; they are the strongest subsets discovered in the head-only sweep,
+      then re-evaluated under zero-shot, head-only, and full fine-tuning. This makes the comparison fully consistent and directly interpretable.
+    </p>
+
+    <figure>
+      <img src="transfer_compare_top5_k5_v063a.png" alt="Top 5 k equals 5 transfer comparison" />
+      <figcaption>
+        <strong>Top 5 subsets with k=5.</strong> For the best 5-sensor LAB2 layouts, head-only adaptation closes a large part of the zero-shot gap, while full fine-tuning reaches
+        roughly 0.981 temperature R&sup2; and 0.968 humidity R&sup2; on average across the five selected subsets.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="transfer_compare_top5_k3_v063a.png" alt="Top 5 k equals 3 transfer comparison" />
+      <figcaption>
+        <strong>Top 5 subsets with k=3.</strong> Even under only three active sensors, head-only adaptation remains consistently better than zero-shot.
+        Full fine-tuning still pushes the model to about 0.975 temperature R&sup2; and 0.963 humidity R&sup2; on average across the selected 3-sensor subsets.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="transfer_compare_top5_k2_v063a.png" alt="Top 5 k equals 2 transfer comparison" />
+      <figcaption>
+        <strong>Top 5 subsets with k=2.</strong> The 2-sensor case is the strongest stress test in this project. Zero-shot remains usable, head-only still improves it,
+        and full fine-tuning remains remarkably strong, with average R&sup2; around 0.976 for temperature and 0.960 for humidity across the top five 2-sensor subsets.
+      </figcaption>
+    </figure>
+
+    <div class="green-box">
+      <div class="ib-title">Unified Transfer Takeaway</div>
+      <p>
+        The full transfer story is now clear. <strong>Zero-shot transfer is genuinely good</strong>; <strong>head-only adaptation is a useful and computationally cheap improvement</strong>;
+        and <strong>full fine-tuning is the strongest mode by a wide margin</strong>. The most important scientific result is that the model does not collapse under room transfer, even under severe sparsity.
+        Instead, it retains meaningful predictive structure and can be adapted to high accuracy with a relatively small amount of LAB2 data.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+
+</body>
+</html>
