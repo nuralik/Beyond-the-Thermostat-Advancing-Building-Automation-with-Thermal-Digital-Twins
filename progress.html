@@ -323,6 +323,10 @@
   <a href="#lstm-pinn">LSTM-PINN</a>
   <a href="#uncertainty">Uncertainty</a>
   <a href="#latest-lab1">Latest Results</a>
+  <a href="#final-model">Final Model</a>
+  <a href="#lab2-transfer">Lab2 Transfer</a>
+  <a href="#phase2-transfer">Phase 2 Transfer</a>
+  <a href="#unified-transfer">Unified Benchmark</a>
 </nav>
 
 <!-- HERO -->
@@ -1211,7 +1215,6 @@
 
 <footer>
   ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
-<footer>
 
 
 <!-- ===================== SECTION 10: LATEST LAB1 RESULTS ===================== -->
@@ -1487,9 +1490,492 @@
   </div>
 </section>
 
+
+
+<!-- ===================== SECTION 11: FINAL MODEL ===================== -->
+<section id="final-model">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">11</div>
+      <span class="section-cat">Final Model Design</span>
+    </div>
+    <h2>Chosen Final Model (v0.5.3) — Why It Won and How It Works</h2>
+    <p>
+      The Step-5 architecture benchmark compared six closely related models: the compact comparison baseline (v0.5.1),
+      a wider snapshot model (v0.5.2), a deeper snapshot model (v0.5.3), a short-history LSTM branch model (v0.5.4),
+      a deep+wide model (v0.5.5), and a deep+GELU variant (v0.5.6). The strongest average score was achieved by the
+      LSTM model v0.5.4, but only by a tiny margin over v0.5.3. Because the gain was negligible while the architecture
+      was more complex, the project standardised on <strong>v0.5.3</strong>: the deep snapshot DeepONet with explicit masking.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Main Change</th>
+          <th>Mean R&sup2; (all comparison protocols)</th>
+          <th>Decision</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>v0.5.1</td><td>Compact benchmark reference</td><td>0.9195</td><td>Baseline only</td></tr>
+        <tr><td>v0.5.2</td><td>Wider snapshot MLP</td><td>0.9227</td><td>Small gain</td></tr>
+        <tr><td>v0.5.3</td><td>Deeper snapshot MLP (depth = 6)</td><td>0.9301</td><td><strong>Chosen final model</strong></td></tr>
+        <tr><td>v0.5.4</td><td>Short-window LSTM branch</td><td>0.9310</td><td>Tiny edge, but more complex</td></tr>
+        <tr><td>v0.5.5</td><td>Deep + wide</td><td>No clear gain</td><td>Rejected</td></tr>
+        <tr><td>v0.5.6</td><td>Deep + GELU</td><td>No clear gain</td><td>Rejected</td></tr>
+      </tbody>
+    </table>
+
+    <div class="green-box">
+      <div class="ib-title">Selection Logic</div>
+      <p>
+        Step 5 showed that <strong>depth mattered more than width</strong>, and that moving from tanh to GELU did not unlock a better model.
+        Because v0.5.3 stayed essentially tied with v0.5.4 while keeping a simpler operator structure and a cheaper transfer pipeline,
+        it became the model carried forward into the Lab1&rarr;Lab2 transfer study.
+      </p>
+    </div>
+
+    <h3>Architecture</h3>
+    <div class="arch-box">
+      <span class="hl">INPUTS</span><br/>
+      <span class="arrow">  Branch values:</span> 13 sensors &times; 2 channels (temperature, humidity) = <span class="hl2">26</span> scalar values<br/>
+      <span class="arrow">  Observed-mask:</span> 13 binary indicators showing which sensors are visible = <span class="hl2">13</span><br/>
+      <span class="arrow">  Trunk input:</span> query coordinate (x, y), normalised by room width and height = <span class="hl3">2</span><br/>
+      <br/>
+      <span class="hl">BRANCH MLP</span><br/>
+      <span class="arrow">  39 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 256</span>  (depth = 6, tanh activations)<br/>
+      <span class="arrow">  Output reshaped as</span> [batch, 2 variables, 128 latent channels]<br/>
+      <br/>
+      <span class="hl">TRUNK MLP</span><br/>
+      <span class="arrow">  2 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 128 &rarr; 256</span>  (depth = 6, tanh activations)<br/>
+      <span class="arrow">  Output reshaped as</span> [batch, 2 variables, 128 latent channels]<br/>
+      <br/>
+      <span class="hl">OUTPUT</span><br/>
+      <span class="arrow">  For each variable, prediction = inner product(branch, trunk) + learned bias</span><br/>
+      <span class="arrow">  Final output dimension = 2  (temperature and humidity at the queried coordinate)</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Why Keep the Trunk This Simple?</div>
+        <p style="font-size:0.9rem;">
+          The trunk sees only normalised coordinates. That is intentional: all temporal and sensor-state information lives in the branch,
+          while the trunk learns a purely spatial basis. This keeps the operator decomposition clean and makes transfer to a new room easier
+          to interpret because geometry enters only through the coordinate system.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Why Keep the Snapshot Branch?</div>
+        <p style="font-size:0.9rem;">
+          The LSTM branch gave only a tiny average gain. The project therefore chose the deeper snapshot branch instead: it captures the
+          spatial state very well, remains fast, and is easier to fine-tune in transfer experiments because there is no recurrent state to adapt.
+        </p>
+      </div>
+    </div>
+
+    <h3>Data Loading and Normalisation Strategy</h3>
+    <p>
+      The data pipeline is deliberately conservative to avoid leakage. For each run, the code reads the common time file
+      <strong>Time_5min.xlsx</strong> plus one file per variable (<strong>Temperature_5min.xlsx</strong> and <strong>Humidity_5min.xlsx</strong>),
+      extracts the 13 sensor columns, and stacks them into a tensor of shape <strong>[time, sensor, variable]</strong>.
+      Every raw value is divided by <strong>100</strong> before modelling so that the two channels live on similar numeric scales.
+      Any timestep containing a NaN anywhere in the full sensor-variable tensor is dropped completely, which guarantees that the operator
+      never sees partially missing raw data before masking is applied on purpose.
+    </p>
+
+    <div class="arch-box">
+      <span class="hl">NORMALISATION PIPELINE</span><br/>
+      <span class="arrow">  1.</span> Read all sensors for all selected variables at 5-minute resolution<br/>
+      <span class="arrow">  2.</span> Remove any timestep with a NaN in any sensor / variable entry<br/>
+      <span class="arrow">  3.</span> Build the blocked train / val / test split first<br/>
+      <span class="arrow">  4.</span> Compute one global mean and one global std <em>per variable</em> from the <strong>training split only</strong><br/>
+      <span class="arrow">  5.</span> Apply z-score normalisation to all splits using those training-only statistics<br/>
+      <span class="arrow">  6.</span> Denormalise back to physical units only for evaluation and reporting
+    </div>
+
+    <div class="info-box">
+      <div class="ib-title">Subtle but Important Detail</div>
+      <p>
+        The mean and standard deviation are computed across <strong>all training timesteps and all 13 sensors</strong> for each variable.
+        This means the model is not trying to learn separate sensor-wise calibration offsets inside the network. Instead, the network sees a
+        common standardised variable space and must learn spatial structure from the coordinates and masking pattern.
+      </p>
+    </div>
+
+    <h3>How Masking is Implemented</h3>
+    <p>
+      Earlier versions simply zero-filled missing sensors. That turned out to be ambiguous, because after z-score normalisation a value near zero
+      can also mean &ldquo;this sensor is close to the mean.&rdquo; The final design fixes that by feeding the model <strong>both</strong> the masked values and an
+      explicit observed/missing mask. During training, every sample chooses one target sensor and always hides it, then hides a random number of
+      additional sensors chosen uniformly between <strong>1 and 12</strong>. The branch therefore sees a broad sparsity distribution during training rather than
+      only one carefully scripted masking level.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Always Hide the Target</div>
+        <p style="font-size:0.9rem;">
+          Each sample is indexed by a timestep and a target sensor. The target sensor is always masked in the branch input and becomes the supervision target.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Random Extra Masks</div>
+        <p style="font-size:0.9rem;">
+          Extra missing sensors are sampled from the remaining 12 sensors. This makes the operator robust to a wide range of sparse deployment regimes.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Observed-Mask Channel</div>
+        <p style="font-size:0.9rem;">
+          The explicit 13-dimensional mask tells the network which zeros are true missingness and which are genuine near-mean standardised values.
+        </p>
+      </div>
+    </div>
+
+    <h3>Split Strategy: Benchmark vs. Transfer</h3>
+    <p>
+      The project uses <strong>two different blocked split policies</strong> for two different questions. In the architecture benchmark (v0.5.x), the model kept the
+      earlier blocked-window split so that all candidate architectures were compared under exactly the same conditions. Once the architecture was chosen,
+      the transfer study upgraded the split to a larger blocked design that is closer to a real held-out deployment scenario.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Purpose</th>
+          <th>Split Logic</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>v0.5.x benchmark</td>
+          <td>Compare architectures fairly</td>
+          <td>Compact blocked validation and test windows inherited from the earlier pipeline</td>
+          <td>Preserves strict comparability with all previous Lab 1 runs</td>
+        </tr>
+        <tr>
+          <td>v0.6.1 transfer</td>
+          <td>Train final Lab 1 source model</td>
+          <td><strong>Blocked 80/10/10</strong> on Lab 1 using 6-hour windows</td>
+          <td>Provides a stronger held-out source split for transfer</td>
+        </tr>
+        <tr>
+          <td>v0.6.1 transfer</td>
+          <td>Adapt / test on Lab 2</td>
+          <td><strong>Blocked 16/4/10</strong> on Lab 2 (adapt-train / adapt-val / test)</td>
+          <td>Keeps a clean unseen Lab 2 test set while reserving a small adaptation budget</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Optimisation Details</h3>
+    <div class="arch-box">
+      <span class="hl">TRAINING SETUP</span><br/>
+      <span class="arrow">  Batch size:</span> 4096<br/>
+      <span class="arrow">  Optimiser:</span> Adam<br/>
+      <span class="arrow">  Initial learning rate:</span> 1e-3<br/>
+      <span class="arrow">  Weight decay:</span> 0<br/>
+      <span class="arrow">  Scheduler:</span> cosine annealing over the full epoch budget<br/>
+      <span class="arrow">  Max epochs:</span> 150<br/>
+      <span class="arrow">  Early stopping:</span> patience = 20, min_delta = 1e-4<br/>
+      <span class="arrow">  Model selection:</span> save the best checkpoint on validation loss, evaluate that checkpoint only
+    </div>
+
+    <div class="warn-box">
+      <div class="ib-title">What We Learned from Step 5</div>
+      <p>
+        The project explicitly tested whether more width, recurrent temporal context, deeper+wide capacity, or GELU activations gave meaningful gains.
+        They did not. The practical sweet spot was the deep tanh snapshot model. That result is useful in itself: the bottleneck is not simply &ldquo;make the
+        network bigger,&rdquo; but rather choosing a masking formulation and split policy that expose the right reconstruction problem.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 12: LAB2 TRANSFER ===================== -->
+<section id="lab2-transfer">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">12</div>
+      <span class="section-cat">Transfer Learning</span>
+    </div>
+    <h2>Lab 1 &rarr; Lab 2 Transfer (v0.6.1 Phase 1)</h2>
+    <p>
+      After selecting v0.5.3 as the final source architecture, the next question was whether the model learned anything that generalises beyond Lab 1.
+      Lab 2 is a different room with a different aspect ratio, different sensor geometry, different equipment layout, and a different air-conditioning structure.
+      In the source paper, LAB2 is described as having <strong>two thermal focal points</strong> due to its two AC outlets, so transfer is a genuine domain-shift test,
+      not just another split of the same room.
+    </p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Phase 1 Transfer Modes</div>
+        <p style="font-size:0.9rem;">
+          Phase 1 evaluates the two transfer endpoints: <strong>zero-shot</strong> (no Lab 2 training at all) and <strong>full fine-tuning</strong>
+          (adapt the entire network on a small blocked Lab 2 adaptation split with a lower learning rate).
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Sensor Regimes</div>
+        <p style="font-size:0.9rem;">
+          Instead of only testing all 13 sensors, the transfer study also evaluates sparse deployment regimes on Lab 2:
+          all 13 active sensors, a 5-sensor subset, and a 3-sensor subset. This separates true domain transfer from sheer sensor-count effects.
+        </p>
+      </div>
+    </div>
+
+    <h3>Phase 1 Results</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Transfer Mode</th>
+          <th>Lab2 Protocol</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+          <th>Main Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Zero-shot</td><td>All 13 active</td><td>0.9029</td><td>0.8710</td><td>Strong transfer without any Lab 2 training</td></tr>
+        <tr><td>Zero-shot</td><td>5 active</td><td>0.8929</td><td>0.8425</td><td>Still meaningful under sparse deployment</td></tr>
+        <tr><td>Zero-shot</td><td>3 active</td><td>0.9113</td><td>0.8705</td><td>Chosen 3-sensor subset was surprisingly informative</td></tr>
+        <tr><td>Full fine-tune</td><td>All 13 active</td><td>0.9854</td><td>0.9721</td><td>Closes almost the entire transfer gap</td></tr>
+        <tr><td>Full fine-tune</td><td>5 active</td><td>0.9816</td><td>0.9692</td><td>High-quality sparse transfer</td></tr>
+        <tr><td>Full fine-tune</td><td>3 active</td><td>0.9818</td><td>0.9633</td><td>Excellent adaptation even under strong sparsity</td></tr>
+      </tbody>
+    </table>
+
+    <div class="green-box">
+      <div class="ib-title">Main Transfer Takeaway</div>
+      <p>
+        The source-trained Lab 1 model transfers to Lab 2 <strong>better than expected even zero-shot</strong>, and full fine-tuning becomes extremely strong.
+        For temperature, the fine-tuned Lab 2 model even reaches or exceeds the corresponding Lab 1 reference averages. This is strong evidence that the operator
+        is learning a transferable representation of indoor thermo-hygrometric structure rather than only memorising one room.
+      </p>
+    </div>
+
+    <div class="info-box">
+      <div class="ib-title">Why This Result Matters</div>
+      <p>
+        A digital twin is most useful when it can be deployed to a room that was never part of training. The zero-shot result shows that the model already carries
+        non-trivial cross-room information. The fine-tuning result then answers the practical question: if zero-shot is not enough, a relatively small amount of new
+        Lab 2 data is sufficient to adapt the model into a high-quality room-specific surrogate.
+      </p>
+    </div>
+
+    <h3>Phase 2 (Ongoing)</h3>
+    <p>
+      The next transfer stage is now running. Phase 2 tests <strong>head-only</strong> and <strong>partial fine-tune</strong> adaptation across many Lab 2 sensor subsets,
+      focusing on <strong>5</strong>, <strong>3</strong>, and <strong>2</strong> active sensors. The goal is no longer just to show transfer works; it is to determine
+      how much adaptation capacity is needed and which sparse Lab 2 sensor layouts are most informative.
+    </p>
+
+    <div class="arch-box">
+      <span class="hl">STEP 6 ROADMAP</span><br/>
+      <span class="arrow">  Phase 1:</span> zero-shot  +  full fine-tune  &nbsp;&nbsp;→&nbsp; completed<br/>
+      <span class="arrow">  Phase 2:</span> head-only + partial fine-tune across many 5/3/2-sensor subsets  &nbsp;&nbsp;→&nbsp; running<br/>
+      <span class="arrow">  Final question:</span> what is the minimum Lab 2 adaptation budget and minimum sensor set needed for reliable transfer?
+    </div>
+  </div>
+</section>
+
+
 <footer>
-  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, Entire Dataset &nbsp;·&nbsp; Built with DeepONet
-</footer>
+  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
+
+
+<!-- ===================== SECTION 13: PHASE 2 TRANSFER ===================== -->
+<section id="phase2-transfer">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">13</div>
+      <span class="section-cat">Transfer Adaptation Capacity</span>
+    </div>
+    <h2>Lab 2 Phase 2 — Head-Only vs. Partial Fine-Tune on Sparse Subsets</h2>
+    <p>
+      After Phase 1 established that <strong>zero-shot transfer is already meaningful</strong> and <strong>full fine-tuning is extremely strong</strong>,
+      the next question was not whether transfer works, but <em>how much adaptation capacity is actually needed</em>.
+      Phase 2 therefore compared two cheaper adaptation modes on many LAB2 sparse subsets: <strong>head-only</strong>, which updates only the final prediction head,
+      and <strong>partial fine-tune</strong>, which unfreezes a limited part of the pretrained operator.
+    </p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Phase 2 Goal</div>
+        <p style="font-size:0.9rem;">
+          Determine whether the strong Phase 1 full-fine-tune result can be approximated with a much cheaper adaptation strategy,
+          especially when only <strong>5</strong>, <strong>3</strong>, or <strong>2</strong> LAB2 sensors remain active.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title">Important Outcome</div>
+        <p style="font-size:0.9rem;">
+          Under the current partial recipe, <strong>head-only consistently outperformed partial fine-tuning</strong>. That means the useful low-cost adaptation mode is the most constrained one,
+          while the partially unfrozen variant destabilises the transferred representation rather than improving it.
+        </p>
+      </div>
+    </div>
+
+    <h3>Mean Phase 2 Results Across All Tested Subsets</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Active Sensors</th>
+          <th>Head-Only Temp R&sup2;</th>
+          <th>Head-Only Humidity R&sup2;</th>
+          <th>Partial FT Temp R&sup2;</th>
+          <th>Partial FT Humidity R&sup2;</th>
+          <th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>5 active</td><td>0.926</td><td>0.873</td><td>0.894</td><td>0.808</td><td>Head-only clearly better</td></tr>
+        <tr><td>3 active</td><td>0.919</td><td>0.860</td><td>0.888</td><td>0.799</td><td>Gap remains significant</td></tr>
+        <tr><td>2 active</td><td>0.905</td><td>0.843</td><td>0.876</td><td>0.780</td><td>Head-only remains preferable even under extreme sparsity</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn-box">
+      <div class="ib-title">Why Partial Fine-Tune Is Not Used in the Final Transfer Benchmark</div>
+      <p>
+        The current partial setup unfroze part of the pretrained operator but did <strong>not</strong> outperform head-only adaptation on any of the sparse regimes tested.
+        In practice, it landed in an unhelpful middle ground: more fragile than head-only, but not as powerful as full fine-tuning.
+        Because of that, the final transfer comparison below focuses on the three modes that matter most for the scientific story:
+        <strong>zero-shot</strong>, <strong>head-only</strong>, and <strong>full fine-tune</strong>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 14: UNIFIED BENCHMARK ===================== -->
+<section id="unified-transfer">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">14</div>
+      <span class="section-cat">Unified Benchmark</span>
+    </div>
+    <h2>Unified LAB1/LAB2 Transfer Benchmark on Selected Sparse Subsets</h2>
+    <p>
+      To make the transfer comparison fully consistent, the final benchmark re-evaluates the same saved models on a <strong>single unified protocol set</strong>:
+      <strong>all 13 active sensors</strong>, plus the <strong>top 5 subsets</strong> for <strong>k=5</strong>, <strong>k=3</strong>, and <strong>k=2</strong>.
+      These sparse subsets were selected from the head-only Phase 2 sweep and then re-evaluated for <strong>LAB1 reference</strong>, <strong>LAB2 zero-shot</strong>,
+      <strong>LAB2 head-only</strong>, and <strong>LAB2 full fine-tune</strong>. This removes the earlier apples-to-oranges problem between fixed and sampled protocols.
+    </p>
+
+    <div class="info-box">
+      <div class="ib-title">Selected Sparse Subsets</div>
+      <p>
+        <strong>Top 5 for k=5:</strong> [2,4,5,6,9], [3,4,5,6,7], [6,7,8,10,12], [4,6,8,10,12], [1,6,7,8,9].<br/>
+        <strong>Top 5 for k=3:</strong> [4,6,7], [4,6,9], [2,4,7], [5,6,9], [6,9,10].<br/>
+        <strong>Top 5 for k=2:</strong> [5,9], [2,7], [8,10], [5,7], [10,12].
+      </p>
+    </div>
+
+    <figure>
+      <img src="transfer_overview_top5_subsets_v063a.png" alt="Unified transfer overview on selected sparse subsets" />
+      <figcaption>
+        <strong>Unified transfer overview.</strong> Mean R&sup2; across the common evaluation set: all 13 active sensors and the top-5 subsets for k=5, k=3, and k=2.
+        The LAB1 reference acts as the in-domain upper bound; zero-shot establishes the raw transfer baseline; head-only shows the best low-cost adaptation;
+        and full fine-tuning gives the strongest final performance.
+      </figcaption>
+    </figure>
+
+    <h3>Key Numbers from the Unified Benchmark</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Protocol Group</th>
+          <th>Mode</th>
+          <th>Temp R&sup2;</th>
+          <th>Humidity R&sup2;</th>
+          <th>Reading</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>All 13 active</td><td>LAB1 reference</td><td>0.966</td><td>0.986</td><td>In-domain upper bound</td></tr>
+        <tr><td>All 13 active</td><td>LAB2 zero-shot</td><td>0.903</td><td>0.871</td><td>Already strong across rooms</td></tr>
+        <tr><td>All 13 active</td><td>LAB2 head-only</td><td>0.943</td><td>0.899</td><td>Meaningful recovery with very cheap adaptation</td></tr>
+        <tr><td>All 13 active</td><td>LAB2 full fine-tune</td><td>0.985</td><td>0.972</td><td>Best overall transfer result</td></tr>
+        <tr><td>Top 5 (k=5) mean</td><td>LAB2 zero-shot</td><td>0.895</td><td>0.860</td><td>Sparse transfer remains viable</td></tr>
+        <tr><td>Top 5 (k=5) mean</td><td>LAB2 head-only</td><td>0.938</td><td>0.889</td><td>Best cheap sparse adaptation</td></tr>
+        <tr><td>Top 5 (k=5) mean</td><td>LAB2 full fine-tune</td><td>0.981</td><td>0.968</td><td>Near-reference quality under sparse sensing</td></tr>
+        <tr><td>Top 5 (k=3) mean</td><td>LAB2 zero-shot</td><td>0.893</td><td>0.845</td><td>Still useful under stronger sparsity</td></tr>
+        <tr><td>Top 5 (k=3) mean</td><td>LAB2 head-only</td><td>0.938</td><td>0.895</td><td>Consistent improvement over zero-shot</td></tr>
+        <tr><td>Top 5 (k=2) mean</td><td>LAB2 head-only</td><td>0.934</td><td>0.872</td><td>Even 2-sensor transfer is workable with adaptation</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Per-Sensor All-13 Transfer Maps</h3>
+    <p>
+      The all-13 transfer maps make the spatial story visible. The zero-shot model already transfers well on many LAB2 locations,
+      but the weak zones are concentrated in the lower portion of the room, especially around sensors <strong>7</strong> and <strong>9</strong>.
+      Head-only adaptation recovers much of that local degradation, while full fine-tuning restores near-uniform high performance.
+    </p>
+
+    <div class="grid-2">
+      <figure>
+        <img src="sensor_map_all13_temperature_v063a.png" alt="All-13 temperature transfer map" />
+        <figcaption>
+          <strong>All-13 temperature transfer map.</strong> The biggest zero-shot temperature errors in LAB2 appear around sensor 7 (R&sup2; = 0.650) and sensor 9 (R&sup2; = 0.771).
+          Head-only lifts these to 0.903 and 0.861, and full fine-tuning raises them further to 0.971 and 0.982.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="sensor_map_all13_humidity_v063a.png" alt="All-13 humidity transfer map" />
+        <figcaption>
+          <strong>All-13 humidity transfer map.</strong> The zero-shot humidity transfer is hardest around sensors 7 and 9 (R&sup2; = 0.673 and 0.568).
+          Head-only improves those to 0.893 and 0.747, and full fine-tuning reaches 0.975 and 0.967. Some already-strong sensors change only slightly,
+          showing that head-only mostly corrects the difficult spatial regions instead of uniformly shifting the whole map.
+        </figcaption>
+      </figure>
+    </div>
+
+    <h3>Subset-Level Comparisons</h3>
+    <p>
+      The next three figures show the exact top-5 subsets for each sparsity level. These are not averages over all possible subsets; they are the strongest subsets discovered in the head-only sweep,
+      then re-evaluated under zero-shot, head-only, and full fine-tuning. This makes the comparison fully consistent and directly interpretable.
+    </p>
+
+    <figure>
+      <img src="transfer_compare_top5_k5_v063a.png" alt="Top 5 k equals 5 transfer comparison" />
+      <figcaption>
+        <strong>Top 5 subsets with k=5.</strong> For the best 5-sensor LAB2 layouts, head-only adaptation closes a large part of the zero-shot gap, while full fine-tuning reaches
+        roughly 0.981 temperature R&sup2; and 0.968 humidity R&sup2; on average across the five selected subsets.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="transfer_compare_top5_k3_v063a.png" alt="Top 5 k equals 3 transfer comparison" />
+      <figcaption>
+        <strong>Top 5 subsets with k=3.</strong> Even under only three active sensors, head-only adaptation remains consistently better than zero-shot.
+        Full fine-tuning still pushes the model to about 0.975 temperature R&sup2; and 0.963 humidity R&sup2; on average across the selected 3-sensor subsets.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="transfer_compare_top5_k2_v063a.png" alt="Top 5 k equals 2 transfer comparison" />
+      <figcaption>
+        <strong>Top 5 subsets with k=2.</strong> The 2-sensor case is the strongest stress test in this project. Zero-shot remains usable, head-only still improves it,
+        and full fine-tuning remains remarkably strong, with average R&sup2; around 0.976 for temperature and 0.960 for humidity across the top five 2-sensor subsets.
+      </figcaption>
+    </figure>
+
+    <div class="green-box">
+      <div class="ib-title">Unified Transfer Takeaway</div>
+      <p>
+        The full transfer story is now clear. <strong>Zero-shot transfer is genuinely good</strong>; <strong>head-only adaptation is a useful and computationally cheap improvement</strong>;
+        and <strong>full fine-tuning is the strongest mode by a wide margin</strong>. The most important scientific result is that the model does not collapse under room transfer, even under severe sparsity.
+        Instead, it retains meaningful predictive structure and can be adapted to high accuracy with a relatively small amount of LAB2 data.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<footer>
 
 </body>
 </html>
