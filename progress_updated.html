@@ -1875,7 +1875,7 @@
     </div>
 
     <figure>
-      <img src="deepOnet/runs/lab_transfer_figures_v0.6.3a/transfer_overview_top5_subsets_v063a.png" alt="Unified transfer overview on selected sparse subsets" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_overview_top5_subsets_v063a.png" alt="Unified transfer overview on selected sparse subsets" />
       <figcaption>
         <strong>Unified transfer overview.</strong> Mean R&sup2; across the common evaluation set: all 13 active sensors and the top-5 subsets for k=5, k=3, and k=2.
         The LAB1 reference acts as the in-domain upper bound; zero-shot establishes the raw transfer baseline; head-only shows the best low-cost adaptation;
@@ -1917,14 +1917,14 @@
 
     <div class="grid-2">
       <figure>
-        <img src="deepOnet/runs/lab_transfer_figures_v0.6.3a/sensor_map_all13_temperature_v063a.png" alt="All-13 temperature transfer map" />
+        <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/sensor_map_all13_temperature_v063a.png" alt="All-13 temperature transfer map" />
         <figcaption>
           <strong>All-13 temperature transfer map.</strong> The biggest zero-shot temperature errors in LAB2 appear around sensor 7 (R&sup2; = 0.650) and sensor 9 (R&sup2; = 0.771).
           Head-only lifts these to 0.903 and 0.861, and full fine-tuning raises them further to 0.971 and 0.982.
         </figcaption>
       </figure>
       <figure>
-        <img src="deepOnet/runs/lab_transfer_figures_v0.6.3a/sensor_map_all13_humidity_v063a.png" alt="All-13 humidity transfer map" />
+        <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/sensor_map_all13_humidity_v063a.png" alt="All-13 humidity transfer map" />
         <figcaption>
           <strong>All-13 humidity transfer map.</strong> The zero-shot humidity transfer is hardest around sensors 7 and 9 (R&sup2; = 0.673 and 0.568).
           Head-only improves those to 0.893 and 0.747, and full fine-tuning reaches 0.975 and 0.967. Some already-strong sensors change only slightly,
@@ -1940,7 +1940,7 @@
     </p>
 
     <figure>
-      <img src="deepOnet/runs/lab_transfer_figures_v0.6.3a/transfer_compare_top5_k5_v063a.png" alt="Top 5 k equals 5 transfer comparison" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_compare_top5_k5_v063a.png" alt="Top 5 k equals 5 transfer comparison" />
       <figcaption>
         <strong>Top 5 subsets with k=5.</strong> For the best 5-sensor LAB2 layouts, head-only adaptation closes a large part of the zero-shot gap, while full fine-tuning reaches
         roughly 0.981 temperature R&sup2; and 0.968 humidity R&sup2; on average across the five selected subsets.
@@ -1948,7 +1948,7 @@
     </figure>
 
     <figure>
-      <img src="deepOnet/runs/lab_transfer_figures_v0.6.3a/transfer_compare_top5_k3_v063a.png" alt="Top 5 k equals 3 transfer comparison" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_compare_top5_k3_v063a.png" alt="Top 5 k equals 3 transfer comparison" />
       <figcaption>
         <strong>Top 5 subsets with k=3.</strong> Even under only three active sensors, head-only adaptation remains consistently better than zero-shot.
         Full fine-tuning still pushes the model to about 0.975 temperature R&sup2; and 0.963 humidity R&sup2; on average across the selected 3-sensor subsets.
@@ -1956,7 +1956,7 @@
     </figure>
 
     <figure>
-      <img src="deepOnet/runs/lab_transfer_figures_v0.6.3a/transfer_compare_top5_k2_v063a.png" alt="Top 5 k equals 2 transfer comparison" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_compare_top5_k2_v063a.png" alt="Top 5 k equals 2 transfer comparison" />
       <figcaption>
         <strong>Top 5 subsets with k=2.</strong> The 2-sensor case is the strongest stress test in this project. Zero-shot remains usable, head-only still improves it,
         and full fine-tuning remains remarkably strong, with average R&sup2; around 0.976 for temperature and 0.960 for humidity across the top five 2-sensor subsets.
