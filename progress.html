@@ -1973,6 +1973,50 @@
     </div>
   </div>
 </section>
+<!-- ===================== SECTION 15: ASSIGNMENT 4 UPDATE ===================== -->
+<section id="assignment4">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">15</div>
+      <span class="section-cat">Project Update</span>
+    </div>
+    <h2>Assignment 4 — Project Progress & Next Steps</h2>
+
+    <p>
+      Through this assignment, our team reflected on our most recent experimental results and aligned on the next phase of the ThermoDT project.
+      Our latest experiments on sparse sensor configurations showed that the model remains surprisingly accurate even when the number of active sensors is significantly reduced.
+      In particular, performance degradation was gradual rather than catastrophic, indicating that the model is learning the underlying spatial thermal structure of the room rather than simply interpolating between sensor points.
+    </p>
+
+     <p>
+      These results give us confidence that the approach is robust enough to move beyond within-room reconstruction.
+      Based on this, we agreed that the next step is to extend our model to spatial predictions in Lab 2, evaluating how well it generalizes to a new room with different geometry and conditions.
+      This will allow us to directly test the transferability of the learned operator, which is one of the main goals of our project.
+    </p>
+
+    <p>
+      In addition, we decided to explore a thermal comfort modeling extension using the minimum viable number of sensors.
+      Specifically, we plan to select a small number of representative spatial locations (e.g., four coordinates corresponding to occupants)
+      and use the model to predict temperature and humidity at those locations.
+      This will allow us to estimate thermal comfort conditions across the room without requiring dense sensing,
+      demonstrating a practical application of our digital twin framework.
+    </p>
+
+    <div class="green-box">
+      <div class="ib-title">Key Takeaways</div>
+      <p>
+        • Sparse sensor results were strong → model captures spatial structure<br/>
+        • Performance degrades smoothly, not abruptly<br/>
+        • Next step: transfer model to Lab 2 (new environment)<br/>
+        • New direction: thermal comfort prediction at occupant locations<br/>
+        • Goal: use minimal sensors for practical deployment
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<a href="#assignment4">Assignment 4</a>
 
 
 <footer>
