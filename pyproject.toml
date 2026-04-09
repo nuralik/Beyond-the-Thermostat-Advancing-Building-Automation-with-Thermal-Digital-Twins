@@ -5,7 +5,7 @@ description = "Thermal Digital Twin for buildings using Physics-Informed Neural 
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
-    { name = "Nurali Kalybay" },
+    { name = "Nueraili" , "David" , "Justin", "Mario"  },
 ]
 keywords = ["digital-twin", "deeponet", "pinn", "thermal", "building-automation", "physics-informed"]
 dependencies = [
