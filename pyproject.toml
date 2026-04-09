@@ -1,9 +1,13 @@
 [project]
-name = "deepOnet"
+name = "thermodt"
 version = "0.1.0"
-description = "Add your description here"
+description = "Thermal Digital Twin for buildings using Physics-Informed Neural Operators (DeepONet/PINN) trained on real wireless sensor data"
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [
+    { name = "Nurali Kalybay" },
+]
+keywords = ["digital-twin", "deeponet", "pinn", "thermal", "building-automation", "physics-informed"]
 dependencies = [
     "ipykernel>=7.2.0",
     "jupyter>=1.1.1",
@@ -17,3 +21,7 @@ dependencies = [
     "scipy==1.13.0",
     "torch>=2.0.0",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
