@@ -1,0 +1,1606 @@
+{
+  "config": {
+    "seed": 20,
+    "device": "auto",
+    "experiment_name": "lab1_to_lab2_transfer_v0.7.1",
+    "data_root": "./data",
+    "resolution": "5min",
+    "time_file": "Time_5min.xlsx",
+    "time_column": "tin",
+    "scale": 100.0,
+    "target_variables": [
+      {
+        "name": "temperature",
+        "file": "Temperature_5min.xlsx",
+        "column_prefix": "tem",
+        "units": "\u00b0C"
+      },
+      {
+        "name": "humidity",
+        "file": "Humidity_5min.xlsx",
+        "column_prefix": "hum",
+        "units": "%RH"
+      }
+    ],
+    "sensor_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "labs": {
+      "lab1": {
+        "room_width": 7.81,
+        "room_height": 7.82,
+        "sensor_coords": {
+          "1": [
+            7.21,
+            0.6
+          ],
+          "2": [
+            3.88,
+            5.88
+          ],
+          "3": [
+            5.85,
+            5.88
+          ],
+          "4": [
+            0.6,
+            0.6
+          ],
+          "5": [
+            1.92,
+            1.94
+          ],
+          "6": [
+            3.88,
+            3.91
+          ],
+          "7": [
+            1.92,
+            3.91
+          ],
+          "8": [
+            5.85,
+            3.91
+          ],
+          "9": [
+            7.21,
+            7.22
+          ],
+          "10": [
+            1.92,
+            5.88
+          ],
+          "11": [
+            0.6,
+            7.22
+          ],
+          "12": [
+            5.85,
+            1.94
+          ],
+          "13": [
+            3.88,
+            1.94
+          ]
+        }
+      },
+      "lab2": {
+        "room_width": 6.6,
+        "room_height": 12.6,
+        "sensor_coords": {
+          "1": [
+            5.7,
+            7.54
+          ],
+          "2": [
+            5.7,
+            10.17
+          ],
+          "3": [
+            3.3,
+            11.6
+          ],
+          "4": [
+            3.3,
+            9.12
+          ],
+          "5": [
+            3.3,
+            6.34
+          ],
+          "6": [
+            3.3,
+            3.86
+          ],
+          "7": [
+            3.3,
+            1.38
+          ],
+          "8": [
+            5.7,
+            4.91
+          ],
+          "9": [
+            5.7,
+            2.43
+          ],
+          "10": [
+            0.9,
+            2.43
+          ],
+          "11": [
+            0.9,
+            10.17
+          ],
+          "12": [
+            0.9,
+            4.91
+          ],
+          "13": [
+            0.9,
+            7.54
+          ]
+        }
+      }
+    },
+    "lab1_split": {
+      "block_hours": 6,
+      "test_fraction": 0.1,
+      "val_fraction": 0.1,
+      "seed_offset": 100
+    },
+    "lab2_split": {
+      "block_hours": 6,
+      "test_fraction": 0.1,
+      "adapt_train_fraction": 0.16,
+      "adapt_val_fraction": 0.04,
+      "seed_offset": 200
+    },
+    "include_observed_mask": true,
+    "mask_fill_value": 0.0,
+    "train_extra_mask_min": 1,
+    "train_extra_mask_max": 12,
+    "hidden": 128,
+    "latent_dim": 128,
+    "depth": 6,
+    "activation": "tanh",
+    "train_lab1_from_scratch": true,
+    "reuse_existing_checkpoints": true,
+    "batch_size": 4096,
+    "epochs": 150,
+    "lr": 0.001,
+    "weight_decay": 0.0,
+    "num_workers": 0,
+    "early_stopping_patience": 20,
+    "early_stopping_min_delta": 0.0001,
+    "run_lab1_reference": true,
+    "run_lab2_zero_shot": true,
+    "run_lab2_head_only": true,
+    "run_lab2_partial_finetune": true,
+    "run_lab2_full_finetune": true,
+    "head_only_lr": 0.0002,
+    "head_only_epochs": 100,
+    "head_only_patience": 20,
+    "head_only_min_delta": 0.0001,
+    "partial_finetune_lr": 0.0002,
+    "partial_finetune_epochs": 100,
+    "partial_finetune_patience": 20,
+    "partial_finetune_min_delta": 0.0001,
+    "partial_unfreeze_linear_layers": 2,
+    "full_finetune_lr": 0.0002,
+    "full_finetune_epochs": 100,
+    "full_finetune_patience": 15,
+    "full_finetune_min_delta": 0.0001,
+    "run_manual_lab2_protocol_eval": false,
+    "lab2_manual_protocols": [
+      {
+        "protocol_name": "lab2_all13",
+        "display_name": "Lab2 all 13 active",
+        "active_sensors": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ]
+      },
+      {
+        "protocol_name": "lab2_active_11_4_6_9_1",
+        "display_name": "Lab2 active set [11, 4, 6, 9, 1]",
+        "active_sensors": [
+          11,
+          4,
+          6,
+          9,
+          1
+        ]
+      },
+      {
+        "protocol_name": "lab2_active_2_5_10",
+        "display_name": "Lab2 active set [2, 5, 10]",
+        "active_sensors": [
+          2,
+          5,
+          10
+        ]
+      }
+    ],
+    "run_subset_search": true,
+    "subset_search_source_mode": "head_only",
+    "subset_search_active_counts": [
+      5,
+      3,
+      2
+    ],
+    "subset_search_generation_mode": {
+      "5": "sampled",
+      "3": "exhaustive",
+      "2": "exhaustive"
+    },
+    "subset_search_sample_limit": {
+      "5": 20,
+      "3": 150,
+      "2": null
+    },
+    "subset_search_sample_seed_offset": 700,
+    "run_unified_benchmark": true,
+    "top_n_per_k": 5,
+    "selected_active_counts": [
+      5,
+      3,
+      2
+    ],
+    "include_lab1_reference_in_plots": true,
+    "include_partial_finetune_in_plots": true,
+    "export_field_maps": true,
+    "field_map_idw_power": 2.0,
+    "field_map_grid_nx": 220,
+    "field_map_grid_ny": 220,
+    "field_map_active_count": 3,
+    "field_map_rank_within_k": 1,
+    "field_map_eval_index": "middle",
+    "field_map_include_sparse_idw_baseline": true,
+    "output_dir": "./deepOnet/runs/lab1_to_lab2_v0.7.1",
+    "best_checkpoint_name": "thermodt_lab1_best.pt",
+    "final_checkpoint_name": "thermodt_lab1_final.pt",
+    "head_best_checkpoint_name": "thermodt_lab2_head_best.pt",
+    "head_final_checkpoint_name": "thermodt_lab2_head_final.pt",
+    "partial_best_checkpoint_name": "thermodt_lab2_partial_best.pt",
+    "partial_final_checkpoint_name": "thermodt_lab2_partial_final.pt",
+    "full_ft_best_checkpoint_name": "thermodt_lab2_fullft_best.pt",
+    "full_ft_final_checkpoint_name": "thermodt_lab2_fullft_final.pt",
+    "lab1_eval_metrics_name": "thermodt_lab1_reference_metrics_v071.csv",
+    "manual_lab2_metrics_name": "thermodt_lab2_manual_metrics_v071.csv",
+    "manual_lab2_sensor_summary_name": "thermodt_lab2_manual_sensor_summary_v071.csv",
+    "manual_lab2_protocol_summary_name": "thermodt_lab2_manual_protocol_summary_v071.csv",
+    "subset_search_metrics_name": "thermodt_subset_search_metrics_v071.csv",
+    "subset_search_sensor_summary_name": "thermodt_subset_search_sensor_summary_v071.csv",
+    "subset_search_protocol_summary_name": "thermodt_subset_search_protocol_summary_v071.csv",
+    "subset_search_best_subsets_name": "thermodt_subset_search_best_subsets_v071.csv",
+    "selected_protocols_name": "thermodt_selected_protocols_v071.csv",
+    "unified_metrics_name": "thermodt_unified_metrics_v071.csv",
+    "unified_sensor_summary_name": "thermodt_unified_sensor_summary_v071.csv",
+    "unified_protocol_summary_name": "thermodt_unified_protocol_summary_v071.csv",
+    "benchmark_regime_summary_name": "thermodt_benchmark_regime_summary_v071.csv",
+    "benchmark_regime_pivot_r2_name": "thermodt_benchmark_regime_pivot_r2_v071.csv",
+    "training_runs_summary_name": "thermodt_training_runs_summary_v071.csv",
+    "summary_json_name": "thermodt_summary_v071.json",
+    "summary_md_name": "thermodt_summary_v071.md",
+    "overview_figure_name": "transfer_overview_topk_v071.png",
+    "sensor_map_temperature_name": "transfer_sensor_map_temperature_v071.png",
+    "sensor_map_humidity_name": "transfer_sensor_map_humidity_v071.png",
+    "subset_compare_k5_name": "transfer_subset_compare_k5_v071.png",
+    "subset_compare_k3_name": "transfer_subset_compare_k3_v071.png",
+    "subset_compare_k2_name": "transfer_subset_compare_k2_v071.png",
+    "field_map_temperature_name": "field_map_temperature_example_v071.png",
+    "field_map_humidity_name": "field_map_humidity_example_v071.png"
+  },
+  "files": {
+    "training_runs_summary": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_training_runs_summary_v071.csv",
+    "subset_search_metrics": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_subset_search_metrics_v071.csv",
+    "subset_search_best_subsets": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_subset_search_best_subsets_v071.csv",
+    "selected_protocols": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_selected_protocols_v071.csv",
+    "lab1_reference_metrics": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab1_reference_metrics_v071.csv",
+    "unified_metrics": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_unified_metrics_v071.csv",
+    "unified_sensor_summary": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_unified_sensor_summary_v071.csv",
+    "unified_protocol_summary": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_unified_protocol_summary_v071.csv",
+    "benchmark_regime_summary": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_benchmark_regime_summary_v071.csv",
+    "benchmark_regime_pivot_r2": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_benchmark_regime_pivot_r2_v071.csv",
+    "overview_figure": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\transfer_overview_topk_v071.png",
+    "sensor_map_temperature": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\transfer_sensor_map_temperature_v071.png",
+    "sensor_map_humidity": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\transfer_sensor_map_humidity_v071.png",
+    "subset_compare_k5": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\transfer_subset_compare_k5_v071.png",
+    "subset_compare_k3": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\transfer_subset_compare_k3_v071.png",
+    "subset_compare_k2": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\transfer_subset_compare_k2_v071.png",
+    "field_map_temperature": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\field_map_temperature_example_v071.png",
+    "field_map_humidity": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\field_map_humidity_example_v071.png",
+    "summary_md": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_summary_v071.md",
+    "summary_json": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_summary_v071.json"
+  },
+  "training_runs": {
+    "lab1_pretrain": {
+      "run_name": "lab1_pretrain",
+      "tag": "lab1_pretrain",
+      "lab_name": "lab1",
+      "transfer_train_mode": "full",
+      "best_epoch": 64,
+      "best_val_loss": 0.034309550876814233,
+      "stop_epoch": 84,
+      "stopped_early": true,
+      "n_train_rows": 21916,
+      "n_val_rows": 2736,
+      "n_trainable_tensors": 25,
+      "trainable_param_names": [
+        "bias",
+        "branch.net.0.weight",
+        "branch.net.0.bias",
+        "branch.net.2.weight",
+        "branch.net.2.bias",
+        "branch.net.4.weight",
+        "branch.net.4.bias",
+        "branch.net.6.weight",
+        "branch.net.6.bias",
+        "branch.net.8.weight",
+        "branch.net.8.bias",
+        "branch.net.10.weight",
+        "branch.net.10.bias",
+        "trunk.net.0.weight",
+        "trunk.net.0.bias",
+        "trunk.net.2.weight",
+        "trunk.net.2.bias",
+        "trunk.net.4.weight",
+        "trunk.net.4.bias",
+        "trunk.net.6.weight",
+        "trunk.net.6.bias",
+        "trunk.net.8.weight",
+        "trunk.net.8.bias",
+        "trunk.net.10.weight",
+        "trunk.net.10.bias"
+      ],
+      "best_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab1_best.pt",
+      "final_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab1_final.pt"
+    },
+    "lab2_head_only": {
+      "run_name": "lab2_head_only",
+      "tag": "lab2_head_only",
+      "lab_name": "lab2",
+      "transfer_train_mode": "head_only",
+      "best_epoch": 81,
+      "best_val_loss": 0.0335619231319835,
+      "stop_epoch": 100,
+      "stopped_early": false,
+      "n_train_rows": 2952,
+      "n_val_rows": 720,
+      "n_trainable_tensors": 5,
+      "trainable_param_names": [
+        "bias",
+        "branch.net.10.weight",
+        "branch.net.10.bias",
+        "trunk.net.10.weight",
+        "trunk.net.10.bias"
+      ],
+      "best_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab2_head_best.pt",
+      "final_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab2_head_final.pt"
+    },
+    "lab2_partial_finetune": {
+      "run_name": "lab2_partial_finetune",
+      "tag": "lab2_partial_finetune",
+      "lab_name": "lab2",
+      "transfer_train_mode": "partial",
+      "best_epoch": 74,
+      "best_val_loss": 0.028843434651692708,
+      "stop_epoch": 94,
+      "stopped_early": true,
+      "n_train_rows": 2952,
+      "n_val_rows": 720,
+      "n_trainable_tensors": 9,
+      "trainable_param_names": [
+        "bias",
+        "branch.net.8.weight",
+        "branch.net.8.bias",
+        "branch.net.10.weight",
+        "branch.net.10.bias",
+        "trunk.net.8.weight",
+        "trunk.net.8.bias",
+        "trunk.net.10.weight",
+        "trunk.net.10.bias"
+      ],
+      "best_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab2_partial_best.pt",
+      "final_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab2_partial_final.pt"
+    },
+    "lab2_full_finetune": {
+      "run_name": "lab2_full_finetune",
+      "tag": "lab2_full_finetune",
+      "lab_name": "lab2",
+      "transfer_train_mode": "full",
+      "best_epoch": 61,
+      "best_val_loss": 0.0160189039989287,
+      "stop_epoch": 76,
+      "stopped_early": true,
+      "n_train_rows": 2952,
+      "n_val_rows": 720,
+      "n_trainable_tensors": 25,
+      "trainable_param_names": [
+        "bias",
+        "branch.net.0.weight",
+        "branch.net.0.bias",
+        "branch.net.2.weight",
+        "branch.net.2.bias",
+        "branch.net.4.weight",
+        "branch.net.4.bias",
+        "branch.net.6.weight",
+        "branch.net.6.bias",
+        "branch.net.8.weight",
+        "branch.net.8.bias",
+        "branch.net.10.weight",
+        "branch.net.10.bias",
+        "trunk.net.0.weight",
+        "trunk.net.0.bias",
+        "trunk.net.2.weight",
+        "trunk.net.2.bias",
+        "trunk.net.4.weight",
+        "trunk.net.4.bias",
+        "trunk.net.6.weight",
+        "trunk.net.6.bias",
+        "trunk.net.8.weight",
+        "trunk.net.8.bias",
+        "trunk.net.10.weight",
+        "trunk.net.10.bias"
+      ],
+      "best_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab2_fullft_best.pt",
+      "final_checkpoint": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\thermodt_lab2_fullft_final.pt"
+    }
+  },
+  "lab1_split": {
+    "split_type": "blocked_fraction",
+    "block_hours": 6,
+    "n_train": 21916,
+    "n_val": 2736,
+    "n_test": 2736,
+    "train_fraction_realized": 0.8002044691105594,
+    "val_fraction_realized": 0.09989776544472032,
+    "test_fraction_realized": 0.09989776544472032,
+    "val_windows": [
+      {
+        "start_idx": 0,
+        "end_idx_exclusive": 72,
+        "start": "2022-06-08 10:40:00",
+        "end": "2022-06-08 16:35:00",
+        "start_hour": 10
+      },
+      {
+        "start_idx": 579,
+        "end_idx_exclusive": 651,
+        "start": "2022-06-10 10:55:00",
+        "end": "2022-06-10 16:50:00",
+        "start_hour": 10
+      },
+      {
+        "start_idx": 1010,
+        "end_idx_exclusive": 1082,
+        "start": "2022-06-11 22:50:00",
+        "end": "2022-06-12 04:45:00",
+        "start_hour": 22
+      },
+      {
+        "start_idx": 1155,
+        "end_idx_exclusive": 1227,
+        "start": "2022-06-12 10:55:00",
+        "end": "2022-06-12 16:50:00",
+        "start_hour": 10
+      },
+      {
+        "start_idx": 1300,
+        "end_idx_exclusive": 1372,
+        "start": "2022-06-12 23:00:00",
+        "end": "2022-06-13 04:55:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 2596,
+        "end_idx_exclusive": 2668,
+        "start": "2022-06-17 11:00:00",
+        "end": "2022-06-17 16:55:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 2741,
+        "end_idx_exclusive": 2813,
+        "start": "2022-06-17 23:05:00",
+        "end": "2022-06-18 05:00:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 3172,
+        "end_idx_exclusive": 3244,
+        "start": "2022-06-19 11:00:00",
+        "end": "2022-06-19 16:55:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 3605,
+        "end_idx_exclusive": 3677,
+        "start": "2022-06-20 23:05:00",
+        "end": "2022-06-21 05:00:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 3750,
+        "end_idx_exclusive": 3822,
+        "start": "2022-06-21 11:10:00",
+        "end": "2022-06-21 17:05:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 4183,
+        "end_idx_exclusive": 4255,
+        "start": "2022-06-22 23:15:00",
+        "end": "2022-06-23 05:10:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 4618,
+        "end_idx_exclusive": 4690,
+        "start": "2022-06-24 11:30:00",
+        "end": "2022-06-24 17:25:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 4763,
+        "end_idx_exclusive": 4835,
+        "start": "2022-06-24 23:35:00",
+        "end": "2022-06-25 05:30:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 4907,
+        "end_idx_exclusive": 4979,
+        "start": "2022-06-25 11:35:00",
+        "end": "2022-06-25 17:30:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 5195,
+        "end_idx_exclusive": 5267,
+        "start": "2022-06-26 11:35:00",
+        "end": "2022-06-26 17:30:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 5485,
+        "end_idx_exclusive": 5557,
+        "start": "2022-06-27 11:45:00",
+        "end": "2022-06-27 17:40:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 5630,
+        "end_idx_exclusive": 5702,
+        "start": "2022-06-27 23:50:00",
+        "end": "2022-06-28 05:45:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 5775,
+        "end_idx_exclusive": 5847,
+        "start": "2022-06-28 11:55:00",
+        "end": "2022-06-28 17:50:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 6929,
+        "end_idx_exclusive": 7001,
+        "start": "2022-07-02 12:05:00",
+        "end": "2022-07-02 18:00:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 7939,
+        "end_idx_exclusive": 8011,
+        "start": "2022-07-06 00:15:00",
+        "end": "2022-07-06 06:10:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 8946,
+        "end_idx_exclusive": 9018,
+        "start": "2022-07-09 12:10:00",
+        "end": "2022-07-09 18:05:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 9520,
+        "end_idx_exclusive": 9592,
+        "start": "2022-07-11 12:00:00",
+        "end": "2022-07-11 17:55:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 9665,
+        "end_idx_exclusive": 9737,
+        "start": "2022-07-12 00:05:00",
+        "end": "2022-07-12 06:00:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 9810,
+        "end_idx_exclusive": 9882,
+        "start": "2022-07-12 12:10:00",
+        "end": "2022-07-12 18:05:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 9955,
+        "end_idx_exclusive": 10027,
+        "start": "2022-07-13 00:15:00",
+        "end": "2022-07-13 06:10:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 10242,
+        "end_idx_exclusive": 10314,
+        "start": "2022-07-14 00:10:00",
+        "end": "2022-07-14 06:05:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 10963,
+        "end_idx_exclusive": 11035,
+        "start": "2022-07-16 12:15:00",
+        "end": "2022-07-16 18:10:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 11108,
+        "end_idx_exclusive": 11180,
+        "start": "2022-07-17 00:20:00",
+        "end": "2022-07-17 06:15:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 11970,
+        "end_idx_exclusive": 12042,
+        "start": "2022-07-27 23:15:00",
+        "end": "2022-07-28 05:10:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 13120,
+        "end_idx_exclusive": 13192,
+        "start": "2022-07-31 23:05:00",
+        "end": "2022-08-01 05:00:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 14128,
+        "end_idx_exclusive": 14200,
+        "start": "2022-08-04 11:05:00",
+        "end": "2022-08-04 17:00:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 14273,
+        "end_idx_exclusive": 14345,
+        "start": "2022-08-04 23:10:00",
+        "end": "2022-08-05 05:05:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 14418,
+        "end_idx_exclusive": 14490,
+        "start": "2022-08-05 11:15:00",
+        "end": "2022-08-05 17:10:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 14853,
+        "end_idx_exclusive": 14925,
+        "start": "2022-08-06 23:30:00",
+        "end": "2022-08-07 05:25:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 15288,
+        "end_idx_exclusive": 15360,
+        "start": "2022-08-08 11:45:00",
+        "end": "2022-08-08 17:40:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 15577,
+        "end_idx_exclusive": 15649,
+        "start": "2022-08-09 11:50:00",
+        "end": "2022-08-09 17:45:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 15867,
+        "end_idx_exclusive": 15939,
+        "start": "2022-08-10 12:00:00",
+        "end": "2022-08-10 17:55:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 16157,
+        "end_idx_exclusive": 16229,
+        "start": "2022-08-11 12:10:00",
+        "end": "2022-08-11 18:05:00",
+        "start_hour": 12
+      }
+    ],
+    "test_windows": [
+      {
+        "start_idx": 723,
+        "end_idx_exclusive": 795,
+        "start": "2022-06-10 22:55:00",
+        "end": "2022-06-11 04:50:00",
+        "start_hour": 22
+      },
+      {
+        "start_idx": 904,
+        "end_idx_exclusive": 976,
+        "start": "2022-06-11 14:00:00",
+        "end": "2022-06-11 19:55:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 1447,
+        "end_idx_exclusive": 1519,
+        "start": "2022-06-13 11:15:00",
+        "end": "2022-06-13 17:10:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 1628,
+        "end_idx_exclusive": 1700,
+        "start": "2022-06-14 02:20:00",
+        "end": "2022-06-14 08:15:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 2170,
+        "end_idx_exclusive": 2242,
+        "start": "2022-06-15 23:30:00",
+        "end": "2022-06-16 05:25:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 2351,
+        "end_idx_exclusive": 2423,
+        "start": "2022-06-16 14:35:00",
+        "end": "2022-06-16 20:30:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 2894,
+        "end_idx_exclusive": 2966,
+        "start": "2022-06-18 11:50:00",
+        "end": "2022-06-18 17:45:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 3075,
+        "end_idx_exclusive": 3147,
+        "start": "2022-06-19 02:55:00",
+        "end": "2022-06-19 08:50:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 3256,
+        "end_idx_exclusive": 3328,
+        "start": "2022-06-19 18:00:00",
+        "end": "2022-06-19 23:55:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 3979,
+        "end_idx_exclusive": 4051,
+        "start": "2022-06-22 06:15:00",
+        "end": "2022-06-22 12:10:00",
+        "start_hour": 6
+      },
+      {
+        "start_idx": 5065,
+        "end_idx_exclusive": 5137,
+        "start": "2022-06-26 00:45:00",
+        "end": "2022-06-26 06:40:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 5969,
+        "end_idx_exclusive": 6041,
+        "start": "2022-06-29 04:05:00",
+        "end": "2022-06-29 10:00:00",
+        "start_hour": 4
+      },
+      {
+        "start_idx": 6150,
+        "end_idx_exclusive": 6222,
+        "start": "2022-06-29 19:10:00",
+        "end": "2022-06-30 01:05:00",
+        "start_hour": 19
+      },
+      {
+        "start_idx": 6693,
+        "end_idx_exclusive": 6765,
+        "start": "2022-07-01 16:25:00",
+        "end": "2022-07-01 22:20:00",
+        "start_hour": 16
+      },
+      {
+        "start_idx": 7236,
+        "end_idx_exclusive": 7308,
+        "start": "2022-07-03 13:40:00",
+        "end": "2022-07-03 19:35:00",
+        "start_hour": 13
+      },
+      {
+        "start_idx": 7597,
+        "end_idx_exclusive": 7669,
+        "start": "2022-07-04 19:45:00",
+        "end": "2022-07-05 01:40:00",
+        "start_hour": 19
+      },
+      {
+        "start_idx": 8321,
+        "end_idx_exclusive": 8393,
+        "start": "2022-07-07 08:05:00",
+        "end": "2022-07-07 14:00:00",
+        "start_hour": 8
+      },
+      {
+        "start_idx": 8502,
+        "end_idx_exclusive": 8574,
+        "start": "2022-07-07 23:10:00",
+        "end": "2022-07-08 05:05:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 8683,
+        "end_idx_exclusive": 8755,
+        "start": "2022-07-08 14:15:00",
+        "end": "2022-07-08 20:10:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 8864,
+        "end_idx_exclusive": 8936,
+        "start": "2022-07-09 05:20:00",
+        "end": "2022-07-09 11:15:00",
+        "start_hour": 5
+      },
+      {
+        "start_idx": 9045,
+        "end_idx_exclusive": 9117,
+        "start": "2022-07-09 20:25:00",
+        "end": "2022-07-10 02:20:00",
+        "start_hour": 20
+      },
+      {
+        "start_idx": 9225,
+        "end_idx_exclusive": 9297,
+        "start": "2022-07-10 11:25:00",
+        "end": "2022-07-10 17:20:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 9406,
+        "end_idx_exclusive": 9478,
+        "start": "2022-07-11 02:30:00",
+        "end": "2022-07-11 08:25:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 10130,
+        "end_idx_exclusive": 10202,
+        "start": "2022-07-13 14:50:00",
+        "end": "2022-07-13 20:45:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 10673,
+        "end_idx_exclusive": 10745,
+        "start": "2022-07-15 12:05:00",
+        "end": "2022-07-15 18:00:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 10854,
+        "end_idx_exclusive": 10926,
+        "start": "2022-07-16 03:10:00",
+        "end": "2022-07-16 09:05:00",
+        "start_hour": 3
+      },
+      {
+        "start_idx": 11215,
+        "end_idx_exclusive": 11287,
+        "start": "2022-07-17 09:15:00",
+        "end": "2022-07-17 15:10:00",
+        "start_hour": 9
+      },
+      {
+        "start_idx": 11396,
+        "end_idx_exclusive": 11468,
+        "start": "2022-07-18 00:20:00",
+        "end": "2022-07-18 06:15:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 11577,
+        "end_idx_exclusive": 11649,
+        "start": "2022-07-18 15:25:00",
+        "end": "2022-07-18 21:20:00",
+        "start_hour": 15
+      },
+      {
+        "start_idx": 11758,
+        "end_idx_exclusive": 11830,
+        "start": "2022-07-19 06:30:00",
+        "end": "2022-07-27 11:30:00",
+        "start_hour": 6
+      },
+      {
+        "start_idx": 12120,
+        "end_idx_exclusive": 12192,
+        "start": "2022-07-28 11:45:00",
+        "end": "2022-07-28 17:40:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 12301,
+        "end_idx_exclusive": 12373,
+        "start": "2022-07-29 02:50:00",
+        "end": "2022-07-29 08:45:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 12663,
+        "end_idx_exclusive": 12735,
+        "start": "2022-07-30 09:00:00",
+        "end": "2022-07-30 14:55:00",
+        "start_hour": 9
+      },
+      {
+        "start_idx": 12843,
+        "end_idx_exclusive": 12915,
+        "start": "2022-07-31 00:00:00",
+        "end": "2022-07-31 05:55:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 13024,
+        "end_idx_exclusive": 13096,
+        "start": "2022-07-31 15:05:00",
+        "end": "2022-07-31 21:00:00",
+        "start_hour": 15
+      },
+      {
+        "start_idx": 13205,
+        "end_idx_exclusive": 13277,
+        "start": "2022-08-01 06:10:00",
+        "end": "2022-08-01 12:05:00",
+        "start_hour": 6
+      },
+      {
+        "start_idx": 13386,
+        "end_idx_exclusive": 13458,
+        "start": "2022-08-01 21:15:00",
+        "end": "2022-08-02 03:10:00",
+        "start_hour": 21
+      },
+      {
+        "start_idx": 13567,
+        "end_idx_exclusive": 13639,
+        "start": "2022-08-02 12:20:00",
+        "end": "2022-08-02 18:15:00",
+        "start_hour": 12
+      }
+    ]
+  },
+  "lab2_split": {
+    "split_type": "blocked_fraction_phase1",
+    "block_hours": 6,
+    "n_adapt_train": 2952,
+    "n_adapt_val": 720,
+    "n_test": 1872,
+    "n_unused": 13003,
+    "adapt_train_fraction_realized": 0.159163206987653,
+    "adapt_val_fraction_realized": 0.03882029438723244,
+    "test_fraction_realized": 0.10093276540680433,
+    "adapt_train_windows": [
+      {
+        "start_idx": 72,
+        "end_idx_exclusive": 144,
+        "start": "2022-10-24 17:00:00",
+        "end": "2022-10-24 22:55:00",
+        "start_hour": 17
+      },
+      {
+        "start_idx": 380,
+        "end_idx_exclusive": 452,
+        "start": "2022-10-25 18:40:00",
+        "end": "2022-10-26 00:35:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 463,
+        "end_idx_exclusive": 535,
+        "start": "2022-10-26 01:35:00",
+        "end": "2022-10-26 07:30:00",
+        "start_hour": 1
+      },
+      {
+        "start_idx": 772,
+        "end_idx_exclusive": 844,
+        "start": "2022-11-03 20:20:00",
+        "end": "2022-11-04 02:15:00",
+        "start_hour": 20
+      },
+      {
+        "start_idx": 1223,
+        "end_idx_exclusive": 1295,
+        "start": "2022-11-05 09:55:00",
+        "end": "2022-11-05 15:50:00",
+        "start_hour": 9
+      },
+      {
+        "start_idx": 1901,
+        "end_idx_exclusive": 1973,
+        "start": "2022-11-07 18:25:00",
+        "end": "2022-11-08 00:20:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 2518,
+        "end_idx_exclusive": 2590,
+        "start": "2022-11-09 21:50:00",
+        "end": "2022-11-10 03:45:00",
+        "start_hour": 21
+      },
+      {
+        "start_idx": 2601,
+        "end_idx_exclusive": 2673,
+        "start": "2022-11-10 04:45:00",
+        "end": "2022-11-10 10:40:00",
+        "start_hour": 4
+      },
+      {
+        "start_idx": 3158,
+        "end_idx_exclusive": 3230,
+        "start": "2022-11-12 03:10:00",
+        "end": "2022-11-12 09:05:00",
+        "start_hour": 3
+      },
+      {
+        "start_idx": 3241,
+        "end_idx_exclusive": 3313,
+        "start": "2022-11-12 10:05:00",
+        "end": "2022-11-12 16:00:00",
+        "start_hour": 10
+      },
+      {
+        "start_idx": 3693,
+        "end_idx_exclusive": 3765,
+        "start": "2022-11-13 23:45:00",
+        "end": "2022-11-14 05:40:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 4227,
+        "end_idx_exclusive": 4299,
+        "start": "2022-11-15 20:15:00",
+        "end": "2022-11-16 02:10:00",
+        "start_hour": 20
+      },
+      {
+        "start_idx": 4596,
+        "end_idx_exclusive": 4668,
+        "start": "2022-11-17 03:00:00",
+        "end": "2022-11-17 08:55:00",
+        "start_hour": 3
+      },
+      {
+        "start_idx": 4762,
+        "end_idx_exclusive": 4834,
+        "start": "2022-11-17 16:50:00",
+        "end": "2022-11-17 22:45:00",
+        "start_hour": 16
+      },
+      {
+        "start_idx": 5357,
+        "end_idx_exclusive": 5429,
+        "start": "2022-11-19 18:25:00",
+        "end": "2022-11-20 00:20:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 5767,
+        "end_idx_exclusive": 5839,
+        "start": "2022-11-21 04:35:00",
+        "end": "2022-11-21 10:30:00",
+        "start_hour": 4
+      },
+      {
+        "start_idx": 6219,
+        "end_idx_exclusive": 6291,
+        "start": "2022-11-22 18:15:00",
+        "end": "2022-11-23 00:10:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 6302,
+        "end_idx_exclusive": 6374,
+        "start": "2022-11-23 01:10:00",
+        "end": "2022-11-23 07:05:00",
+        "start_hour": 1
+      },
+      {
+        "start_idx": 6385,
+        "end_idx_exclusive": 6457,
+        "start": "2022-11-23 08:05:00",
+        "end": "2022-11-23 14:00:00",
+        "start_hour": 8
+      },
+      {
+        "start_idx": 7122,
+        "end_idx_exclusive": 7194,
+        "start": "2022-11-25 21:30:00",
+        "end": "2022-11-26 03:25:00",
+        "start_hour": 21
+      },
+      {
+        "start_idx": 7348,
+        "end_idx_exclusive": 7420,
+        "start": "2022-11-26 16:20:00",
+        "end": "2022-11-26 22:15:00",
+        "start_hour": 16
+      },
+      {
+        "start_idx": 7514,
+        "end_idx_exclusive": 7586,
+        "start": "2022-11-27 19:35:00",
+        "end": "2022-11-28 01:30:00",
+        "start_hour": 19
+      },
+      {
+        "start_idx": 7597,
+        "end_idx_exclusive": 7669,
+        "start": "2022-11-28 02:30:00",
+        "end": "2022-11-28 08:25:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 7762,
+        "end_idx_exclusive": 7834,
+        "start": "2022-11-28 16:15:00",
+        "end": "2022-11-28 22:10:00",
+        "start_hour": 16
+      },
+      {
+        "start_idx": 8011,
+        "end_idx_exclusive": 8083,
+        "start": "2022-11-29 13:00:00",
+        "end": "2022-11-29 18:55:00",
+        "start_hour": 13
+      },
+      {
+        "start_idx": 8177,
+        "end_idx_exclusive": 8249,
+        "start": "2022-11-30 02:50:00",
+        "end": "2022-11-30 08:45:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 9039,
+        "end_idx_exclusive": 9111,
+        "start": "2022-12-09 06:30:00",
+        "end": "2022-12-09 12:25:00",
+        "start_hour": 6
+      },
+      {
+        "start_idx": 9264,
+        "end_idx_exclusive": 9336,
+        "start": "2022-12-10 01:15:00",
+        "end": "2022-12-10 07:10:00",
+        "start_hour": 1
+      },
+      {
+        "start_idx": 9573,
+        "end_idx_exclusive": 9645,
+        "start": "2022-12-11 03:00:00",
+        "end": "2022-12-11 08:55:00",
+        "start_hour": 3
+      },
+      {
+        "start_idx": 9965,
+        "end_idx_exclusive": 10037,
+        "start": "2022-12-12 11:40:00",
+        "end": "2022-12-12 17:35:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 10047,
+        "end_idx_exclusive": 10119,
+        "start": "2022-12-12 18:30:00",
+        "end": "2022-12-13 00:25:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 10213,
+        "end_idx_exclusive": 10285,
+        "start": "2022-12-13 08:20:00",
+        "end": "2022-12-13 14:15:00",
+        "start_hour": 8
+      },
+      {
+        "start_idx": 10296,
+        "end_idx_exclusive": 10368,
+        "start": "2022-12-13 15:15:00",
+        "end": "2022-12-13 21:10:00",
+        "start_hour": 15
+      },
+      {
+        "start_idx": 10462,
+        "end_idx_exclusive": 10534,
+        "start": "2022-12-14 05:05:00",
+        "end": "2022-12-14 11:00:00",
+        "start_hour": 5
+      },
+      {
+        "start_idx": 10544,
+        "end_idx_exclusive": 10616,
+        "start": "2022-12-14 11:55:00",
+        "end": "2022-12-14 17:50:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 10627,
+        "end_idx_exclusive": 10699,
+        "start": "2022-12-14 18:50:00",
+        "end": "2022-12-15 00:45:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 10710,
+        "end_idx_exclusive": 10782,
+        "start": "2022-12-15 01:45:00",
+        "end": "2022-12-15 07:40:00",
+        "start_hour": 1
+      },
+      {
+        "start_idx": 11102,
+        "end_idx_exclusive": 11174,
+        "start": "2022-12-16 10:25:00",
+        "end": "2022-12-16 16:20:00",
+        "start_hour": 10
+      },
+      {
+        "start_idx": 11350,
+        "end_idx_exclusive": 11422,
+        "start": "2022-12-17 07:05:00",
+        "end": "2022-12-17 13:00:00",
+        "start_hour": 7
+      },
+      {
+        "start_idx": 11599,
+        "end_idx_exclusive": 11671,
+        "start": "2022-12-18 03:50:00",
+        "end": "2022-12-18 09:45:00",
+        "start_hour": 3
+      },
+      {
+        "start_idx": 11682,
+        "end_idx_exclusive": 11754,
+        "start": "2022-12-18 10:45:00",
+        "end": "2022-12-18 16:40:00",
+        "start_hour": 10
+      }
+    ],
+    "adapt_val_windows": [
+      {
+        "start_idx": 0,
+        "end_idx_exclusive": 72,
+        "start": "2022-10-24 11:00:00",
+        "end": "2022-10-24 16:55:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 1328,
+        "end_idx_exclusive": 1400,
+        "start": "2022-11-05 18:40:00",
+        "end": "2022-11-06 00:35:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 3986,
+        "end_idx_exclusive": 4058,
+        "start": "2022-11-15 00:10:00",
+        "end": "2022-11-15 06:05:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 5458,
+        "end_idx_exclusive": 5530,
+        "start": "2022-11-20 02:50:00",
+        "end": "2022-11-20 08:45:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 7215,
+        "end_idx_exclusive": 7287,
+        "start": "2022-11-26 05:15:00",
+        "end": "2022-11-26 11:10:00",
+        "start_hour": 5
+      },
+      {
+        "start_idx": 8351,
+        "end_idx_exclusive": 8423,
+        "start": "2022-12-06 21:10:00",
+        "end": "2022-12-07 03:05:00",
+        "start_hour": 21
+      },
+      {
+        "start_idx": 8872,
+        "end_idx_exclusive": 8944,
+        "start": "2022-12-08 16:35:00",
+        "end": "2022-12-08 22:30:00",
+        "start_hour": 16
+      },
+      {
+        "start_idx": 9393,
+        "end_idx_exclusive": 9465,
+        "start": "2022-12-10 12:00:00",
+        "end": "2022-12-10 17:55:00",
+        "start_hour": 12
+      },
+      {
+        "start_idx": 9772,
+        "end_idx_exclusive": 9844,
+        "start": "2022-12-11 19:35:00",
+        "end": "2022-12-12 01:30:00",
+        "start_hour": 19
+      },
+      {
+        "start_idx": 10907,
+        "end_idx_exclusive": 10979,
+        "start": "2022-12-15 18:10:00",
+        "end": "2022-12-16 00:05:00",
+        "start_hour": 18
+      }
+    ],
+    "test_windows": [
+      {
+        "start_idx": 179,
+        "end_idx_exclusive": 251,
+        "start": "2022-10-25 01:55:00",
+        "end": "2022-10-25 07:50:00",
+        "start_hour": 1
+      },
+      {
+        "start_idx": 538,
+        "end_idx_exclusive": 610,
+        "start": "2022-10-26 07:50:00",
+        "end": "2022-10-26 13:45:00",
+        "start_hour": 7
+      },
+      {
+        "start_idx": 896,
+        "end_idx_exclusive": 968,
+        "start": "2022-11-04 06:40:00",
+        "end": "2022-11-04 12:35:00",
+        "start_hour": 6
+      },
+      {
+        "start_idx": 1076,
+        "end_idx_exclusive": 1148,
+        "start": "2022-11-04 21:40:00",
+        "end": "2022-11-05 03:35:00",
+        "start_hour": 21
+      },
+      {
+        "start_idx": 1614,
+        "end_idx_exclusive": 1686,
+        "start": "2022-11-06 18:30:00",
+        "end": "2022-11-07 00:25:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 1793,
+        "end_idx_exclusive": 1865,
+        "start": "2022-11-07 09:25:00",
+        "end": "2022-11-07 15:20:00",
+        "start_hour": 9
+      },
+      {
+        "start_idx": 1973,
+        "end_idx_exclusive": 2045,
+        "start": "2022-11-08 00:25:00",
+        "end": "2022-11-08 06:20:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 2331,
+        "end_idx_exclusive": 2403,
+        "start": "2022-11-09 06:15:00",
+        "end": "2022-11-09 12:10:00",
+        "start_hour": 6
+      },
+      {
+        "start_idx": 3049,
+        "end_idx_exclusive": 3121,
+        "start": "2022-11-11 18:05:00",
+        "end": "2022-11-12 00:00:00",
+        "start_hour": 18
+      },
+      {
+        "start_idx": 3408,
+        "end_idx_exclusive": 3480,
+        "start": "2022-11-13 00:00:00",
+        "end": "2022-11-13 05:55:00",
+        "start_hour": 0
+      },
+      {
+        "start_idx": 3587,
+        "end_idx_exclusive": 3659,
+        "start": "2022-11-13 14:55:00",
+        "end": "2022-11-13 20:50:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 3766,
+        "end_idx_exclusive": 3838,
+        "start": "2022-11-14 05:50:00",
+        "end": "2022-11-14 11:45:00",
+        "start_hour": 5
+      },
+      {
+        "start_idx": 4304,
+        "end_idx_exclusive": 4376,
+        "start": "2022-11-16 02:40:00",
+        "end": "2022-11-16 08:35:00",
+        "start_hour": 2
+      },
+      {
+        "start_idx": 4484,
+        "end_idx_exclusive": 4556,
+        "start": "2022-11-16 17:40:00",
+        "end": "2022-11-16 23:35:00",
+        "start_hour": 17
+      },
+      {
+        "start_idx": 4842,
+        "end_idx_exclusive": 4914,
+        "start": "2022-11-17 23:30:00",
+        "end": "2022-11-18 05:25:00",
+        "start_hour": 23
+      },
+      {
+        "start_idx": 5022,
+        "end_idx_exclusive": 5094,
+        "start": "2022-11-18 14:30:00",
+        "end": "2022-11-18 20:25:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 5201,
+        "end_idx_exclusive": 5273,
+        "start": "2022-11-19 05:25:00",
+        "end": "2022-11-19 11:20:00",
+        "start_hour": 5
+      },
+      {
+        "start_idx": 5560,
+        "end_idx_exclusive": 5632,
+        "start": "2022-11-20 11:20:00",
+        "end": "2022-11-20 17:15:00",
+        "start_hour": 11
+      },
+      {
+        "start_idx": 5919,
+        "end_idx_exclusive": 5991,
+        "start": "2022-11-21 17:15:00",
+        "end": "2022-11-21 23:10:00",
+        "start_hour": 17
+      },
+      {
+        "start_idx": 6098,
+        "end_idx_exclusive": 6170,
+        "start": "2022-11-22 08:10:00",
+        "end": "2022-11-22 14:05:00",
+        "start_hour": 8
+      },
+      {
+        "start_idx": 6457,
+        "end_idx_exclusive": 6529,
+        "start": "2022-11-23 14:05:00",
+        "end": "2022-11-23 20:00:00",
+        "start_hour": 14
+      },
+      {
+        "start_idx": 6636,
+        "end_idx_exclusive": 6708,
+        "start": "2022-11-24 05:00:00",
+        "end": "2022-11-24 10:55:00",
+        "start_hour": 5
+      },
+      {
+        "start_idx": 6816,
+        "end_idx_exclusive": 6888,
+        "start": "2022-11-24 20:00:00",
+        "end": "2022-11-25 01:55:00",
+        "start_hour": 20
+      },
+      {
+        "start_idx": 6995,
+        "end_idx_exclusive": 7067,
+        "start": "2022-11-25 10:55:00",
+        "end": "2022-11-25 16:50:00",
+        "start_hour": 10
+      },
+      {
+        "start_idx": 8430,
+        "end_idx_exclusive": 8502,
+        "start": "2022-12-07 03:45:00",
+        "end": "2022-12-07 09:40:00",
+        "start_hour": 3
+      },
+      {
+        "start_idx": 9147,
+        "end_idx_exclusive": 9219,
+        "start": "2022-12-09 15:30:00",
+        "end": "2022-12-09 21:25:00",
+        "start_hour": 15
+      }
+    ]
+  },
+  "field_map_manifest": {
+    "temperature": {
+      "protocol_name": "lab2_active_2_10_12",
+      "active_sensors": [
+        2,
+        10,
+        12
+      ],
+      "active_count": 3,
+      "time_global_index": 4484,
+      "time_eval_local_index": 936,
+      "timestamp": "2022-11-16 17:40:00",
+      "variable": "temperature",
+      "outfile": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\field_map_temperature_example_v071.png"
+    },
+    "humidity": {
+      "protocol_name": "lab2_active_2_10_12",
+      "active_sensors": [
+        2,
+        10,
+        12
+      ],
+      "active_count": 3,
+      "time_global_index": 4484,
+      "time_eval_local_index": 936,
+      "timestamp": "2022-11-16 17:40:00",
+      "variable": "humidity",
+      "outfile": "C:\\Users\\ddelg\\Documents\\Autonomous Sustainable Buildings\\Project\\Beyond-the-Thermostat-Advancing-Building-Automation-with-Thermal-Digital-Twins\\deepOnet\\runs\\lab1_to_lab2_v0.7.1\\field_map_humidity_example_v071.png"
+    }
+  }
+}
