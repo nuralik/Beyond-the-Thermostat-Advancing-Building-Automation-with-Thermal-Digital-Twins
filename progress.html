@@ -1213,9 +1213,6 @@
   </div>
 </section>
 
-<footer>
-  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
-
 
 <!-- ===================== SECTION 10: LATEST LAB1 RESULTS ===================== -->
 <section id="latest-lab1">
@@ -1783,8 +1780,6 @@
 </section>
 
 
-<footer>
-  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Lab 1, 40-Day Dataset &nbsp;·&nbsp; Built with DeepONet
 
 
 <!-- ===================== SECTION 13: PHASE 2 TRANSFER ===================== -->
@@ -1794,61 +1789,71 @@
       <div class="section-num">13</div>
       <span class="section-cat">Transfer Adaptation Capacity</span>
     </div>
-    <h2>Lab 2 Phase 2 — Head-Only vs. Partial Fine-Tune on Sparse Subsets</h2>
+    <h2>Lab 2 Adaptation Capacity — Zero-Shot, Head-Only, Partial, and Full Fine-Tune</h2>
     <p>
-      After Phase 1 established that <strong>zero-shot transfer is already meaningful</strong> and <strong>full fine-tuning is extremely strong</strong>,
-      the next question was not whether transfer works, but <em>how much adaptation capacity is actually needed</em>.
-      Phase 2 therefore compared two cheaper adaptation modes on many LAB2 sparse subsets: <strong>head-only</strong>, which updates only the final prediction head,
-      and <strong>partial fine-tune</strong>, which unfreezes a limited part of the pretrained operator.
+      The v0.7.1 pipeline unifies the full Lab 1 &rarr; Lab 2 transfer story in one comparable benchmark. Instead of evaluating different transfer modes on different protocol sets,
+      all modes are now measured on the <strong>same blocked Lab 2 split</strong>, the <strong>same selected sparse subsets</strong>, and the <strong>same reporting tables and figures</strong>.
+      This makes the comparison between <strong>zero-shot</strong>, <strong>head-only</strong>, <strong>partial fine-tune</strong>, and <strong>full fine-tune</strong> directly interpretable.
     </p>
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Phase 2 Goal</div>
+        <div class="card-title">What changed in v0.7.1?</div>
         <p style="font-size:0.9rem;">
-          Determine whether the strong Phase 1 full-fine-tune result can be approximated with a much cheaper adaptation strategy,
-          especially when only <strong>5</strong>, <strong>3</strong>, or <strong>2</strong> LAB2 sensors remain active.
+          One single pipeline now handles Lab 1 pretraining, Lab 2 adaptation, sparse subset search, unified re-evaluation, and figure generation.
+          That removes the earlier mismatch between fixed v0.6.1 protocols and sampled v0.6.2 protocols.
         </p>
       </div>
       <div class="card">
-        <div class="card-title">Important Outcome</div>
+        <div class="card-title">What does Phase 2 answer?</div>
         <p style="font-size:0.9rem;">
-          Under the current partial recipe, <strong>head-only consistently outperformed partial fine-tuning</strong>. That means the useful low-cost adaptation mode is the most constrained one,
-          while the partially unfrozen variant destabilises the transferred representation rather than improving it.
+          Not only whether transfer works, but how much adaptation capacity is needed to recover high-quality Lab 2 performance under <strong>5</strong>, <strong>3</strong>, and <strong>2</strong> active-sensor regimes.
         </p>
       </div>
     </div>
 
-    <h3>Mean Phase 2 Results Across All Tested Subsets</h3>
+    <h3>Mean R&sup2; by regime from the unified v0.7.1 benchmark</h3>
     <table>
       <thead>
         <tr>
-          <th>Active Sensors</th>
-          <th>Head-Only Temp R&sup2;</th>
-          <th>Head-Only Humidity R&sup2;</th>
+          <th>Regime</th>
+          <th>Zero-shot Temp R&sup2;</th>
+          <th>Head-only Temp R&sup2;</th>
           <th>Partial FT Temp R&sup2;</th>
+          <th>Full FT Temp R&sup2;</th>
+          <th>Zero-shot Humidity R&sup2;</th>
+          <th>Head-only Humidity R&sup2;</th>
           <th>Partial FT Humidity R&sup2;</th>
-          <th>Interpretation</th>
+          <th>Full FT Humidity R&sup2;</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>5 active</td><td>0.926</td><td>0.873</td><td>0.894</td><td>0.808</td><td>Head-only clearly better</td></tr>
-        <tr><td>3 active</td><td>0.919</td><td>0.860</td><td>0.888</td><td>0.799</td><td>Gap remains significant</td></tr>
-        <tr><td>2 active</td><td>0.905</td><td>0.843</td><td>0.876</td><td>0.780</td><td>Head-only remains preferable even under extreme sparsity</td></tr>
+        <tr><td>All 13 active</td><td>0.833</td><td>0.960</td><td>0.970</td><td>0.981</td><td>0.889</td><td>0.968</td><td>0.975</td><td>0.986</td></tr>
+        <tr><td>Top 5 mean (k=5)</td><td>0.825</td><td>0.956</td><td>0.968</td><td>0.978</td><td>0.876</td><td>0.965</td><td>0.973</td><td>0.984</td></tr>
+        <tr><td>Top 5 mean (k=3)</td><td>0.820</td><td>0.959</td><td>0.968</td><td>0.978</td><td>0.864</td><td>0.969</td><td>0.975</td><td>0.982</td></tr>
+        <tr><td>Top 5 mean (k=2)</td><td>0.808</td><td>0.952</td><td>0.963</td><td>0.974</td><td>0.865</td><td>0.964</td><td>0.969</td><td>0.978</td></tr>
       </tbody>
     </table>
 
-    <div class="warn-box">
-      <div class="ib-title">Why Partial Fine-Tune Is Not Used in the Final Transfer Benchmark</div>
+    <div class="green-box">
+      <div class="ib-title">Main v0.7.1 Takeaway</div>
       <p>
-        The current partial setup unfroze part of the pretrained operator but did <strong>not</strong> outperform head-only adaptation on any of the sparse regimes tested.
-        In practice, it landed in an unhelpful middle ground: more fragile than head-only, but not as powerful as full fine-tuning.
-        Because of that, the final transfer comparison below focuses on the three modes that matter most for the scientific story:
-        <strong>zero-shot</strong>, <strong>head-only</strong>, and <strong>full fine-tune</strong>.
+        <strong>Zero-shot transfer is meaningful</strong>, <strong>head-only adaptation recovers most of the lost performance</strong>, <strong>partial fine-tuning improves further</strong>,
+        and <strong>full fine-tuning is the strongest overall mode</strong>. This ranking is stable across all-13 sensing and the selected sparse subsets, which is exactly what the final benchmark needed to show.
+      </p>
+    </div>
+
+    <div class="info-box">
+      <div class="ib-title">Important interpretation note</div>
+      <p>
+        The <strong>LAB1 reference</strong> bars later on are a useful anchor, but they are <strong>not</strong> a strict upper bound for Lab 2. They come from a different room, with a different geometry and different test distribution.
+        So when the fully adapted Lab 2 model matches or slightly exceeds the Lab 1 reference in some summaries, that should be read as <em>very strong target-domain performance</em>, not as a contradiction.
       </p>
     </div>
   </div>
 </section>
+
+
 
 <!-- ===================== SECTION 14: UNIFIED BENCHMARK ===================== -->
 <section id="unified-transfer">
@@ -1857,169 +1862,157 @@
       <div class="section-num">14</div>
       <span class="section-cat">Unified Benchmark</span>
     </div>
-    <h2>Unified LAB1/LAB2 Transfer Benchmark on Selected Sparse Subsets</h2>
+    <h2>Unified LAB1/LAB2 Transfer Benchmark (v0.7.1)</h2>
     <p>
-      To make the transfer comparison fully consistent, the final benchmark re-evaluates the same saved models on a <strong>single unified protocol set</strong>:
-      <strong>all 13 active sensors</strong>, plus the <strong>top 5 subsets</strong> for <strong>k=5</strong>, <strong>k=3</strong>, and <strong>k=2</strong>.
-      These sparse subsets were selected from the head-only Phase 2 sweep and then re-evaluated for <strong>LAB1 reference</strong>, <strong>LAB2 zero-shot</strong>,
-      <strong>LAB2 head-only</strong>, and <strong>LAB2 full fine-tune</strong>. This removes the earlier apples-to-oranges problem between fixed and sampled protocols.
+      The final website benchmark now uses the exact v0.7.1 outputs. The benchmark re-evaluates <strong>LAB1 reference</strong>, <strong>LAB2 zero-shot</strong>,
+      <strong>LAB2 head-only</strong>, <strong>LAB2 partial fine-tune</strong>, and <strong>LAB2 full fine-tune</strong> on a <strong>single shared protocol set</strong>:
+      <strong>all 13 active sensors</strong>, plus the <strong>top 5 subsets</strong> for <strong>k=5</strong>, <strong>k=3</strong>, and <strong>k=2</strong> discovered from the head-only subset search.
+      This is the clean, directly comparable transfer benchmark that the final report and website were aiming for.
     </p>
 
-    <div class="info-box">
-      <div class="ib-title">Selected Sparse Subsets</div>
-      <p>
-        <strong>Top 5 for k=5:</strong> [2,4,5,6,9], [3,4,5,6,7], [6,7,8,10,12], [4,6,8,10,12], [1,6,7,8,9].<br/>
-        <strong>Top 5 for k=3:</strong> [4,6,7], [4,6,9], [2,4,7], [5,6,9], [6,9,10].<br/>
-        <strong>Top 5 for k=2:</strong> [5,9], [2,7], [8,10], [5,7], [10,12].
-      </p>
-    </div>
-
     <figure>
-      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_overview_top5_subsets_v063a.png" alt="Unified transfer overview on selected sparse subsets" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/transfer_overview_topk_v071.png" alt="Unified comparable LAB1/LAB2 transfer benchmark" />
       <figcaption>
-        <strong>Unified transfer overview.</strong> Mean R&sup2; across the common evaluation set: all 13 active sensors and the top-5 subsets for k=5, k=3, and k=2.
-        The LAB1 reference acts as the in-domain upper bound; zero-shot establishes the raw transfer baseline; head-only shows the best low-cost adaptation;
-        and full fine-tuning gives the strongest final performance.
+        <strong>Unified comparable LAB1/LAB2 transfer benchmark.</strong> Mean R&sup2; values for temperature and humidity under the all-13 regime and the selected sparse subset regimes.
+        Zero-shot is already meaningful, head-only provides a strong lightweight adaptation baseline, partial fine-tuning improves further, and full fine-tuning performs best overall.
       </figcaption>
     </figure>
 
-    <h3>Key Numbers from the Unified Benchmark</h3>
+    <h3>Headline numbers from the common benchmark</h3>
     <table>
       <thead>
         <tr>
-          <th>Protocol Group</th>
-          <th>Mode</th>
-          <th>Temp R&sup2;</th>
-          <th>Humidity R&sup2;</th>
-          <th>Reading</th>
+          <th>Regime</th>
+          <th>LAB1 Ref Temp R&sup2;</th>
+          <th>LAB2 Zero-shot Temp R&sup2;</th>
+          <th>LAB2 Head-only Temp R&sup2;</th>
+          <th>LAB2 Partial FT Temp R&sup2;</th>
+          <th>LAB2 Full FT Temp R&sup2;</th>
+          <th>LAB1 Ref Humidity R&sup2;</th>
+          <th>LAB2 Zero-shot Humidity R&sup2;</th>
+          <th>LAB2 Head-only Humidity R&sup2;</th>
+          <th>LAB2 Partial FT Humidity R&sup2;</th>
+          <th>LAB2 Full FT Humidity R&sup2;</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>All 13 active</td><td>LAB1 reference</td><td>0.966</td><td>0.986</td><td>In-domain upper bound</td></tr>
-        <tr><td>All 13 active</td><td>LAB2 zero-shot</td><td>0.903</td><td>0.871</td><td>Already strong across rooms</td></tr>
-        <tr><td>All 13 active</td><td>LAB2 head-only</td><td>0.943</td><td>0.899</td><td>Meaningful recovery with very cheap adaptation</td></tr>
-        <tr><td>All 13 active</td><td>LAB2 full fine-tune</td><td>0.985</td><td>0.972</td><td>Best overall transfer result</td></tr>
-        <tr><td>Top 5 (k=5) mean</td><td>LAB2 zero-shot</td><td>0.895</td><td>0.860</td><td>Sparse transfer remains viable</td></tr>
-        <tr><td>Top 5 (k=5) mean</td><td>LAB2 head-only</td><td>0.938</td><td>0.889</td><td>Best cheap sparse adaptation</td></tr>
-        <tr><td>Top 5 (k=5) mean</td><td>LAB2 full fine-tune</td><td>0.981</td><td>0.968</td><td>Near-reference quality under sparse sensing</td></tr>
-        <tr><td>Top 5 (k=3) mean</td><td>LAB2 zero-shot</td><td>0.893</td><td>0.845</td><td>Still useful under stronger sparsity</td></tr>
-        <tr><td>Top 5 (k=3) mean</td><td>LAB2 head-only</td><td>0.938</td><td>0.895</td><td>Consistent improvement over zero-shot</td></tr>
-        <tr><td>Top 5 (k=2) mean</td><td>LAB2 head-only</td><td>0.934</td><td>0.872</td><td>Even 2-sensor transfer is workable with adaptation</td></tr>
+        <tr><td>All 13 active</td><td>0.951</td><td>0.833</td><td>0.960</td><td>0.970</td><td>0.981</td><td>0.986</td><td>0.889</td><td>0.968</td><td>0.975</td><td>0.986</td></tr>
+        <tr><td>Top 5 mean (k=5)</td><td>0.932</td><td>0.825</td><td>0.956</td><td>0.968</td><td>0.978</td><td>0.979</td><td>0.876</td><td>0.965</td><td>0.973</td><td>0.984</td></tr>
+        <tr><td>Top 5 mean (k=3)</td><td>0.923</td><td>0.820</td><td>0.959</td><td>0.968</td><td>0.978</td><td>0.976</td><td>0.864</td><td>0.969</td><td>0.975</td><td>0.982</td></tr>
+        <tr><td>Top 5 mean (k=2)</td><td>0.896</td><td>0.808</td><td>0.952</td><td>0.963</td><td>0.974</td><td>0.966</td><td>0.865</td><td>0.964</td><td>0.969</td><td>0.978</td></tr>
       </tbody>
     </table>
 
-    <h3>Per-Sensor All-13 Transfer Maps</h3>
+    <div class="green-box">
+      <div class="ib-title">Why this section matters</div>
+      <p>
+        This benchmark finally resolves the old comparability problem. Earlier versions mixed fixed protocols and sampled subset sweeps, which made direct transfer-mode comparison awkward.
+        In v0.7.1, every mode is scored on the same selected benchmark, so the conclusions are much more defensible.
+      </p>
+    </div>
+
+    <h3>Selected sparse subsets</h3>
     <p>
-      The all-13 transfer maps make the spatial story visible. The zero-shot model already transfers well on many LAB2 locations,
-      but the weak zones are concentrated in the lower portion of the room, especially around sensors <strong>7</strong> and <strong>9</strong>.
-      Head-only adaptation recovers much of that local degradation, while full fine-tuning restores near-uniform high performance.
+      The strongest sparse subsets were selected from the head-only search and then reused for the common benchmark. A practical pattern stands out immediately:
+      <strong>sensor 12 appears repeatedly</strong>, often together with sensors <strong>2</strong>, <strong>11</strong>, <strong>1</strong>, <strong>10</strong>, or <strong>9</strong>.
+      That suggests the best sparse layouts are leveraging a few strategically informative locations rather than merely spreading sensors evenly across the room.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>k</th>
+          <th>Selected subsets</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>5</td><td>{3, 9, 10, 11, 12}; {2, 5, 8, 10, 12}; {3, 4, 6, 11, 12}; {1, 2, 6, 9, 12}; {2, 7, 8, 11, 13}</td></tr>
+        <tr><td>3</td><td>{2, 10, 12}; {1, 9, 11}; {9, 11, 12}; {6, 10, 12}; {1, 2, 12}</td></tr>
+        <tr><td>2</td><td>{2, 12}; {1, 2}; {11, 12}; {6, 8}; {1, 11}</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Per-sensor all-13 transfer maps</h3>
+    <p>
+      The all-13 maps make the spatial transfer story visible. In both temperature and humidity, the zero-shot errors are not uniform across the room; they are concentrated in a few difficult Lab 2 regions.
+      Head-only and partial fine-tuning correct most of those local failures, and full fine-tuning produces a nearly uniform high-R&sup2; map.
     </p>
 
     <div class="grid-2">
       <figure>
-        <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/sensor_map_all13_temperature_v063a.png" alt="All-13 temperature transfer map" />
+        <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/transfer_sensor_map_temperature_v071.png" alt="Per-sensor transfer map under the all-13 regime for temperature" />
         <figcaption>
-          <strong>All-13 temperature transfer map.</strong> The biggest zero-shot temperature errors in LAB2 appear around sensor 7 (R&sup2; = 0.650) and sensor 9 (R&sup2; = 0.771).
-          Head-only lifts these to 0.903 and 0.861, and full fine-tuning raises them further to 0.971 and 0.982.
+          <strong>Per-sensor transfer map (temperature).</strong> The largest zero-shot temperature failures appear around sensors 7, 6, and 9, while head-only, partial fine-tuning, and especially full fine-tuning remove most of that local degradation.
         </figcaption>
       </figure>
       <figure>
-        <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/sensor_map_all13_humidity_v063a.png" alt="All-13 humidity transfer map" />
+        <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/transfer_sensor_map_humidity_v071.png" alt="Per-sensor transfer map under the all-13 regime for humidity" />
         <figcaption>
-          <strong>All-13 humidity transfer map.</strong> The zero-shot humidity transfer is hardest around sensors 7 and 9 (R&sup2; = 0.673 and 0.568).
-          Head-only improves those to 0.893 and 0.747, and full fine-tuning reaches 0.975 and 0.967. Some already-strong sensors change only slightly,
-          showing that head-only mostly corrects the difficult spatial regions instead of uniformly shifting the whole map.
+          <strong>Per-sensor transfer map (humidity).</strong> Humidity transfers slightly better than temperature in zero-shot, but the same pattern holds: the difficult regions are localised, and adaptation makes the spatial performance much more uniform across Lab 2.
         </figcaption>
       </figure>
     </div>
 
-    <h3>Subset-Level Comparisons</h3>
+    <h3>Sparse subset comparison figures</h3>
     <p>
-      The next three figures show the exact top-5 subsets for each sparsity level. These are not averages over all possible subsets; they are the strongest subsets discovered in the head-only sweep,
-      then re-evaluated under zero-shot, head-only, and full fine-tuning. This makes the comparison fully consistent and directly interpretable.
+      The next figures show the exact selected sparse subsets for <strong>k=5</strong>, <strong>k=3</strong>, and <strong>k=2</strong>. These are not averages over all possible subsets.
+      They are the strongest subsets discovered in the head-only search, re-evaluated under every transfer mode on the common benchmark.
     </p>
 
     <figure>
-      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_compare_top5_k5_v063a.png" alt="Top 5 k equals 5 transfer comparison" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/transfer_subset_compare_k5_v071.png" alt="Unified subset comparison for k equals 5" />
       <figcaption>
-        <strong>Top 5 subsets with k=5.</strong> For the best 5-sensor LAB2 layouts, head-only adaptation closes a large part of the zero-shot gap, while full fine-tuning reaches
-        roughly 0.981 temperature R&sup2; and 0.968 humidity R&sup2; on average across the five selected subsets.
+        <strong>Selected subsets with k=5.</strong> Sparse transfer remains strong with only five active sensors. Head-only already recovers most of the zero-shot gap, partial fine-tuning improves further, and full fine-tuning remains the strongest overall mode.
       </figcaption>
     </figure>
 
     <figure>
-      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_compare_top5_k3_v063a.png" alt="Top 5 k equals 3 transfer comparison" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/transfer_subset_compare_k3_v071.png" alt="Unified subset comparison for k equals 3" />
       <figcaption>
-        <strong>Top 5 subsets with k=3.</strong> Even under only three active sensors, head-only adaptation remains consistently better than zero-shot.
-        Full fine-tuning still pushes the model to about 0.975 temperature R&sup2; and 0.963 humidity R&sup2; on average across the selected 3-sensor subsets.
+        <strong>Selected subsets with k=3.</strong> Even under only three active sensors, the transfer story is stable: zero-shot remains useful, adaptation closes a large portion of the gap, and full fine-tuning stays best.
       </figcaption>
     </figure>
 
     <figure>
-      <img src="./deepOnet/runs/lab1_to_lab2_v0.6.3/transfer_compare_top5_k2_v063a.png" alt="Top 5 k equals 2 transfer comparison" />
+      <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/transfer_subset_compare_k2_v071.png" alt="Unified subset comparison for k equals 2" />
       <figcaption>
-        <strong>Top 5 subsets with k=2.</strong> The 2-sensor case is the strongest stress test in this project. Zero-shot remains usable, head-only still improves it,
-        and full fine-tuning remains remarkably strong, with average R&sup2; around 0.976 for temperature and 0.960 for humidity across the top five 2-sensor subsets.
+        <strong>Selected subsets with k=2.</strong> This is the strongest stress test in the benchmark. Despite only two active sensors, the adapted models still achieve very strong temperature and humidity reconstruction, especially under partial and full fine-tuning.
       </figcaption>
     </figure>
 
-    <div class="green-box">
-      <div class="ib-title">Unified Transfer Takeaway</div>
+    <h3>Example spatial field reconstructions</h3>
+    <p>
+      These example plots compare the Lab 2 ground truth, a sparse <strong>IDW baseline</strong>, and the DeepONet reconstructions under the different transfer modes for the same sparse protocol.
+      The IDW baseline is easy to interpret but visibly oversmooths the field. The adapted DeepONet models recover sharper and more realistic room structure from the same sparse sensor input.
+    </p>
+
+    <div class="grid-2">
+      <figure>
+        <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/field_map_temperature_example_v071.png" alt="Lab 2 temperature field map example" />
+        <figcaption>
+          <strong>Temperature field example.</strong> For protocol {2, 10, 12}, the sparse IDW baseline captures only a smooth approximation. Zero-shot reflects the room structure but with local distortions, while the adapted DeepONet variants move much closer to the ground-truth thermal field.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="./deepOnet/runs/lab1_to_lab2_v0.7.1/field_map_humidity_example_v071.png" alt="Lab 2 humidity field map example" />
+        <figcaption>
+          <strong>Humidity field example.</strong> The same comparison for humidity. The adapted operator reconstructs more plausible moist/dry regions than the sparse IDW baseline, particularly near the local extrema.
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="info-box">
+      <div class="ib-title">Current scope vs. next step</div>
       <p>
-        The full transfer story is now clear. <strong>Zero-shot transfer is genuinely good</strong>; <strong>head-only adaptation is a useful and computationally cheap improvement</strong>;
-        and <strong>full fine-tuning is the strongest mode by a wide margin</strong>. The most important scientific result is that the model does not collapse under room transfer, even under severe sparsity.
-        Instead, it retains meaningful predictive structure and can be adapted to high accuracy with a relatively small amount of LAB2 data.
+        The current pipeline reconstructs <strong>dense temperature and humidity fields</strong>. A separate thermal comfort model is still the next layer to add on top of these reconstructed fields; it is not yet part of the current benchmark outputs.
       </p>
     </div>
   </div>
 </section>
-<!-- ===================== SECTION 15: ASSIGNMENT 4 UPDATE ===================== -->
-<section id="assignment4">
-  <div class="container">
-    <div class="section-label">
-      <div class="section-num">15</div>
-      <span class="section-cat">Project Update</span>
-    </div>
-    <h2>Assignment 4 — Project Progress & Next Steps</h2>
-
-    <p>
-      Through this assignment, our team reflected on our most recent experimental results and aligned on the next phase of the ThermoDT project.
-      Our latest experiments on sparse sensor configurations showed that the model remains surprisingly accurate even when the number of active sensors is significantly reduced.
-      In particular, performance degradation was gradual rather than catastrophic, indicating that the model is learning the underlying spatial thermal structure of the room rather than simply interpolating between sensor points.
-    </p>
-
-     <p>
-      These results give us confidence that the approach is robust enough to move beyond within-room reconstruction.
-      Based on this, we agreed that the next step is to extend our model to spatial predictions in Lab 2, evaluating how well it generalizes to a new room with different geometry and conditions.
-      This will allow us to directly test the transferability of the learned operator, which is one of the main goals of our project.
-    </p>
-
-    <p>
-      In addition, we decided to explore a thermal comfort modeling extension using the minimum viable number of sensors.
-      Specifically, we plan to select a small number of representative spatial locations (e.g., four coordinates corresponding to occupants)
-      and use the model to predict temperature and humidity at those locations.
-      This will allow us to estimate thermal comfort conditions across the room without requiring dense sensing,
-      demonstrating a practical application of our digital twin framework.
-    </p>
-
-    <div class="green-box">
-      <div class="ib-title">Key Takeaways</div>
-      <p>
-        • Sparse sensor results were strong → model captures spatial structure<br/>
-        • Performance degrades smoothly, not abruptly<br/>
-        • Next step: transfer model to Lab 2 (new environment)<br/>
-        • New direction: thermal comfort prediction at occupant locations<br/>
-        • Goal: use minimal sensors for practical deployment
-      </p>
-    </div>
-  </div>
-</section>
-
-
-<a href="#assignment4">Assignment 4</a>
 
 
 <footer>
+  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Unified v0.7.1 LAB1/LAB2 benchmark &nbsp;·&nbsp; DeepONet sparse field reconstruction
+</footer>
 
 </body>
 </html>
