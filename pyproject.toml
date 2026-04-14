@@ -5,7 +5,7 @@ description = "Thermal Digital Twin for buildings using Physics-Informed Neural 
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
-    { name = "Nueraili" , "David" , "Justin", "Mario"  },
+    { name = "Nueraili, David, Justin, Mario"  },
 ]
 keywords = ["digital-twin", "deeponet", "pinn", "thermal", "building-automation", "physics-informed"]
 dependencies = [
@@ -22,6 +22,4 @@ dependencies = [
     "torch>=2.0.0",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+
