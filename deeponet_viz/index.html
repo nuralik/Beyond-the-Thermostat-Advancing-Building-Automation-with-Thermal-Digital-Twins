@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DeepONet v0.5.3 — Architecture & Training Animation</title>
+<style>
+  :root {
+    --bg:#f6f8fa; --panel:#ffffff; --border:#d0d7de;
+    --accent:#0969da; --green:#1a7f37; --orange:#9a6700;
+    --red:#cf222e; --purple:#8250df; --text:#24292f; --muted:#57606a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'SF Mono','Fira Code',monospace; min-height:100vh; overflow-x:hidden; }
+
+  header { background:var(--panel); border-bottom:1px solid var(--border); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 1px 3px rgba(0,0,0,.07); }
+  header h1 { font-size:15px; color:var(--accent); letter-spacing:.4px; }
+  header p  { font-size:11px; color:var(--muted); }
+  .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button { background:var(--panel); border:1px solid var(--border); color:var(--text); padding:6px 16px; border-radius:6px; cursor:pointer; font-size:12px; font-family:inherit; transition:background .2s,border-color .2s; }
+  button:hover  { background:#f3f4f6; border-color:var(--accent); }
+  button.active { background:#dbeafe; border-color:var(--accent); color:var(--accent); }
+  .speed-wrap { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); }
+  input[type=range] { width:90px; accent-color:var(--accent); }
+
+  #info-bar { background:var(--panel); border-bottom:1px solid var(--border); padding:8px 28px; display:flex; gap:28px; align-items:center; font-size:11px; flex-wrap:wrap; }
+  .stat { display:flex; gap:6px; align-items:center; }
+  .stat span:first-child { color:var(--muted); }
+  .stat span:last-child  { color:var(--accent); font-weight:700; min-width:54px; }
+  #loss-bar-wrap { flex:1; height:4px; background:#e5e7eb; border-radius:2px; min-width:100px; max-width:260px; }
+  #loss-bar { height:100%; background:var(--green); border-radius:2px; width:100%; transition:width .3s; }
+
+  #main { display:flex; flex-direction:column; align-items:center; padding:18px 16px 30px; gap:18px; }
+  #arch-wrap { width:100%; max-width:1340px; background:var(--panel); border:1px solid var(--border); border-radius:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  #arch-svg  { width:100%; height:auto; display:block; }
+
+  #chart-wrap { width:100%; max-width:1340px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 18px 10px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  #chart-title { font-size:11px; color:var(--muted); margin-bottom:8px; }
+  #loss-canvas { width:100%; height:130px; display:block; }
+
+  #tooltip { position:fixed; background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:11px; pointer-events:none; opacity:0; transition:opacity .15s; z-index:999; max-width:280px; line-height:1.7; color:var(--text); box-shadow:0 4px 12px rgba(0,0,0,.12); }
+  #tooltip b { color:var(--accent); }
+
+  #legend { display:flex; gap:18px; flex-wrap:wrap; font-size:10px; color:var(--muted); max-width:1340px; width:100%; }
+  .leg { display:flex; align-items:center; gap:5px; }
+  .leg-dot { width:10px; height:10px; border-radius:50%; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>DeepONet v0.5.3 — Network Architecture &amp; Training</h1>
+    <p>Multi-output thermal digital twin · 13 sensors · temp + humidity · depth 6 · hidden 128 · latent 128</p>
+  </div>
+  <div class="controls">
+    <button id="btn-play">▶ Play</button>
+    <button id="btn-reset">↺ Reset</button>
+    <button id="btn-step">Step →</button>
+    <div class="speed-wrap">
+      <span>Speed</span>
+      <input type="range" id="speed" min="1" max="10" value="1"/>
+      <span id="speed-val">1×</span>
+    </div>
+  </div>
+</header>
+
+<div id="info-bar">
+  <div class="stat"><span>Epoch</span><span id="epoch-lbl">0 / 150</span></div>
+  <div class="stat"><span>Train Loss</span><span id="train-lbl">—</span></div>
+  <div class="stat"><span>Val Loss</span><span id="val-lbl">—</span></div>
+  <div class="stat"><span>Active Sensors</span><span id="active-lbl">—</span></div>
+  <div class="stat"><span>Masked Sensors</span><span id="masked-lbl">—</span></div>
+  <div class="stat"><span>Phase</span><span id="phase-lbl" style="color:var(--green)">—</span></div>
+  <div id="loss-bar-wrap"><div id="loss-bar"></div></div>
+</div>
+
+<div id="main">
+  <div id="arch-wrap">
+    <!-- viewBox height = 860 — gives enough room for r=14 sensor circles + grad panel -->
+    <svg id="arch-svg" viewBox="0 0 1280 860" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr"   markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#0969da" opacity="0.7"/></marker>
+        <marker id="arr-g" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#1a7f37" opacity="0.9"/></marker>
+        <marker id="arr-r" markerWidth="7" markerHeight="7" refX="2" refY="3.5" orient="auto"><polygon points="7 0,0 3.5,7 7" fill="#cf222e" opacity="0.8"/></marker>
+        <!-- light-mode glows: subtle drop-shadows -->
+        <filter id="glow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#0969da" flood-opacity="0.25"/></filter>
+        <filter id="glow-sm"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#0969da" flood-opacity="0.2"/></filter>
+        <filter id="glow-red"><feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#cf222e" flood-opacity="0.3"/></filter>
+        <filter id="glow-g"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#1a7f37" flood-opacity="0.25"/></filter>
+      </defs>
+
+      <!-- ── SVG background ── -->
+      <rect width="1280" height="860" fill="#f6f8fa"/>
+
+      <!-- ── Section labels ── -->
+      <text x="100"  y="24" fill="#57606a" font-size="12" text-anchor="middle" font-family="monospace" font-weight="bold">BRANCH INPUT</text>
+      <text x="278"  y="24" fill="#57606a" font-size="12" text-anchor="middle" font-family="monospace" font-weight="bold">MASK VECTOR</text>
+      <text x="505"  y="24" fill="#57606a" font-size="12" text-anchor="middle" font-family="monospace" font-weight="bold">BRANCH NET  (depth=6, h=128)</text>
+      <text x="808"  y="24" fill="#57606a" font-size="12" text-anchor="middle" font-family="monospace" font-weight="bold">TRUNK NET  (depth=6, h=128)</text>
+      <text x="1055" y="24" fill="#57606a" font-size="12" text-anchor="middle" font-family="monospace" font-weight="bold">DOT PRODUCT</text>
+      <text x="1200" y="24" fill="#57606a" font-size="12" text-anchor="middle" font-family="monospace" font-weight="bold">OUTPUT</text>
+
+      <!-- ── Section separators ── -->
+      <line x1="188"  y1="30" x2="188"  y2="855" stroke="#d0d7de" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="348"  y1="30" x2="348"  y2="855" stroke="#d0d7de" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="672"  y1="30" x2="672"  y2="855" stroke="#d0d7de" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="962"  y1="30" x2="962"  y2="855" stroke="#d0d7de" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="1138" y1="30" x2="1138" y2="855" stroke="#d0d7de" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- ── Sensor nodes (drawn by JS) ── -->
+      <g id="sensors-temp"></g>
+      <g id="sensors-hum"></g>
+      <text x="56"  y="42" fill="#0969da" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">Temp</text>
+      <text x="140" y="42" fill="#8250df" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">Hum</text>
+
+      <!-- ── Mask nodes (drawn by JS) ── -->
+      <g id="mask-nodes"></g>
+      <text x="278" y="42" fill="#9a6700" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">mask[1..13]</text>
+
+      <!-- ── Branch net layers (drawn by JS) ── -->
+      <g id="branch-layers"></g>
+
+      <!-- ── Trunk coord input (drawn by JS) ── -->
+      <g id="trunk-input"></g>
+      <text x="706" y="618" fill="#1a7f37" font-size="11" text-anchor="middle" font-family="monospace">coord (x, y)</text>
+      <g id="trunk-layers"></g>
+
+      <!-- ── Dot product box ── -->
+      <g id="dot-group" style="cursor:pointer">
+        <rect x="968" y="210" width="168" height="190" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2" filter="url(#glow-sm)"/>
+        <!-- step 1: reshape -->
+        <text x="1052" y="234" fill="#57606a" font-size="10" text-anchor="middle" font-family="monospace">256-d  ↓ reshape</text>
+        <text x="1052" y="249" fill="#0969da" font-size="10" text-anchor="middle" font-family="monospace">[batch, 2, 128]</text>
+        <!-- divider -->
+        <line x1="978" y1="256" x2="1126" y2="256" stroke="#d0d7de" stroke-width="1"/>
+        <!-- step 2: element-wise multiply -->
+        <text x="1052" y="270" fill="#57606a" font-size="10" text-anchor="middle" font-family="monospace">branch ⊙ trunk</text>
+        <text x="1052" y="284" fill="#57606a" font-size="9"  text-anchor="middle" font-family="monospace">[batch,2,128] ⊙ [batch,2,128]</text>
+        <!-- step 3: sum -->
+        <text x="1052" y="300" fill="#0969da" font-size="14" text-anchor="middle" font-family="monospace">∑</text>
+        <text x="1052" y="316" fill="#57606a" font-size="9"  text-anchor="middle" font-family="monospace">sum over latent dim (128)</text>
+        <!-- divider -->
+        <line x1="978" y1="322" x2="1126" y2="322" stroke="#d0d7de" stroke-width="1"/>
+        <!-- step 4: output -->
+        <text x="1052" y="336" fill="#1a7f37" font-size="10" text-anchor="middle" font-family="monospace" font-weight="bold">→ [batch, 2]  + bias[2]</text>
+        <text x="1052" y="352" fill="#9a6700" font-size="9"  text-anchor="middle" font-family="monospace">Temp  &amp;  Humidity</text>
+        <rect id="dot-glow" x="968" y="210" width="168" height="190" rx="10" fill="none" stroke="#0969da" stroke-width="0" opacity="0"/>
+      </g>
+
+      <!-- ── Output nodes ── -->
+      <g id="output-group">
+        <circle cx="1205" cy="282" r="32" fill="#eff6ff" stroke="#0969da" stroke-width="2" id="out-temp"/>
+        <text x="1205" y="275" fill="#0969da" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">Temp</text>
+        <text x="1205" y="289" fill="#57606a" font-size="9"  text-anchor="middle" font-family="monospace">°C</text>
+        <text x="1205" y="304" fill="#0969da" font-size="10" text-anchor="middle" id="out-temp-val" font-family="monospace">—</text>
+
+        <circle cx="1205" cy="368" r="32" fill="#faf5ff" stroke="#8250df" stroke-width="2" id="out-hum"/>
+        <text x="1205" y="361" fill="#8250df" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">Hum</text>
+        <text x="1205" y="375" fill="#57606a" font-size="9"  text-anchor="middle" font-family="monospace">%RH</text>
+        <text x="1205" y="390" fill="#8250df" font-size="10" text-anchor="middle" id="out-hum-val" font-family="monospace">—</text>
+      </g>
+
+      <!-- ── Dimension labels ── -->
+      <text x="358" y="196" fill="#57606a" font-size="10" font-family="monospace">39-d</text>
+      <text x="966" y="196" fill="#57606a" font-size="10" font-family="monospace">256-d</text>
+      <text x="966" y="440" fill="#57606a" font-size="10" font-family="monospace">256-d</text>
+      <text x="686" y="430" fill="#57606a" font-size="10" font-family="monospace">2-d</text>
+
+      <!-- ════════════════════════════════════════════════════
+           "Why masked ≠ weight update" panel
+           Positioned UNDER the branch net section (x 350-665)
+      ════════════════════════════════════════════════════ -->
+      <g id="grad-panel">
+        <rect x="350" y="456" width="310" height="198" rx="8"
+              fill="#fff8f8" stroke="#cf222e" stroke-width="1.5"/>
+        <text x="360" y="476" fill="#cf222e" font-size="11" font-family="monospace" font-weight="bold">Why masked sensor ≠ weight update</text>
+
+        <text x="358" y="495" fill="#57606a" font-size="10" font-family="monospace">Forward pass:</text>
+        <text x="358" y="510" fill="#9a6700" font-size="10" font-family="monospace">  values[masked] = 0.0    ← line 553</text>
+        <text x="358" y="524" fill="#9a6700" font-size="10" font-family="monospace">  observed[masked] = 0.0  ← line 554</text>
+        <text x="358" y="538" fill="#24292f" font-size="10" font-family="monospace">  h = W × input → W_col × 0 = 0</text>
+
+        <text x="358" y="556" fill="#57606a" font-size="10" font-family="monospace">Backward pass (chain rule):</text>
+        <text x="358" y="570" fill="#cf222e" font-size="10" font-family="monospace">  ∂L/∂W_m = (∂L/∂h) × input_masked</text>
+        <text x="358" y="584" fill="#cf222e" font-size="10" font-family="monospace">           = (∂L/∂h) ×     0      = 0</text>
+
+        <rect x="358" y="592" width="294" height="52" rx="5" fill="#ffe5e5" stroke="#cf222e" stroke-width="1"/>
+        <text x="366" y="610" fill="#cf222e" font-size="10.5" font-family="monospace" font-weight="bold">→ Adam/SGD  Δw = 0</text>
+        <text x="366" y="628" fill="#cf222e" font-size="10" font-family="monospace">   Masked weights NOT updated</text>
+      </g>
+
+      <!-- ── "×0" flash at concat point ── -->
+      <g id="zero-flash" opacity="0">
+        <rect x="346" y="204" width="46" height="18" rx="4" fill="#ffe5e5" stroke="#cf222e" stroke-width="1"/>
+        <text x="369" y="217" fill="#cf222e" font-size="10" text-anchor="middle" font-family="monospace" font-weight="bold">×0</text>
+      </g>
+
+      <!-- ── Particles, zero-labels, backward ghosts ── -->
+      <g id="particles"></g>
+      <g id="zero-labels"></g>
+      <g id="grad-ghosts"></g>
+    </svg>
+  </div>
+
+  <div id="chart-wrap">
+    <div id="chart-title">Training &amp; Validation Loss (MSE) — simulated over 150 epochs</div>
+    <canvas id="loss-canvas"></canvas>
+  </div>
+
+  <div id="legend">
+    <div class="leg"><div class="leg-dot" style="background:#1a7f37"></div>Active sensor — signal flows through</div>
+    <div class="leg"><div class="leg-dot" style="background:#cf222e"></div>Masked sensor — value zeroed (0.0)</div>
+    <div class="leg"><div class="leg-dot" style="background:#0969da"></div>Branch net layer</div>
+    <div class="leg"><div class="leg-dot" style="background:#1a7f37"></div>Trunk net layer</div>
+    <div class="leg"><div class="leg-dot" style="background:#8250df"></div>Latent dot product</div>
+    <div class="leg"><div class="leg-dot" style="background:#cf222e; opacity:.5"></div>∂L/∂W = 0 gradient ghost (backward)</div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CONSTANTS  (deepOnet_v0.5.3.py PARAMS)
+═══════════════════════════════════════════════ */
+const N_SENSORS    = 13;
+const N_CHANNELS   = 2;
+const HIDDEN       = 128;
+const DEPTH        = 6;
+const LATENT_OUT   = N_CHANNELS * 128;   // 256
+const TOTAL_EPOCHS = 150;
+const MASK_MIN = 1, MASK_MAX = 12;
+
+const SENSOR_COORDS = {
+  1:[7.21,0.60],2:[3.88,5.88],3:[5.85,5.88],4:[0.60,0.60],5:[1.92,1.94],
+  6:[3.88,3.91],7:[1.92,3.91],8:[5.85,3.91],9:[7.21,7.22],10:[1.92,5.88],
+  11:[0.60,7.22],12:[5.85,1.94],13:[3.88,1.94]
+};
+
+/* ═══════════════════════════════════════════════
+   SVG HELPERS
+═══════════════════════════════════════════════ */
+const SVG_NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, a={}) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const [k,v] of Object.entries(a)) el.setAttribute(k,v);
+  return el;
+}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT  — bigger circles, more vertical room
+═══════════════════════════════════════════════ */
+const SVG_H        = 860;
+const SENSOR_Y_START = 56;
+// Step = 620/13 ≈ 47.7 px — enough room for r=14 circles (28px diam) with ~20px gaps
+const SENSOR_Y_STEP  = (SVG_H - 240) / N_SENSORS;
+const sY = i => SENSOR_Y_START + i * SENSOR_Y_STEP + SENSOR_Y_STEP / 2;
+
+// Branch net  — centred around y=230, height 210
+const BLX = [380, 432, 484, 536, 592, 652];
+const BLY = 230, BLH = 210;
+
+// Trunk net  — lower section
+const TLX = [724, 766, 808, 852, 896, 942];
+const TLY = 520, TLH = 110;
+
+// Concat point (all sensor/mask lines converge here)
+const CONCAT_X = 362, CONCAT_Y = BLY;
+
+/* ═══════════════════════════════════════════════
+   BUILD STATIC SVG ELEMENTS
+═══════════════════════════════════════════════ */
+const sTempG  = document.getElementById('sensors-temp');
+const sHumG   = document.getElementById('sensors-hum');
+const maskG   = document.getElementById('mask-nodes');
+const branchG = document.getElementById('branch-layers');
+const trunkIG = document.getElementById('trunk-input');
+const trunkG  = document.getElementById('trunk-layers');
+const partG   = document.getElementById('particles');
+const zeroLG  = document.getElementById('zero-labels');
+const gradGG  = document.getElementById('grad-ghosts');
+
+const tempNodes = [], humNodes = [], maskNodes = [];
+const branchLayerEls = [], trunkLayerEls = [];
+
+// ── Sensor temp nodes  (r=14, font 10) ──
+for (let i = 0; i < N_SENSORS; i++) {
+  const cx = 56, cy = sY(i);
+  const c = svgEl('circle', {cx, cy, r:14, fill:'#f0fff4', stroke:'#1a7f37', 'stroke-width':'2', id:`st${i}`});
+  const t = svgEl('text',   {x:cx, y:cy+4, 'font-size':'10', 'text-anchor':'middle', 'font-family':'monospace', fill:'#24292f', 'font-weight':'600'});
+  t.textContent = `S${i+1}`;
+  sTempG.appendChild(c); sTempG.appendChild(t);
+  tempNodes.push(c);
+  sTempG.appendChild(svgEl('line', {x1:cx+14, y1:cy, x2:244, y2:cy, stroke:'#d0d7de', 'stroke-width':'1'}));
+}
+
+// ── Sensor hum nodes  (r=14, font 10) ──
+for (let i = 0; i < N_SENSORS; i++) {
+  const cx = 140, cy = sY(i);
+  const c = svgEl('circle', {cx, cy, r:14, fill:'#faf5ff', stroke:'#8250df', 'stroke-width':'2', id:`sh${i}`});
+  const t = svgEl('text',   {x:cx, y:cy+4, 'font-size':'10', 'text-anchor':'middle', 'font-family':'monospace', fill:'#24292f', 'font-weight':'600'});
+  t.textContent = `S${i+1}`;
+  sHumG.appendChild(c); sHumG.appendChild(t);
+  humNodes.push(c);
+}
+
+// ── Mask nodes  (28×18 rect, font 10) ──
+for (let i = 0; i < N_SENSORS; i++) {
+  const cx = 278, cy = sY(i);
+  const rect = svgEl('rect', {x:cx-14, y:cy-9, width:28, height:18, rx:4, fill:'#fffbeb', stroke:'#9a6700', 'stroke-width':'1.5'});
+  const t    = svgEl('text', {x:cx,    y:cy+4, 'font-size':'10', 'text-anchor':'middle', 'font-family':'monospace', fill:'#9a6700', 'font-weight':'700'});
+  t.textContent = '1';
+  maskG.appendChild(rect); maskG.appendChild(t);
+  maskNodes.push({rect, text:t});
+  maskG.appendChild(svgEl('line', {x1:cx+14, y1:cy, x2:CONCAT_X, y2:CONCAT_Y, stroke:'#d0d7de', 'stroke-width':'0.8', opacity:'0.5'}));
+}
+
+// ── Branch entry arrow ──
+branchG.appendChild(svgEl('line', {x1:CONCAT_X, y1:BLY, x2:BLX[0]-14, y2:BLY, stroke:'#0969da', 'stroke-width':'2', 'marker-end':'url(#arr)'}));
+
+// ── Branch net layers ──
+for (let l = 0; l < DEPTH; l++) {
+  const x = BLX[l], isLast = l === DEPTH-1;
+  const col    = isLast ? '#8250df' : '#0969da';
+  const fillBg = isLast ? '#faf5ff' : '#eff6ff';
+  const lbl    = isLast ? '256' : '128';
+  const cols   = isLast ? 16 : 12;
+
+  const g  = svgEl('g', {id:`bl${l}`});
+  const rx = svgEl('rect', {x:x-14, y:BLY-BLH/2, width:28, height:BLH, rx:5,
+    fill:fillBg, stroke:col, 'stroke-width':'2', opacity:'0.95'});
+  g.appendChild(rx);
+  branchLayerEls.push(rx);
+
+  for (let n = 0; n < cols; n++) {
+    g.appendChild(svgEl('circle', {
+      cx:x, cy:BLY-BLH/2+10+n*(BLH-20)/(cols-1),
+      r:2.8, fill:col, opacity:'0.5'
+    }));
+  }
+
+  const lt = svgEl('text', {x, y:BLY+BLH/2+16, 'font-size':'10', 'text-anchor':'middle', 'font-family':'monospace', fill:'#57606a', 'font-weight':'600'});
+  lt.textContent = l===0 ? `in→${lbl}` : lbl;
+  g.appendChild(lt);
+
+  if (l < DEPTH-1) {
+    const at = svgEl('text', {x, y:BLY+BLH/2+30, 'font-size':'9', 'text-anchor':'middle', 'font-family':'monospace', fill:'#1a7f37'});
+    at.textContent = 'tanh';
+    g.appendChild(at);
+    g.appendChild(svgEl('line', {x1:x+14, y1:BLY, x2:BLX[l+1]-14, y2:BLY,
+      stroke:'#0969da', 'stroke-width':'1.2', 'marker-end':'url(#arr)', opacity:'0.7'}));
+  }
+  branchG.appendChild(g);
+
+  rx.style.cursor = 'pointer';
+  const cap = l;
+  rx.addEventListener('mouseover', e => showTip(e, cap < DEPTH-1
+    ? `<b>Branch Layer ${cap+1}</b><br/>Linear(${cap===0?'39':HIDDEN}→${HIDDEN}) + Tanh<br/>Hidden dim: ${HIDDEN}`
+    : `<b>Branch Output Layer</b><br/>Linear(${HIDDEN}→${LATENT_OUT})<br/>Output: [batch, 2, 128]`));
+  rx.addEventListener('mousemove', moveTip);
+  rx.addEventListener('mouseleave', hideTip);
+}
+// branch → dot
+branchG.appendChild(svgEl('line', {x1:BLX[DEPTH-1]+14, y1:BLY, x2:968, y2:290,
+  stroke:'#8250df', 'stroke-width':'2', 'marker-end':'url(#arr)', opacity:'0.8'}));
+
+// ── Trunk coord input  (r=16) ──
+for (const [cy, lbl] of [[500, 'x'], [540, 'y']]) {
+  trunkIG.appendChild(svgEl('circle', {cx:706, cy, r:16, fill:'#f0fff4', stroke:'#1a7f37', 'stroke-width':'2'}));
+  const t = svgEl('text', {x:706, y:cy+4, 'font-size':'12', 'text-anchor':'middle', 'font-family':'monospace', fill:'#1a7f37', 'font-weight':'700'});
+  t.textContent = lbl;
+  trunkIG.appendChild(t);
+  trunkIG.appendChild(svgEl('line', {x1:722, y1:cy, x2:TLX[0]-12, y2:TLY,
+    stroke:'#1a7f37', 'stroke-width':'1.2', 'marker-end':'url(#arr-g)', opacity:'0.7'}));
+}
+
+// ── Trunk net layers ──
+for (let l = 0; l < DEPTH; l++) {
+  const x = TLX[l], isLast = l === DEPTH-1;
+  const col    = isLast ? '#8250df' : '#1a7f37';
+  const fillBg = isLast ? '#faf5ff' : '#f0fff4';
+  const cols   = isLast ? 12 : 8;
+
+  const g  = svgEl('g', {id:`tl${l}`});
+  const rx = svgEl('rect', {x:x-12, y:TLY-TLH/2, width:24, height:TLH, rx:5,
+    fill:fillBg, stroke:col, 'stroke-width':'2', opacity:'0.95'});
+  g.appendChild(rx);
+  trunkLayerEls.push(rx);
+
+  for (let n = 0; n < cols; n++) {
+    g.appendChild(svgEl('circle', {
+      cx:x, cy:TLY-TLH/2+6+n*(TLH-12)/(cols-1),
+      r:2.5, fill:col, opacity:'0.5'
+    }));
+  }
+
+  const lt = svgEl('text', {x, y:TLY+TLH/2+16, 'font-size':'10', 'text-anchor':'middle', 'font-family':'monospace', fill:'#57606a', 'font-weight':'600'});
+  lt.textContent = isLast ? '256' : '128';
+  g.appendChild(lt);
+
+  if (l < DEPTH-1) {
+    const at = svgEl('text', {x, y:TLY+TLH/2+30, 'font-size':'9', 'text-anchor':'middle', 'font-family':'monospace', fill:'#1a7f37'});
+    at.textContent = 'tanh';
+    g.appendChild(at);
+    g.appendChild(svgEl('line', {x1:x+12, y1:TLY, x2:TLX[l+1]-12, y2:TLY,
+      stroke:'#1a7f37', 'stroke-width':'1.2', 'marker-end':'url(#arr-g)', opacity:'0.7'}));
+  }
+  trunkG.appendChild(g);
+
+  rx.style.cursor = 'pointer';
+  const cap = l;
+  rx.addEventListener('mouseover', e => showTip(e, cap < DEPTH-1
+    ? `<b>Trunk Layer ${cap+1}</b><br/>Linear(${cap===0?'2':HIDDEN}→${HIDDEN}) + Tanh`
+    : `<b>Trunk Output</b><br/>Linear(${HIDDEN}→${LATENT_OUT})<br/>Output: [batch, 2, 128]`));
+  rx.addEventListener('mousemove', moveTip);
+  rx.addEventListener('mouseleave', hideTip);
+}
+// trunk → dot
+trunkG.appendChild(svgEl('line', {x1:TLX[DEPTH-1]+12, y1:TLY, x2:968, y2:370,
+  stroke:'#1a7f37', 'stroke-width':'2', 'marker-end':'url(#arr-g)', opacity:'0.8'}));
+
+// dot → output arrows
+const dotG = document.getElementById('dot-group');
+dotG.appendChild(svgEl('line', {x1:1136, y1:295, x2:1170, y2:284, stroke:'#0969da', 'stroke-width':'2', 'marker-end':'url(#arr)', opacity:'0.8'}));
+dotG.appendChild(svgEl('line', {x1:1136, y1:328, x2:1170, y2:368, stroke:'#8250df', 'stroke-width':'2', 'marker-end':'url(#arr)', opacity:'0.8'}));
+dotG.addEventListener('mouseover', e => showTip(e,
+  '<b>Dot Product + Bias</b><br/>'+
+  '1. Both nets output <b>256-d</b><br/>'+
+  '2. Reshape → [batch, <b>2</b>, <b>128</b>]<br/>'+
+  '3. Element-wise ⊙<br/>'+
+  '4. sum(dim=−1) over 128 latent<br/>'+
+  '5. → [batch, <b>2</b>] + bias[2]<br/>'+
+  '<i>2 = outputs (temp + humidity)</i>'));
+dotG.addEventListener('mousemove', moveTip); dotG.addEventListener('mouseleave', hideTip);
+
+// sensor tooltips
+tempNodes.forEach((n,i) => {
+  n.style.cursor='pointer';
+  n.addEventListener('mouseover', e => showTip(e,
+    `<b>Sensor ${i+1} — Temperature</b><br/>Coord: (${SENSOR_COORDS[i+1][0]}, ${SENSOR_COORDS[i+1][1]}) m<br/>`+
+    (currentMask.has(i)
+      ? `<span style="color:#cf222e">MASKED → value set to 0.0<br/>mask bit = 0<br/>W×0=0 → ∂L/∂W=0 (no update)</span>`
+      : `<span style="color:#1a7f37">ACTIVE — value flows through branch net</span>`)));
+  n.addEventListener('mousemove', moveTip); n.addEventListener('mouseleave', hideTip);
+});
+humNodes.forEach((n,i) => {
+  n.style.cursor='pointer';
+  n.addEventListener('mouseover', e => showTip(e,
+    `<b>Sensor ${i+1} — Humidity</b><br/>Coord: (${SENSOR_COORDS[i+1][0]}, ${SENSOR_COORDS[i+1][1]}) m<br/>`+
+    (currentMask.has(i)
+      ? `<span style="color:#cf222e">MASKED → value set to 0.0<br/>mask bit = 0<br/>W×0=0 → ∂L/∂W=0 (no update)</span>`
+      : `<span style="color:#1a7f37">ACTIVE — value flows through branch net</span>`)));
+  n.addEventListener('mousemove', moveTip); n.addEventListener('mouseleave', hideTip);
+});
+maskNodes.forEach(({rect},i) => {
+  rect.style.cursor='pointer';
+  rect.addEventListener('mouseover', e => showTip(e,
+    `<b>Mask bit S${i+1}</b><br/>1 = active · 0 = masked<br/>When 0:<br/>&nbsp;values[i]=0.0 → W×0=0<br/>&nbsp;∂L/∂W_masked = ∂L/∂h × 0 = 0<br/>&nbsp;→ weight not updated`));
+  rect.addEventListener('mousemove', moveTip); rect.addEventListener('mouseleave', hideTip);
+});
+
+/* ═══════════════════════════════════════════════
+   LOSS CHART
+═══════════════════════════════════════════════ */
+const lossCanvas = document.getElementById('loss-canvas');
+const ctx = lossCanvas.getContext('2d');
+function resizeLC() {
+  lossCanvas.width  = lossCanvas.offsetWidth  * devicePixelRatio;
+  lossCanvas.height = lossCanvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+}
+window.addEventListener('resize', resizeLC);
+resizeLC();
+
+function genCurve(init, seed) {
+  let rng = seed;
+  const lcg = () => { rng=(rng*1664525+1013904223)&0xffffffff; return (rng>>>0)/4294967296; };
+  return Array.from({length:TOTAL_EPOCHS}, (_,e) => {
+    const d = Math.exp(-e*0.038);
+    return Math.max(init*d + 0.008 + (lcg()-0.5)*0.002*d*20, 0.006);
+  });
+}
+const trainCurve = genCurve(0.42, 42);
+const valCurve   = genCurve(0.48, 99).map(v => v*1.08+0.002);
+
+function drawChart(n) {
+  const W = lossCanvas.offsetWidth, H = lossCanvas.offsetHeight;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  const p = {l:40,r:16,t:10,b:24}, gw=W-p.l-p.r, gh=H-p.t-p.b;
+  ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+  for (let g=0;g<=4;g++) { ctx.beginPath(); ctx.moveTo(p.l,p.t+g*gh/4); ctx.lineTo(p.l+gw,p.t+g*gh/4); ctx.stroke(); }
+  ctx.fillStyle='#57606a'; ctx.font='11px monospace'; ctx.textAlign='right';
+  ['0.40','0.30','0.20','0.10','0.00'].forEach((l,i)=>ctx.fillText(l,p.l-5,p.t+i*gh/4+4));
+  ctx.textAlign='center';
+  [0,50,100,150].forEach(ep=>ctx.fillText(ep,p.l+ep/150*gw,H-p.b+16));
+  if (n<=0) return;
+  const xS=i=>p.l+i/(TOTAL_EPOCHS-1)*gw, yS=v=>p.t+(1-v/0.44)*gh;
+  [[trainCurve,'#1a7f37'],[valCurve,'#0969da']].forEach(([c,col],ci)=>{
+    ctx.strokeStyle=col; ctx.lineWidth=2;
+    ci===1 ? ctx.setLineDash([5,3]) : ctx.setLineDash([]);
+    ctx.beginPath();
+    for(let i=0;i<Math.min(n,TOTAL_EPOCHS);i++){const x=xS(i),y=Math.max(p.t,yS(c[i]));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+  ctx.strokeStyle='#9a6700'; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+  const ex=xS(Math.min(n-1,TOTAL_EPOCHS-1));
+  ctx.beginPath(); ctx.moveTo(ex,p.t); ctx.lineTo(ex,p.t+gh); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='10px monospace'; ctx.textAlign='left';
+  ctx.fillStyle='#1a7f37'; ctx.fillText('▬ Train',p.l+4,p.t+12);
+  ctx.fillStyle='#0969da'; ctx.fillText('╌ Val',   p.l+72,p.t+12);
+}
+
+/* ═══════════════════════════════════════════════
+   SIMULATION STATE
+═══════════════════════════════════════════════ */
+let epoch=0, playing=false, animId=null, lastTs=0, speed=1;
+let epochTimer=0;
+const EPOCH_MS=300;
+let currentMask=new Set(), prevMask=new Set();
+let fwdParticles=[], bwdGhosts=[], zeroLabels=[];
+
+function randomMask() {
+  const n = MASK_MIN + Math.floor(Math.random()*(MASK_MAX-MASK_MIN+1));
+  const ids = Array.from({length:N_SENSORS},(_,i)=>i);
+  const m = new Set();
+  while (m.size < Math.min(n,N_SENSORS-1)) m.add(ids[Math.floor(Math.random()*ids.length)]);
+  return m;
+}
+
+function applyMask(masked, prev) {
+  for (let i=0; i<N_SENSORS; i++) {
+    const isM = masked.has(i), wasM = prev ? prev.has(i) : null;
+    // temp node
+    tempNodes[i].setAttribute('stroke', isM ? '#cf222e' : '#1a7f37');
+    tempNodes[i].setAttribute('fill',   isM ? '#fff0f0' : '#f0fff4');
+    // hum node
+    humNodes[i].setAttribute('stroke',  isM ? '#cf222e' : '#8250df');
+    humNodes[i].setAttribute('fill',    isM ? '#fff0f0' : '#faf5ff');
+    // mask bit
+    maskNodes[i].rect.setAttribute('stroke', isM ? '#cf222e' : '#9a6700');
+    maskNodes[i].rect.setAttribute('fill',   isM ? '#fff0f0' : '#fffbeb');
+    maskNodes[i].text.textContent = isM ? '0' : '1';
+    maskNodes[i].text.setAttribute('fill', isM ? '#cf222e' : '#9a6700');
+    // spawn floating label for newly masked
+    if (isM && (!prev || !wasM)) spawnZeroLabel(i);
+  }
+}
+
+/* ── "→ 0.0" floating label ── */
+function spawnZeroLabel(sIdx) {
+  zeroLabels.push({sIdx, age:0, maxAge:120, x:56, y:sY(sIdx)});
+}
+function updateZeroLabels(dt) {
+  while (zeroLG.firstChild) zeroLG.removeChild(zeroLG.firstChild);
+  zeroLabels = zeroLabels.filter(z => {
+    z.age += dt * speed * 0.04;
+    if (z.age >= z.maxAge) return false;
+    const alpha = Math.min(1, z.age/15) * Math.max(0, 1-(z.age-70)/50);
+    const dx = z.age * 0.7;
+    const g = svgEl('g');
+    g.appendChild(svgEl('rect',{x:z.x+dx-20,y:z.y-10,width:62,height:17,rx:4,fill:'#fff0f0',stroke:'#cf222e','stroke-width':'1',opacity:alpha}));
+    const t = svgEl('text',{x:z.x+dx+11,y:z.y+4,'font-size':'10','text-anchor':'middle','font-family':'monospace',fill:'#cf222e',opacity:alpha,'font-weight':'600'});
+    t.textContent='→ 0.0';
+    g.appendChild(t); zeroLG.appendChild(g);
+    return true;
+  });
+}
+
+/* ── Forward particles ── */
+function spawnFwd() {
+  const sIdx = Math.floor(Math.random()*N_SENSORS);
+  const isMasked = currentMask.has(sIdx);
+  fwdParticles.push({sIdx, masked:isMasked, phase:0, progress:0,
+    color:isMasked?'#cf222e':'#1a7f37', x:56, y:sY(sIdx),
+    spd:0.007+Math.random()*0.005});
+}
+function lerp(x1,y1,x2,y2,t){return{x:x1+(x2-x1)*t,y:y1+(y2-y1)*t};}
+function updateFwd(p,dt) {
+  p.progress += p.spd * dt * 0.06 * speed;
+  const cy = sY(p.sIdx);
+  if (p.phase===0) {
+    const pt=lerp(56,cy,CONCAT_X,CONCAT_Y,Math.min(1,p.progress));
+    p.x=pt.x; p.y=pt.y;
+    if (p.progress>=1) {
+      if (p.masked){ triggerZeroFlash(); spawnBwdGhost(p.sIdx); return true; }
+      p.phase=1; p.progress=0;
+    }
+  } else if (p.phase===1) {
+    const seg=DEPTH-1, lp=p.progress*seg, li=Math.min(Math.floor(lp),seg-1), lf=lp-li;
+    const x1=li===0?CONCAT_X:BLX[li-1], x2=BLX[li];
+    const pt=lerp(x1,BLY,x2,BLY,lf);
+    p.x=pt.x; p.y=pt.y;
+    if (p.progress>=1){p.phase=2;p.progress=0;}
+  } else if (p.phase===2) {
+    const pt=lerp(BLX[DEPTH-1],BLY,968,290,Math.min(1,p.progress));
+    p.x=pt.x; p.y=pt.y; p.color='#8250df';
+    if(p.progress>=1) return true;
+  }
+  return false;
+}
+
+/* ── "×0" flash ── */
+let zeroFlashAge=-1;
+function triggerZeroFlash(){zeroFlashAge=0;document.getElementById('zero-flash').setAttribute('opacity','1');}
+function tickZeroFlash(dt){
+  if(zeroFlashAge<0)return;
+  zeroFlashAge+=dt*speed*0.05;
+  document.getElementById('zero-flash').setAttribute('opacity',Math.max(0,1-zeroFlashAge/30));
+  if(zeroFlashAge>30)zeroFlashAge=-1;
+}
+
+/* ── Backward gradient ghost ── */
+function spawnBwdGhost(sIdx){
+  bwdGhosts.push({sIdx,phase:0,progress:0,x:BLX[0],y:BLY,spd:0.005+Math.random()*0.004,age:0});
+}
+function updateBwd(g,dt){
+  g.progress+=g.spd*dt*0.06*speed; g.age+=dt*speed*0.05;
+  const cy=sY(g.sIdx);
+  if(g.phase===0){
+    const pt=lerp(BLX[0],BLY,CONCAT_X,CONCAT_Y,Math.min(1,g.progress));
+    g.x=pt.x;g.y=pt.y;
+    if(g.progress>=1){g.phase=1;g.progress=0;}
+  } else {
+    const pt=lerp(CONCAT_X,CONCAT_Y,56,cy,Math.min(1,g.progress));
+    g.x=pt.x;g.y=pt.y;
+    if(g.progress>=1)return true;
+  }
+  return false;
+}
+function renderBwdGhosts(){
+  while(gradGG.firstChild)gradGG.removeChild(gradGG.firstChild);
+  bwdGhosts=bwdGhosts.filter(g=>{
+    const alpha=Math.max(0,0.85-g.age/60);
+    if(alpha<=0)return false;
+    gradGG.appendChild(svgEl('circle',{cx:g.x,cy:g.y,r:5,fill:'none',stroke:'#cf222e',
+      'stroke-width':'1.8','stroke-dasharray':'4,2',opacity:alpha,filter:'url(#glow-red)'}));
+    if(g.phase===0||(g.phase===1&&g.progress<0.6)){
+      const bg=svgEl('rect',{x:g.x+7,y:g.y-11,width:74,height:16,rx:4,
+        fill:'#fff0f0',stroke:'#cf222e','stroke-width':'0.8',opacity:alpha*0.95});
+      const t=svgEl('text',{x:g.x+44,y:g.y+3,'font-size':'9','text-anchor':'middle',
+        'font-family':'monospace',fill:'#cf222e',opacity:alpha,'font-weight':'600'});
+      t.textContent='∂L/∂W = 0';
+      gradGG.appendChild(bg);gradGG.appendChild(t);
+    }
+    return true;
+  });
+}
+
+/* ── Trunk particles ── */
+let trunkP=[];
+function spawnTrunk(){
+  trunkP.push({phase:0,progress:0,startY:Math.random()<0.5?500:540,x:706,y:500,
+    spd:0.009+Math.random()*0.006,color:'#1a7f37'});
+}
+function updateTrunk(p,dt){
+  p.progress+=p.spd*dt*0.06*speed;
+  if(p.phase===0){
+    const pt=lerp(706,p.startY,TLX[0],TLY,Math.min(1,p.progress));
+    p.x=pt.x;p.y=pt.y;if(p.progress>=1){p.phase=1;p.progress=0;}
+  } else if(p.phase===1){
+    const seg=DEPTH-1,lp=p.progress*seg,li=Math.min(Math.floor(lp),seg-1),lf=lp-li;
+    const pt=lerp(TLX[li],TLY,TLX[li+1]??TLX[li]+50,TLY,lf);
+    p.x=pt.x;p.y=pt.y;if(p.progress>=1){p.phase=2;p.progress=0;}
+  } else {
+    const pt=lerp(TLX[DEPTH-1],TLY,968,370,Math.min(1,p.progress));
+    p.x=pt.x;p.y=pt.y;p.color='#8250df';if(p.progress>=1)return true;
+  }
+  return false;
+}
+
+function renderParticles(){
+  while(partG.firstChild)partG.removeChild(partG.firstChild);
+  for(const p of trunkP){
+    partG.appendChild(svgEl('circle',{cx:p.x,cy:p.y,r:4.5,fill:p.color,filter:'url(#glow-g)',opacity:'0.9'}));
+  }
+  for(const p of fwdParticles){
+    if(!p.masked){
+      partG.appendChild(svgEl('circle',{cx:p.x,cy:p.y,r:4.5,fill:p.color,filter:'url(#glow-g)',opacity:'0.9'}));
+    } else {
+      partG.appendChild(svgEl('circle',{cx:p.x,cy:p.y,r:5,fill:'none',stroke:'#cf222e',
+        'stroke-width':'2','stroke-dasharray':'4,2',opacity:'0.85',filter:'url(#glow-red)'}));
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   EPOCH TICK
+═══════════════════════════════════════════════ */
+function tickEpoch(){
+  if(epoch>=TOTAL_EPOCHS){
+    // loop: reset state silently and continue playing
+    epoch=0; fwdParticles=[];trunkP=[];bwdGhosts=[];zeroLabels=[];zeroFlashAge=-1;
+    document.getElementById('zero-flash').setAttribute('opacity','0');
+    prevMask=new Set(); currentMask=randomMask(); applyMask(currentMask,null);
+    [partG,gradGG,zeroLG].forEach(g=>{while(g.firstChild)g.removeChild(g.firstChild);});
+    drawChart(0);
+    branchLayerEls.forEach(el=>{el.setAttribute('opacity','0.95');el.removeAttribute('filter');});
+    trunkLayerEls.forEach(el=>{el.setAttribute('opacity','0.95');el.removeAttribute('filter');});
+    document.getElementById('dot-glow').setAttribute('stroke-width','0');
+    ['out-temp','out-hum'].forEach(id=>{const el=document.getElementById(id);el.setAttribute('stroke-width','2');el.removeAttribute('filter');});
+    return;
+  }
+  if(epoch%8===0){
+    prevMask=new Set(currentMask);
+    currentMask=randomMask();
+    applyMask(currentMask,prevMask);
+  }
+  document.getElementById('epoch-lbl').textContent=`${epoch+1} / ${TOTAL_EPOCHS}`;
+  document.getElementById('train-lbl').textContent=trainCurve[epoch].toFixed(4);
+  document.getElementById('val-lbl').textContent=valCurve[epoch].toFixed(4);
+  document.getElementById('active-lbl').textContent=N_SENSORS-currentMask.size;
+  document.getElementById('masked-lbl').textContent=currentMask.size;
+  document.getElementById('phase-lbl').textContent=epoch<20?'Warm-up':epoch<80?'Training':epoch<130?'Converging':'Fine-tuning';
+  document.getElementById('loss-bar').style.width=(100-Math.min(1,trainCurve[epoch]/0.44)*100)+'%';
+
+  branchLayerEls.forEach((el,i)=>{
+    const v=0.5+0.5*Math.sin(epoch*0.3+i*0.7);
+    el.setAttribute('opacity',0.8+0.2*v);
+    v>0.75?el.setAttribute('filter','url(#glow-sm)'):el.removeAttribute('filter');
+  });
+  trunkLayerEls.forEach((el,i)=>{
+    el.setAttribute('opacity',0.8+0.2*(0.5+0.5*Math.sin(epoch*0.3+i*0.9+1.5)));
+  });
+
+  const prog=epoch/TOTAL_EPOCHS;
+  if(epoch>30){
+    const dg=document.getElementById('dot-glow');
+    dg.setAttribute('stroke-width',Math.min(3,(epoch-30)/60*3));
+    dg.setAttribute('opacity',0.4+prog*0.5);
+  }
+  if(epoch>5){
+    document.getElementById('out-temp-val').textContent=(22+3*Math.sin(epoch*0.12)-5*trainCurve[epoch]).toFixed(2)+'°';
+    document.getElementById('out-hum-val').textContent=(55+8*Math.cos(epoch*0.09)-8*trainCurve[epoch]).toFixed(1)+'%';
+    ['out-temp','out-hum'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.setAttribute('filter','url(#glow-sm)');
+      el.setAttribute('stroke-width',(2+Math.min(1,(epoch-10)/40)*1.5).toFixed(2));
+    });
+  }
+  drawChart(epoch+1);
+  epoch++;
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATION LOOP
+═══════════════════════════════════════════════ */
+function loop(ts){
+  if(!playing)return;
+  const dt=ts-lastTs; lastTs=ts;
+  if(Math.random()<0.3)spawnFwd();
+  if(Math.random()<0.2)spawnTrunk();
+  fwdParticles=fwdParticles.filter(p=>!updateFwd(p,dt));
+  trunkP=trunkP.filter(p=>!updateTrunk(p,dt));
+  bwdGhosts=bwdGhosts.filter(g=>!updateBwd(g,dt));
+  renderParticles();renderBwdGhosts();updateZeroLabels(dt);tickZeroFlash(dt);
+  epochTimer+=dt*speed;
+  if(epochTimer>=EPOCH_MS){epochTimer=0;tickEpoch();}
+  if(playing)animId=requestAnimationFrame(loop);
+}
+
+function startPlay(){if(playing)return;playing=true;lastTs=performance.now();animId=requestAnimationFrame(loop);updatePlayBtn();}
+function pausePlay(){playing=false;if(animId)cancelAnimationFrame(animId);updatePlayBtn();}
+function resetAll(){
+  pausePlay(); epoch=0; fwdParticles=[];trunkP=[];bwdGhosts=[];zeroLabels=[];zeroFlashAge=-1;
+  document.getElementById('zero-flash').setAttribute('opacity','0');
+  prevMask=new Set(); currentMask=randomMask(); applyMask(currentMask,null);
+  [partG,gradGG,zeroLG].forEach(g=>{while(g.firstChild)g.removeChild(g.firstChild);});
+  drawChart(0);
+  ['epoch-lbl','train-lbl','val-lbl','active-lbl','masked-lbl'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('epoch-lbl').textContent='0 / 150';
+  document.getElementById('phase-lbl').textContent='—';
+  document.getElementById('loss-bar').style.width='100%';
+  document.getElementById('out-temp-val').textContent='—';
+  document.getElementById('out-hum-val').textContent='—';
+  branchLayerEls.forEach(el=>{el.setAttribute('opacity','0.95');el.removeAttribute('filter');});
+  trunkLayerEls.forEach(el=>{el.setAttribute('opacity','0.95');el.removeAttribute('filter');});
+  document.getElementById('dot-glow').setAttribute('stroke-width','0');
+  ['out-temp','out-hum'].forEach(id=>{const el=document.getElementById(id);el.setAttribute('stroke-width','2');el.removeAttribute('filter');});
+}
+function updatePlayBtn(){
+  const b=document.getElementById('btn-play');
+  b.textContent=playing?'⏸ Pause':'▶ Play';
+  b.classList.toggle('active',playing);
+}
+
+/* ═══════════════════════════════════════════════
+   CONTROLS
+═══════════════════════════════════════════════ */
+document.getElementById('btn-play').addEventListener('click',()=>{if(epoch>=TOTAL_EPOCHS)resetAll();playing?pausePlay():startPlay();});
+document.getElementById('btn-reset').addEventListener('click',resetAll);
+document.getElementById('btn-step').addEventListener('click',()=>{if(epoch>=TOTAL_EPOCHS)resetAll();pausePlay();currentMask=randomMask();applyMask(currentMask,prevMask);tickEpoch();});
+document.getElementById('speed').addEventListener('input',function(){speed=+this.value;document.getElementById('speed-val').textContent=speed+'×';});
+
+/* ═══════════════════════════════════════════════
+   TOOLTIPS
+═══════════════════════════════════════════════ */
+const tip=document.getElementById('tooltip');
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity='1';moveTip(e);}
+function moveTip(e){tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';}
+function hideTip(){tip.style.opacity='0';}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+applyMask(currentMask,null);
+drawChart(0);
+startPlay();
+</script>
+</body>
+</html>
