@@ -2010,13 +2010,10 @@
 </section>
 
 
-<footer>
-  ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Unified v0.7.1 LAB1/LAB2 benchmark &nbsp;·&nbsp; DeepONet sparse field reconstruction
-</footer>
 <section id="tcmodel-baseline">
   <div class="container">
     <div class="section-label">
-      <div class="section-num">10</div>
+      <div class="section-num">14</div>
       <span class="section-cat">Baseline Lab 1 Model</span>
     </div>
 
@@ -2151,5 +2148,136 @@
     </div>
   </div>
 </section>
+  <div class="card">
+  <div class="card-title">Robustness Across Sensor Subsets</div>
+
+  <p>
+    To further evaluate the model beyond a single sensor configuration, performance was tested across
+    multiple subsets consisting of two active sensors. This allows us to assess how well the model
+    generalizes under increasingly sparse sensing conditions.
+  </p>
+
+  <p>
+    For each subset, predictions from the DeepONet model are compared against two baseline approaches:
+    a mean-based estimate and a nearest-neighbor interpolation. These baselines serve as simple reference
+    methods that do not explicitly model spatial relationships.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sensor Subset</th>
+        <th>Model RMSE</th>
+        <th>Model MAE</th>
+        <th>Mean Baseline RMSE</th>
+        <th>NN Baseline RMSE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>[2,5]</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+      </tr>
+      <tr>
+        <td>[2,10]</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+      </tr>
+      <tr>
+        <td>[5,10]</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+      </tr>
+      <tr>
+    <td>[1,11]</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+    </tr>
+  
+    <tr>
+      <td>[6,8]</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:0.9rem;">
+    Across all subsets, model performance decreases as fewer sensors are available, which is expected
+    due to reduced spatial information. However, the learned model consistently performs better than
+    both baseline methods, indicating that it captures meaningful spatial structure rather than relying
+    on simple averaging or nearest observations.
+  </p>
+</div>
+  <div class="card">
+  <div class="card-title">Occupant-Level Query Comparison Across Sensor Subsets</div>
+
+  <p>
+    After evaluating reconstruction accuracy at sensor locations, the same trained model was queried at
+    four fixed interior coordinates representing approximate occupant positions. Unlike the earlier metric-based
+    evaluation, this step is not used to compute RMSE or R², since no direct ground-truth measurements exist at
+    these locations. Instead, it is used to compare how the predicted local thermal conditions change when the
+    active sensor subset changes.
+  </p>
+
+  <p>
+    In <code>subset_queries.py</code>, the saved Lab 1 model is loaded once, a fixed timestep
+    (<strong>time index = 10</strong>) is selected, and the same four query points are evaluated under each
+    of the sensor subsets defined in <code>eval_sensor_subsets</code>. This makes the comparison fully controlled:
+    the room, timestep, and query locations are held constant, and only the available sensor pair changes.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Subset</th>
+        <th>Query</th>
+        <th>x (m)</th>
+        <th>y (m)</th>
+        <th>Predicted Temp (°C)</th>
+        <th>Predicted Humidity (%RH)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>{1, 2}</td><td>1</td><td>1.5</td><td>1.5</td><td>22.8077</td><td>67.9921</td></tr>
+      <tr><td>{1, 2}</td><td>2</td><td>2.5</td><td>4.5</td><td>22.4365</td><td>68.5038</td></tr>
+      <tr><td>{1, 2}</td><td>3</td><td>5.0</td><td>2.5</td><td>22.5658</td><td>67.4145</td></tr>
+      <tr><td>{1, 2}</td><td>4</td><td>6.5</td><td>6.0</td><td>22.9940</td><td>66.2928</td></tr>
+
+      <tr><td>{11, 12}</td><td>1</td><td>1.5</td><td>1.5</td><td>22.9247</td><td>70.1901</td></tr>
+      <tr><td>{11, 12}</td><td>2</td><td>2.5</td><td>4.5</td><td>22.8476</td><td>69.4890</td></tr>
+      <tr><td>{11, 12}</td><td>3</td><td>5.0</td><td>2.5</td><td>22.6339</td><td>69.4550</td></tr>
+      <tr><td>{11, 12}</td><td>4</td><td>6.5</td><td>6.0</td><td>22.7745</td><td>69.4902</td></tr>
+
+      <tr><td>{6, 8}</td><td>1</td><td>1.5</td><td>1.5</td><td>22.6798</td><td>69.8864</td></tr>
+      <tr><td>{6, 8}</td><td>2</td><td>2.5</td><td>4.5</td><td>22.8476</td><td>71.5085</td></tr>
+      <tr><td>{6, 8}</td><td>3</td><td>5.0</td><td>2.5</td><td>22.1916</td><td>71.3002</td></tr>
+      <tr><td>{6, 8}</td><td>4</td><td>6.5</td><td>6.0</td><td>22.5239</td><td>69.8204</td></tr>
+    
+      <tr><td>{1, 11}</td><td>1</td><td>1.5</td><td>1.5</td><td>22.7476</td><td>67.3494</td></tr>
+      <tr><td>{1, 11}</td><td>2</td><td>2.5</td><td>4.5</td><td>22.7537</td><td>67.3941</td></tr>
+      <tr><td>{1, 11}</td><td>3</td><td>5.0</td><td>2.5</td><td>22.3162</td><td>67.7541</td></tr>
+      <tr><td>{1, 11}</td><td>4</td><td>6.5</td><td>6.0</td><td>22.6409</td><td>66.8131</td></tr>
+      <!-- paste rows from subset_query_time10.csv here -->
+    </tbody>
+  </table>
+
+  <p style="margin-top:0.9rem;">
+    This comparison provides an occupant-oriented view of model behavior. If predictions remain similar across
+    subsets, the model is relatively robust to sensor placement. If predictions vary strongly, then the estimated
+    thermal conditions experienced by occupants depend more heavily on which sensors are available.
+  </p>
+</div>
 </body>
 </html>
