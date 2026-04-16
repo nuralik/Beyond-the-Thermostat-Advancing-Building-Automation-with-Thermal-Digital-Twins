@@ -2013,6 +2013,143 @@
 <footer>
   ThermoDT — Thermal Digital Twin Research &nbsp;·&nbsp; Unified v0.7.1 LAB1/LAB2 benchmark &nbsp;·&nbsp; DeepONet sparse field reconstruction
 </footer>
+<section id="tcmodel-baseline">
+  <div class="container">
+    <div class="section-label">
+      <div class="section-num">10</div>
+      <span class="section-cat">Baseline Lab 1 Model</span>
+    </div>
 
+    <h2>Baseline Lab 1 DeepONet Reconstruction</h2>
+
+    <p>
+      This experiment establishes the main Lab 1 reconstruction pipeline used in the project.
+      The model is trained on 5-minute temperature and humidity data from 13 sensors, but only
+      sensors <strong>[2, 5, 10]</strong> are treated as active inputs. The goal is to learn a mapping
+      from sparse sensor observations to local thermal conditions throughout the room.
+    </p>
+
+    <p>
+      During training, the model is supervised only at sensor locations where ground-truth measurements
+      are available. However, because the network conditions its prediction on a spatial query coordinate,
+      the trained model can later be evaluated at arbitrary interior points. In this project, four query
+      coordinates are used to represent approximate occupant positions, making the model useful not only
+      for sensor reconstruction but also for occupant-level thermal assessment.
+    </p>
+
+    <figure>
+      <img src="tcmodel_loss_curve.png" alt="Training and validation loss for baseline Lab 1 DeepONet" />
+      <figcaption>
+        <strong>Figure 10-1 — Training and Validation Loss.</strong>
+        Both training and validation loss decrease rapidly during the early epochs and then stabilize,
+        indicating that the baseline DeepONet learns a consistent mapping from sparse sensor inputs to
+        temperature and humidity predictions. The small gap between the two curves suggests stable
+        generalization rather than severe overfitting.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="tcmodel_room_layout_queries.png" alt="Lab 1 sensor layout and four occupant query points" />
+      <figcaption>
+        <strong>Figure 10-2 — Lab 1 Sensor Layout and Query Points.</strong>
+        The three active sensors used by the model are sensors 2, 5, and 10. Four additional query points
+        (Q1–Q4) are placed at interior room locations to represent approximate occupant positions. These
+        points are used only for inference, not for supervised metric evaluation.
+      </figcaption>
+    </figure>
+
+    <div class="card">
+      <div class="card-title">Final Test Metrics</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>RMSE</th>
+            <th>MAE</th>
+            <th>R²</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Temperature</td>
+            <td>0.1816</td>
+            <td>0.1303</td>
+            <td>0.9635</td>
+          </tr>
+          <tr>
+            <td>Humidity</td>
+            <td>0.6464</td>
+            <td>0.4486</td>
+            <td>0.9803</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.9rem;">
+        These metrics are computed at sensor locations on the held-out test set, where ground-truth
+        measurements are available. They evaluate how well the model reconstructs known sensor values
+        from sparse input, which serves as the main quantitative validation step for the baseline model.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Example Query Predictions at Time Index 10</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Query</th>
+            <th>x (m)</th>
+            <th>y (m)</th>
+            <th>Temperature (°C)</th>
+            <th>Humidity (%RH)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Q1</td>
+            <td>1.5</td>
+            <td>1.5</td>
+            <td>22.2343</td>
+            <td>69.5653</td>
+          </tr>
+          <tr>
+            <td>Q2</td>
+            <td>2.5</td>
+            <td>4.5</td>
+            <td>21.8333</td>
+            <td>70.7147</td>
+          </tr>
+          <tr>
+            <td>Q3</td>
+            <td>5.0</td>
+            <td>2.5</td>
+            <td>21.8407</td>
+            <td>70.5878</td>
+          </tr>
+          <tr>
+            <td>Q4</td>
+            <td>6.5</td>
+            <td>6.0</td>
+            <td>22.2394</td>
+            <td>69.0526</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.9rem;">
+        These predictions illustrate how the trained model can be queried at non-sensor coordinates.
+        Although no direct ground truth exists at these points, they provide an occupant-oriented view
+        of local thermal conditions and motivate the later thermal comfort analysis.
+      </p>
+    </div>
+
+    <div class="green-box">
+      <div class="ib-title">Takeaway</div>
+      <p>
+        The baseline Lab 1 model achieves low reconstruction error at sensor locations while also enabling
+        prediction at arbitrary interior coordinates. This makes it a useful bridge between sparse sensor
+        reconstruction and future occupant-level thermal comfort modeling.
+      </p>
+    </div>
+  </div>
+</section>
 </body>
 </html>
