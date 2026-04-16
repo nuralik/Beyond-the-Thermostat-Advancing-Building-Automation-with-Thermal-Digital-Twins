@@ -2166,50 +2166,72 @@
   <table>
     <thead>
       <tr>
-        <th>Sensor Subset</th>
-        <th>Model RMSE</th>
-        <th>Model MAE</th>
-        <th>Mean Baseline RMSE</th>
-        <th>NN Baseline RMSE</th>
+          <th rowspan="2">Subset</th>
+        <th colspan="2">Model</th>
+        <th colspan="2">Mean Baseline</th>
+        <th colspan="2">Nearest Neighbor</th>
       </tr>
+      <tr>
+        <th>Temp RMSE / MAE</th>
+        <th>Hum RMSE / MAE</th>
+        <th>Temp RMSE / MAE</th>
+        <th>Hum RMSE / MAE</th>
+        <th>Temp RMSE / MAE</th>
+        <th>Hum RMSE / MAE</th>
+    </tr>
+        
     </thead>
     <tbody>
-      <tr>
-        <td>[2,5]</td>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-      </tr>
-      <tr>
-        <td>[2,10]</td>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-      </tr>
-      <tr>
-        <td>[5,10]</td>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-      </tr>
-      <tr>
-    <td>[1,11]</td>
-    <td>...</td>
-    <td>...</td>
-    <td>...</td>
-    <td>...</td>
-    </tr>
-  
     <tr>
-      <td>[6,8]</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
+      <td>[2, 12]</td>
+      <td>0.1950 / 0.1316</td>
+      <td>0.7270 / 0.4868</td>
+      <td>0.3994 / 0.2784</td>
+      <td>1.5342 / 1.1341</td>
+      <td>0.4313 / 0.3045</td>
+      <td>1.6247 / 1.1738</td>
     </tr>
+
+    <tr>
+      <td>[1, 2]</td>
+      <td>0.2336 / 0.1551</td>
+      <td>0.8987 / 0.6123</td>
+      <td>0.4435 / 0.3170</td>
+      <td>1.7037 / 1.3165</td>
+      <td>0.6438 / 0.4820</td>
+      <td>2.5127 / 1.8891</td>
+    </tr>
+
+    <tr>
+      <td>[11, 12]</td>
+      <td>0.2267 / 0.1484</td>
+      <td>0.8097 / 0.5481</td>
+      <td>0.3984 / 0.2922</td>
+      <td>1.5420 / 1.2037</td>
+      <td>0.4492 / 0.3207</td>
+      <td>1.6437 / 1.2328</td>
+    </tr>
+    
+    <tr>
+      <td>[6, 8]</td>
+      <td>0.2150 / 0.1317</td>
+      <td>0.7922 / 0.5116</td>
+      <td>0.4498 / 0.3164</td>
+      <td>1.6189 / 1.1891</td>
+      <td>0.6198 / 0.4422</td>
+      <td>2.0555 / 1.4595</td>
+    </tr>
+
+    <tr>
+      <td>[1, 11]</td>
+      <td>0.2476 / 0.1650</td>
+      <td>0.9307 / 0.6542</td>
+      <td>0.4336 / 0.2950</td>
+      <td>1.5888 / 1.1431</td>
+      <td>0.6323 / 0.5055</td>
+      <td>2.5799 / 2.1348</td>
+    </tr>
+          
     </tbody>
   </table>
 
