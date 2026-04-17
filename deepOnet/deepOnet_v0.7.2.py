@@ -50,7 +50,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 PARAMS: Dict[str, Any] = {
-    "seed": 42,
+    "seed": 20,
     "device": "auto",
     "experiment_name": "lab1_to_lab2_transfer_v0.7.2",
     "data_root": "./data",
