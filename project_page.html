@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thermal Digital Twin with DeepONet</title>
+  <script>
+    MathJax = { tex: { inlineMath: [['$','$']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #fff;
+      color: #111;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      padding: 3.5rem 4rem 2.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Authors grid ── */
+    .authors {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.8rem 2rem;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .author {
+      text-align: center;
+    }
+
+    .author img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 0.6rem;
+      border: 2px solid #ddd;
+    }
+
+    .author .name {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .author .affiliation,
+    .author .department,
+    .author .location {
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    /* ── Background Section ── */
+    .bg-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 2rem 3.5rem;
+    }
+
+    .bg-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 2rem 0 0.6rem;
+    }
+
+    .bg-section p {
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.8;
+      margin-bottom: 0.8rem;
+    }
+
+    .bg-section ul {
+      margin: 0.4rem 0 0.8rem 1.4rem;
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.9;
+    }
+
+    .bg-section figure {
+      margin: 1.6rem 0;
+      text-align: center;
+    }
+
+    .bg-section figure img {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .bg-section figure figcaption {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .theorem-box {
+      background: #f5f5f5;
+      border-left: 4px solid #555;
+      border-radius: 4px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.4rem 0;
+      font-size: 0.93rem;
+      line-height: 1.9;
+    }
+
+    .theorem-box .theorem-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Problem Section ── */
+    .problem-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 2rem 1rem;
+    }
+
+    .problem-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.4rem;
+    }
+
+    .problem-item {
+      display: flex;
+      gap: 1.2rem;
+      margin-bottom: 1.6rem;
+      align-items: flex-start;
+    }
+
+    .problem-number {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: #222;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.15rem;
+    }
+
+    .problem-item h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .problem-item p {
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid #e0e0e0;
+      max-width: 800px;
+      margin: 1rem auto 0;
+    }
+
+    /* ── Model Section ── */
+    .model-section {
+      width: 100%;
+      padding: 2rem 4rem 1rem;
+    }
+
+    .model-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .model-section p {
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      max-width: 800px;
+    }
+
+    .viz-frame-wrap {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .viz-frame-wrap iframe {
+      width: 100%;
+      height: 780px;
+      border: none;
+      display: block;
+    }
+
+    /* ── Data Section ── */
+    .data-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 1.4rem 0 1.8rem;
+    }
+
+    .data-stat {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 1rem 0.8rem;
+      text-align: center;
+    }
+
+    .data-stat .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .data-stat .stat-label {
+      font-size: 0.78rem;
+      color: #555;
+    }
+
+    /* ── Divider below header ── */
+    .header-divider {
+      border: none;
+      border-top: 1px solid #ccc;
+      margin: 0 4rem 2rem;
+    }
+
+    /* ── Eval Section ── */
+    .eval-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 2rem 3.5rem;
+    }
+
+    .eval-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 2rem 0 0.6rem;
+    }
+
+    .eval-section h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.6rem 0 0.5rem;
+    }
+
+    .eval-section p {
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.8;
+      margin-bottom: 0.8rem;
+    }
+
+    .eval-section ul {
+      margin: 0.4rem 0 0.8rem 1.4rem;
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.9;
+    }
+
+    .eval-section figure {
+      margin: 1.6rem 0;
+      text-align: center;
+    }
+
+    .eval-section figure img {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .eval-section figure figcaption {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .idw-box {
+      background: #f5f5f5;
+      border-left: 4px solid #555;
+      border-radius: 4px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.4rem 0;
+      font-size: 0.93rem;
+      line-height: 1.9;
+    }
+
+    .idw-box .idw-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+      margin: 1.2rem 0 1.6rem;
+    }
+
+    .metric-card {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 0.9rem 0.7rem;
+      text-align: center;
+    }
+
+    .metric-card .metric-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .metric-card .metric-label {
+      font-size: 0.76rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Thermal Digital Twin<br>with DeepONet</h1>
+
+    <div class="authors">
+
+      <div class="author">
+        <img src="icon/picachu.jpeg" alt="Nueraili Kuerbanjiang" />
+        <div class="name">Nueraili Kuerbanjiang</div>
+        <div class="affiliation">Carnegie Mellon University</div>
+        <div class="department">Civil and Environmental Engineering</div>
+        <div class="location">Pittsburgh, Pennsylvania, USA</div>
+      </div>
+
+      <div class="author">
+        <img src="icon/charmander.png" alt="David Delgado Ferrufino" />
+        <div class="name">David Delgado Ferrufino</div>
+        <div class="affiliation">Carnegie Mellon University</div>
+        <div class="department">Civil and Environmental Engineering</div>
+        <div class="location">Pittsburgh, Pennsylvania, USA</div>
+      </div>
+
+      <div class="author">
+        <img src="icon/Squirtle.PNG" alt="Justin Oh" />
+        <div class="name">Justin Oh</div>
+        <div class="affiliation">Carnegie Mellon University</div>
+        <div class="department">Civil and Environmental Engineering</div>
+        <div class="location">Pittsburgh, Pennsylvania, USA</div>
+      </div>
+
+      <div class="author">
+        <img src="icon/pockemon trainner.png" alt="Mario Bergés" style="object-position: top;" />
+        <div class="name">Mario Bergés</div>
+        <div class="affiliation">Carnegie Mellon University</div>
+        <div class="department">Civil and Environmental Engineering</div>
+        <div class="location">Pittsburgh, Pennsylvania, USA</div>
+      </div>
+
+    </div>
+  </header>
+
+  <hr class="header-divider" />
+
+  <section class="problem-section">
+    <h2>What Are We Trying to Solve?</h2>
+
+    <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div>
+        <h3>Buildings need a thermal digital twin</h3>
+        <p>
+          Buildings account for roughly 40% of global energy consumption, and heating, ventilation,
+          and air conditioning (HVAC) systems are among the largest contributors. A
+          <strong>thermal digital twin</strong> — a continuously updated, data-driven virtual
+          replica of a room's thermal state — is critical for next-generation building automation.
+          It enables predictive control that anticipates thermal loads rather than reacting to them,
+          directly reducing energy waste. Beyond energy, maintaining precise spatial temperature and
+          humidity conditions has measurable impacts on occupant health, cognitive performance, and
+          comfort — making the thermal environment an active lever for human well-being, not just
+          an operational cost.
+        </p>
+      </div>
+    </div>
+
+    <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div>
+        <h3>Sensors are sparse — and we don't know how to deploy them well</h3>
+        <p>
+          Real buildings do have sensors: temperature, humidity, CO₂. But in practice they are
+          sparsely and often arbitrarily deployed — one sensor per room, or one per floor.
+          How many sensors are actually needed, and <em>where</em> should they go to maximally
+          capture the thermal dynamics of a space? This is a persistently under-investigated
+          problem. On top of that, sensor drift, failure, and data dropouts are common in
+          long-running deployments. A robust thermal digital twin must include online sensor
+          performance monitoring and fault diagnosis — detecting when a reading is anomalous
+          before that bad data corrupts the model's predictions.
+        </p>
+      </div>
+    </div>
+
+    <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div>
+        <h3>We need high-resolution thermal comfort maps</h3>
+        <p>
+          A single thermostat reading tells you very little about whether the person by the
+          window is comfortable or whether the corner near the vent is overheated. What
+          building operators actually need is a dense, continuous <strong>thermal comfort
+          map</strong> of the indoor space — temperature and humidity at every point, not just
+          at sensor locations. Producing this map from a sparse set of sensor readings is
+          fundamentally a spatial reconstruction problem, and one that changes continuously
+          as occupancy, weather, and HVAC operation evolve.
+        </p>
+      </div>
+    </div>
+
+    <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div>
+        <h3>Generalization: one model, many rooms</h3>
+        <p>
+          The most expensive path to building automation is training a bespoke model for every
+          room in every building. The most important open question is whether a model trained
+          on the thermal physics of one room can be transferred — zero-shot or with minimal
+          fine-tuning — to a different room in the same building. If the model truly learns the
+          underlying physics of heat diffusion rather than memorizing room-specific patterns,
+          generalization should be possible. Demonstrating this transferability is the key step
+          toward scalable, building-wide automation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="bg-section">
+
+    <h2>What is a Neural Operator?</h2>
+    <p>
+      Classical neural networks learn mappings between finite-dimensional vectors — given a fixed-size
+      input, they produce a fixed-size output. A <strong>neural operator</strong> goes one level
+      higher: it learns a mapping between <em>functions</em>. Given an entire input function
+      (for example, a time-varying heat source or a boundary condition defined over a spatial domain),
+      it produces an entire output function (for example, the temperature field at every point in
+      space and time). Formally, a neural operator approximates a nonlinear operator
+      $\mathcal{G}: \mathcal{V} \to \mathcal{C}(K_2)$ where both the input and output live in
+      infinite-dimensional function spaces.
+    </p>
+    <p>
+      Because the operator is learned in function space, the model is
+      <em>discretization-independent</em> — it can be queried at any spatial or temporal coordinate,
+      not just the fixed grid it was trained on.
+    </p>
+
+    <figure>
+      <img src="icon/operator.png"
+           alt="Neural operator: different heat-source functions mapped to corresponding output functions" />
+      <figcaption>
+        A neural operator takes different input functions (top row: four test heat sources) and maps
+        each to its corresponding output function (bottom row: predictions vs. truth). The operator
+        is queried continuously — it is not tied to any fixed resolution.
+      </figcaption>
+    </figure>
+
+    <h2>Why Use Neural Operators for a Thermal Digital Twin?</h2>
+    <p>
+      Traditional physics-based simulators are accurate but expensive — a single forward pass of a
+      building energy model can take minutes. For a digital twin that must update in real time as
+      sensor readings arrive, that is not acceptable. Neural operators offer several properties
+      that make them a natural fit:
+    </p>
+    <ul>
+      <li><strong>Zero-shot resolution independence.</strong> Once trained, the operator can be
+          evaluated at any spatial or temporal query point without retraining. There is no fixed
+          grid to worry about.</li>
+      <li><strong>Learns the physics of the entire space.</strong> Rather than fitting a pointwise
+          regression, the operator learns the underlying governing dynamics — the map from forcing
+          conditions to the full temperature field. This means the learned model respects the
+          spatial structure of heat diffusion.</li>
+      <li><strong>Strong generalization ability.</strong> Operators trained on a distribution of
+          input functions can generalize to unseen forcing conditions, and — crucially for our
+          project — to rooms they have never been trained on (zero-shot room transfer).</li>
+      <li><strong>Ideal for a thermal digital twin.</strong> A digital twin needs to answer
+          "what will the temperature field look like given this heating schedule?" in real time.
+          Neural operators provide exactly this: a fast, physics-aware surrogate that takes a
+          measured or prescribed forcing function and outputs the predicted thermal response
+          everywhere in the space.</li>
+    </ul>
+
+    <h2>DeepONet</h2>
+
+    <p>
+      The theoretical foundation for neural operators is the <strong>Universal Approximation
+      Theorem for Operators</strong> (Chen &amp; Chen, 1995), which guarantees that a sufficiently
+      wide shallow network can approximate any nonlinear continuous operator to arbitrary precision:
+    </p>
+
+    <div class="theorem-box">
+      <div class="theorem-title">Theorem 1 (Universal Approximation Theorem for Operators).</div>
+      Suppose that $\sigma$ is a continuous non-polynomial function, $X$ is a Banach space,
+      $K_1 \subset X$, $K_2 \subset \mathbb{R}^d$ are two compact sets, $V$ is a compact set in
+      $C(K_1)$, and $\mathcal{G}$ is a nonlinear continuous operator mapping $V$ into $C(K_2)$.
+      Then for any $\epsilon > 0$, there exist positive integers $n, p, m$ and constants
+      $c_i^k, \xi_{ij}^k, \theta_i^k, \zeta^k \in \mathbb{R}$, $w^k \in \mathbb{R}^d$,
+      $x_j \in K_1$ such that
+      $$\left| \mathcal{G}(u)(y) - \sum_{k=1}^{p} \underbrace{\sum_{i=1}^{n} c_i^k\,
+        \sigma\!\left(\sum_{j=1}^{m} \xi_{ij}^k\, u(x_j) + \theta_i^k\right)}_{\text{branch}}
+        \underbrace{\sigma(w^k \cdot y + \zeta^k)}_{\text{trunk}} \right| < \epsilon$$
+      holds for all $u \in V$ and $y \in K_2$.
+    </div>
+
+    <p>
+      <strong>DeepONet</strong> (Lu et al., 2021) directly operationalizes this theorem as a
+      trainable architecture. It consists of two sub-networks:
+    </p>
+    <ul>
+      <li><strong>Branch net</strong> — takes the input function $u$ sampled at $m$ fixed sensor
+          locations $\{x_1, \dots, x_m\}$ and encodes it into a vector of $p$ coefficients
+          $\{b_1, \dots, b_p\}$.</li>
+      <li><strong>Trunk net</strong> — takes the query coordinate $y$ (any point in the output
+          domain) and produces a vector of $p$ basis functions $\{t_1, \dots, t_p\}$.</li>
+    </ul>
+    <p>
+      The output $\mathcal{G}(u)(y)$ is the dot product $\sum_{k=1}^p b_k\, t_k$. Because the
+      trunk net is a continuous function of $y$, the model can be evaluated at any query point —
+      it is never tied to a fixed output grid. In our project, the branch net receives temperature
+      readings from the room's sensors as the input function, and the trunk net is queried at
+      arbitrary spatial locations to predict the thermal field throughout the room.
+    </p>
+
+    <figure>
+      <img src="icon/deepOnet.png"
+           alt="DeepONet architecture: branch net encodes u(x), trunk net encodes query y, dot product gives G(u)(y)" />
+      <figcaption>
+        DeepONet architecture. The branch net encodes the input function $u$ sampled at sensor
+        locations; the trunk net encodes the query coordinate $y$. Their dot product yields the
+        operator output $\mathcal{G}(u)(y)$.
+      </figcaption>
+    </figure>
+
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="bg-section">
+
+    <h2>Dataset</h2>
+    <p>
+      Neural operators have largely been validated on simulation data — CFD outputs, finite-element
+      solutions, and other numerically generated fields. These datasets are clean, smooth, and
+      internally consistent, but they carry a <strong>sim-to-real gap</strong>: real sensors
+      are noisy, deployments drift, and the physics of an actual room differ from a textbook
+      boundary-value problem. For this project we deliberately chose a real-world dataset so that
+      the model is forced to learn from the kind of data it would encounter in deployment, not
+      from idealized surrogates.
+    </p>
+    <p>
+      We use the dataset published by Botero-Valencia et al. (<em>Data</em> 2023, 8, 82),
+      collected at the Instituto Tecnológico Metropolitano (ITM) in Medellín, Colombia.
+      It is, to our knowledge, one of the largest open indoor climate datasets, comprising
+      nearly 55 million timestamped records of temperature, relative humidity, and RSSI
+      sampled at 10-second intervals over approximately 3,915 hours (June 2022 – February 2023).
+    </p>
+
+    <div class="data-stats">
+      <div class="data-stat">
+        <span class="stat-value">~55M</span>
+        <span class="stat-label">total sensor records</span>
+      </div>
+      <div class="data-stat">
+        <span class="stat-value">3,915 h</span>
+        <span class="stat-label">continuous monitoring (~9 months)</span>
+      </div>
+      <div class="data-stat">
+        <span class="stat-value">13</span>
+        <span class="stat-label">calibrated sensors per room</span>
+      </div>
+      <div class="data-stat">
+        <span class="stat-value">10 s</span>
+        <span class="stat-label">sampling interval</span>
+      </div>
+    </div>
+
+    <p>
+      The dataset covers <strong>two physically distinct rooms</strong> — LAB1 and LAB2 —
+      in the same building, which is precisely what we need for cross-room generalization experiments:
+    </p>
+    <ul>
+      <li><strong>LAB1</strong> (Modeling Laboratory, Block F room 202) — 7.81 × 7.82 m floor,
+          2.96 m ceiling height. Used for computational design work; typically 5 occupants,
+          up to 20 during meetings. Air conditioning: Comfortfresh TUB-36CRA-N1 (36,000 BTU/h
+          floor-roof fan coil unit on the south wall).</li>
+      <li><strong>LAB2</strong> (Simulation &amp; Prototyping Laboratory, Fraternidad HQ) —
+          6.60 × 12.60 m floor, 4.40 m ceiling height. A larger, more open space used for
+          simulation and research; typically 3 occupants, up to 15. Air conditioning: York
+          YSM-B104V1600CFL0A (56,000 BTU/h unit with two ceiling grilles).</li>
+    </ul>
+    <p>
+      In each room, thirteen <strong>Xiaomi Mijia (LYWSDCGQ/01ZM) sensors</strong> were
+      ceiling-mounted at a known height and at precisely recorded XY coordinates — giving us a
+      relatively dense, spatially registered measurement network. This spatial grounding is what
+      enables us to treat the sensor readings as a sampled input function and ask the DeepONet
+      to reconstruct the full thermal field. Sensors were laboratory-calibrated (±0.1 °C,
+      ±0.1% RH) using a Fluke 2626-H reference instrument.
+    </p>
+    <p>
+      The two-room structure is a key asset: a model trained on LAB1 can be evaluated
+      zero-shot on LAB2, giving a direct test of whether the learned operator captures
+      transferable room-agnostic physics or merely overfits to room-specific patterns.
+    </p>
+
+    <figure>
+      <img src="icon/lab_layout.png"
+           alt="Floor plan and sensor layout for LAB1 and LAB2" />
+      <figcaption>
+        Floor plan of LAB1 (left, 7.81 × 7.82 m) and LAB2 (right, 6.60 × 12.60 m) with the
+        positions of all 13 ceiling-mounted sensors numbered. Known XY coordinates for every
+        sensor enable spatial function reconstruction across the room.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="data/sensor6_temperature.png"
+           alt="Sensor 6 indoor temperature vs outdoor temperature over the full monitoring period" />
+      <figcaption>
+        Sensor 6 indoor temperature (blue) versus outdoor temperature (red) resampled at 5-minute
+        intervals across the full nine-month collection window. The dataset captures daily cycles,
+        seasonal drift, and the effect of air conditioning — all of which a real-world thermal
+        digital twin must handle.
+      </figcaption>
+    </figure>
+
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="model-section">
+    <h2>Model Architecture</h2>
+    <p>
+      The interactive visualization below shows the full DeepONet architecture as implemented in
+      this project — 13 sensors, dual outputs (temperature + humidity), branch and trunk nets each
+      with depth 6 and hidden dimension 128. It also animates the <strong>sensor masking</strong>
+      strategy used during training: a random subset of sensors is zeroed out each epoch, teaching
+      the model to reconstruct the full thermal field from partial observations. Masked weights
+      receive zero gradient and are not updated, which is explained in the annotation panel.
+    </p>
+    <div class="viz-frame-wrap">
+      <iframe src="deeponet_viz/index.html" title="DeepONet Architecture Animation"></iframe>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="eval-section">
+
+    <h2>Evaluation</h2>
+
+    <h3>DeepONet Per-Sensor Performance</h3>
+    <p>
+      We evaluate DeepONet v0.5.3 using a <strong>leave-one-out protocol</strong>: for each of the
+      13 sensors in LAB1, the model is run with that sensor's branch input masked to zero, and its
+      prediction at that sensor's XY coordinate is compared against the ground-truth reading. This
+      mirrors the real deployment scenario where a sensor may fail or be absent, and the digital
+      twin must infer the missing value from the remaining network.
+    </p>
+    <p>
+      The floor map below encodes both RMSE (circle color, red = high error) and R²
+      (circle color, green = high fit) at each sensor's physical XY position in the room,
+      for both temperature and humidity. Most sensors achieve R² > 0.99 and temperature
+      RMSE below 0.10 °C. The slight outliers (sensor 1 and sensor 13) are near the
+      air-conditioning unit — a region of higher thermal gradients where interpolation is harder.
+    </p>
+
+    <div class="metric-row">
+      <div class="metric-card">
+        <span class="metric-value">0.080 °C</span>
+        <span class="metric-label">Mean Temp RMSE</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-value">0.979</span>
+        <span class="metric-label">Mean Temp R²</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-value">0.331 %RH</span>
+        <span class="metric-label">Mean Hum RMSE</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-value">0.991</span>
+        <span class="metric-label">Mean Hum R²</span>
+      </div>
+    </div>
+
+    <figure>
+      <img src="eval/deeponet_eval_floormap.png"
+           alt="DeepONet v0.5.3 floor map: per-sensor RMSE and R² for temperature and humidity" />
+      <figcaption>
+        DeepONet v0.5.3 floor map of per-sensor RMSE and R² for temperature (top row) and
+        humidity (bottom row). Circle color encodes the metric value; each circle is plotted at
+        the sensor's physical XY position in LAB1. The vast majority of sensors achieve
+        R² &gt; 0.99 with sub-0.1 °C temperature error.
+      </figcaption>
+    </figure>
+
+    <h3>Baseline Comparison: Inverse Distance Weighting (IDW)</h3>
+    <p>
+      To put these numbers in context, we compare DeepONet against
+      <strong>Inverse Distance Weighting (IDW)</strong>, the classical spatial interpolation
+      method used in environmental monitoring and geospatial analysis. IDW is a natural
+      and competitive baseline for this task because it requires no training, uses all
+      available neighboring sensors, and is directly grounded in physical intuition — nearby
+      sensors should matter more than distant ones.
+    </p>
+
+    <div class="idw-box">
+      <div class="idw-title">How IDW Works</div>
+      <p style="margin:0 0 0.6rem;">
+        Given $S-1$ known sensor readings $\{v_1, \dots, v_{S-1}\}$ at positions
+        $\{x_1, \dots, x_{S-1}\}$, IDW predicts the value at a target location $x_0$ as a
+        weighted average:
+      </p>
+      $$\hat{v}(x_0) = \frac{\sum_{i=1}^{S-1} w_i\, v_i}{\sum_{i=1}^{S-1} w_i},
+        \qquad w_i = \frac{1}{\|x_0 - x_i\|^p}$$
+      <p style="margin:0.5rem 0 0;">
+        where $p$ is the power parameter (we use $p = 2$, the standard choice). Each neighbor
+        contributes in inverse proportion to the square of its Euclidean distance from the
+        target. Nearby sensors dominate; distant ones contribute little. The weights are
+        normalized so the prediction is always a convex combination of the observed values.
+        IDW is purely geometric — it has no memory of past states, no notion of temporal
+        dynamics, and no awareness of room geometry or HVAC forcing. Every timestep is
+        predicted independently from the current spatial snapshot.
+      </p>
+    </div>
+
+    <p>
+      In our evaluation we apply the same leave-one-out protocol to IDW: for each target sensor,
+      the prediction uses the 12 remaining sensors weighted by $1/d^2$ from the target's known
+      floor coordinate. This gives the fairest possible comparison — both methods see exactly the
+      same available inputs.
+    </p>
+
+    <figure>
+      <img src="eval/baseline_compare_temperature.png"
+           alt="DeepONet v0.5.3 vs IDW — per-sensor RMSE and R² for temperature" />
+      <figcaption>
+        Per-sensor RMSE (top) and R² (bottom) for temperature, comparing DeepONet (blue) and IDW
+        (orange). DeepONet consistently achieves lower RMSE and higher R² across all 13 sensors.
+        The largest gaps appear at sensors 6 and 13, which sit near the AC unit — exactly where
+        purely distance-based interpolation struggles most.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="eval/baseline_compare_summary.png"
+           alt="DeepONet v0.5.3 vs IDW — mean metrics across all sensors for temperature and humidity" />
+      <figcaption>
+        Mean RMSE (left) and mean R² (right) aggregated across all 13 sensors for both
+        temperature and humidity. DeepONet reduces mean temperature RMSE from 0.318 °C (IDW)
+        to 0.080 °C — a <strong>4× improvement</strong> — and humidity RMSE from 1.199 %RH
+        to 0.331 %RH — a <strong>3.6× improvement</strong>. Mean R² improves from 0.726 to
+        0.979 for temperature and from 0.883 to 0.991 for humidity.
+      </figcaption>
+    </figure>
+
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="eval-section">
+
+    <h2>Sensor Optimization: How Many Sensors Do You Actually Need?</h2>
+    <p>
+      Once the model is trained, a natural question arises: does a building operator
+      <em>really</em> need all 13 sensors active at once? And which sensors are inherently
+      easy or hard for the model to predict — regardless of how many inputs are available?
+      We answer both questions through a systematic <strong>sensor ablation study</strong>.
+    </p>
+
+    <h3>Predictability vs. Input Budget</h3>
+    <p>
+      We ran an exhaustive search over all possible subsets of $k$ active input sensors,
+      for $k = 1, \dots, 12$, and measured the mean R² at each target sensor for temperature.
+      The heatmap below encodes the result: rows are target sensors (the ones being predicted),
+      columns are the number of active input sensors $k$, and each cell shows the mean R²
+      averaged over many random input subsets of that size.
+    </p>
+    <p>
+      Two patterns stand out clearly. First, <strong>most sensors saturate quickly</strong> —
+      by $k = 3$ or $4$, R² is already above 0.95 for the majority of locations, meaning
+      the full 13-sensor array is largely redundant. Second, <strong>Sensor 13 is the
+      hardest by far</strong>: even with 12 active inputs its R² stays at 0.87, and
+      with just 1 input it drops to −0.10. Sensor 13 sits directly next to the AC unit,
+      where local thermal gradients are steep and not well captured by far-field readings.
+      Sensor 6 shows the second-highest difficulty for the same reason.
+    </p>
+
+    <figure>
+      <img src="eval/sensor_ablation_heatmap_temperature.png"
+           alt="Mean R² per sensor × k — Temperature heatmap" />
+      <figcaption>
+        Mean temperature R² for each target sensor (rows) as a function of the number of
+        active input sensors $k$ (columns). Each cell averages over random subsets of that
+        size. Most sensors reach R² &gt; 0.95 at $k = 3$–$4$. Sensor 13 (near the AC unit)
+        remains the hardest target even with all 12 inputs active.
+      </figcaption>
+    </figure>
+
+    <h3>Sensor Placement Matters: Best vs. Worst Pair at k = 2</h3>
+    <p>
+      Knowing that 2–3 sensors are often sufficient raises an immediate follow-up:
+      <em>which</em> 2 sensors? The answer turns out to matter enormously.
+      The floor map below shows, for each target sensor, the two input sensors that yield
+      the <strong>best</strong> prediction (green lines) and the two that yield the
+      <strong>worst</strong> (red dashed lines) when only 2 inputs are active.
+      The spread is striking — for Sensor 13, the best pair reaches R² = 0.677 while
+      the worst pair collapses to R² = −1.524. Even for easier targets the gap between
+      the best and worst pair can exceed 0.2 in R².
+    </p>
+    <p>
+      This means sensor <em>count</em> alone does not determine prediction quality —
+      sensor <em>placement</em> is equally critical. A poorly chosen pair of sensors
+      can be worse than useless, while a well-chosen pair comes close to the full
+      13-sensor result.
+    </p>
+
+    <figure>
+      <img src="eval/spatial_best_pair_floormap_temperature.png"
+           alt="k=2 best vs worst input pair per target sensor — Temperature floor map" />
+      <figcaption>
+        For each target sensor (yellow star), the input pair that yields the highest R²
+        (green lines) and the pair that yields the lowest R² (red dashed lines) when only
+        two input sensors are active. The gap between best and worst is large for almost
+        every target, underscoring that sensor placement — not just sensor count — drives
+        prediction quality.
+      </figcaption>
+    </figure>
+
+    <h3>Interactive Sensor Explorer</h3>
+    <p>
+      The tool below lets you click any combination of sensors and instantly see the
+      resulting DeepONet R² and IDW R² for the selected target sensor. Use it to explore
+      the trade-off between sensor count and prediction quality — and to see exactly how
+      quickly performance degrades as sensors are removed.
+    </p>
+
+  </section>
+
+  <div style="width:100%; border:1px solid #e0e0e0; border-radius:10px; overflow:hidden; margin:0 0 3rem;">
+    <iframe src="eval/sensor_interactive.html"
+            style="width:100%; height:640px; border:none; display:block; background:#fff;"
+            title="Interactive Sensor Selector"></iframe>
+  </div>
+
+</body>
+</html>
