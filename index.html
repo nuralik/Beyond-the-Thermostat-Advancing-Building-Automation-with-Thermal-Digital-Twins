@@ -249,6 +249,98 @@
       border-top: 1px solid #ccc;
       margin: 0 4rem 2rem;
     }
+
+    /* ── Eval Section ── */
+    .eval-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 2rem 3.5rem;
+    }
+
+    .eval-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 2rem 0 0.6rem;
+    }
+
+    .eval-section h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.6rem 0 0.5rem;
+    }
+
+    .eval-section p {
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.8;
+      margin-bottom: 0.8rem;
+    }
+
+    .eval-section ul {
+      margin: 0.4rem 0 0.8rem 1.4rem;
+      font-size: 0.97rem;
+      color: #222;
+      line-height: 1.9;
+    }
+
+    .eval-section figure {
+      margin: 1.6rem 0;
+      text-align: center;
+    }
+
+    .eval-section figure img {
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .eval-section figure figcaption {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .idw-box {
+      background: #f5f5f5;
+      border-left: 4px solid #555;
+      border-radius: 4px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.4rem 0;
+      font-size: 0.93rem;
+      line-height: 1.9;
+    }
+
+    .idw-box .idw-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+      margin: 1.2rem 0 1.6rem;
+    }
+
+    .metric-card {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 0.9rem 0.7rem;
+      text-align: center;
+    }
+
+    .metric-card .metric-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .metric-card .metric-label {
+      font-size: 0.76rem;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -583,6 +675,207 @@
       <iframe src="deeponet_viz/index.html" title="DeepONet Architecture Animation"></iframe>
     </div>
   </section>
+
+  <hr class="section-divider" />
+
+  <section class="eval-section">
+
+    <h2>Evaluation</h2>
+
+    <h3>DeepONet Per-Sensor Performance</h3>
+    <p>
+      We evaluate DeepONet v0.5.3 using a <strong>leave-one-out protocol</strong>: for each of the
+      13 sensors in LAB1, the model is run with that sensor's branch input masked to zero, and its
+      prediction at that sensor's XY coordinate is compared against the ground-truth reading. This
+      mirrors the real deployment scenario where a sensor may fail or be absent, and the digital
+      twin must infer the missing value from the remaining network.
+    </p>
+    <p>
+      The floor map below encodes both RMSE (circle color, red = high error) and R²
+      (circle color, green = high fit) at each sensor's physical XY position in the room,
+      for both temperature and humidity. Most sensors achieve R² > 0.99 and temperature
+      RMSE below 0.10 °C. The slight outliers (sensor 1 and sensor 13) are near the
+      air-conditioning unit — a region of higher thermal gradients where interpolation is harder.
+    </p>
+
+    <div class="metric-row">
+      <div class="metric-card">
+        <span class="metric-value">0.080 °C</span>
+        <span class="metric-label">Mean Temp RMSE</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-value">0.979</span>
+        <span class="metric-label">Mean Temp R²</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-value">0.331 %RH</span>
+        <span class="metric-label">Mean Hum RMSE</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-value">0.991</span>
+        <span class="metric-label">Mean Hum R²</span>
+      </div>
+    </div>
+
+    <figure>
+      <img src="eval/deeponet_eval_floormap.png"
+           alt="DeepONet v0.5.3 floor map: per-sensor RMSE and R² for temperature and humidity" />
+      <figcaption>
+        DeepONet v0.5.3 floor map of per-sensor RMSE and R² for temperature (top row) and
+        humidity (bottom row). Circle color encodes the metric value; each circle is plotted at
+        the sensor's physical XY position in LAB1. The vast majority of sensors achieve
+        R² &gt; 0.99 with sub-0.1 °C temperature error.
+      </figcaption>
+    </figure>
+
+    <h3>Baseline Comparison: Inverse Distance Weighting (IDW)</h3>
+    <p>
+      To put these numbers in context, we compare DeepONet against
+      <strong>Inverse Distance Weighting (IDW)</strong>, the classical spatial interpolation
+      method used in environmental monitoring and geospatial analysis. IDW is a natural
+      and competitive baseline for this task because it requires no training, uses all
+      available neighboring sensors, and is directly grounded in physical intuition — nearby
+      sensors should matter more than distant ones.
+    </p>
+
+    <div class="idw-box">
+      <div class="idw-title">How IDW Works</div>
+      <p style="margin:0 0 0.6rem;">
+        Given $S-1$ known sensor readings $\{v_1, \dots, v_{S-1}\}$ at positions
+        $\{x_1, \dots, x_{S-1}\}$, IDW predicts the value at a target location $x_0$ as a
+        weighted average:
+      </p>
+      $$\hat{v}(x_0) = \frac{\sum_{i=1}^{S-1} w_i\, v_i}{\sum_{i=1}^{S-1} w_i},
+        \qquad w_i = \frac{1}{\|x_0 - x_i\|^p}$$
+      <p style="margin:0.5rem 0 0;">
+        where $p$ is the power parameter (we use $p = 2$, the standard choice). Each neighbor
+        contributes in inverse proportion to the square of its Euclidean distance from the
+        target. Nearby sensors dominate; distant ones contribute little. The weights are
+        normalized so the prediction is always a convex combination of the observed values.
+        IDW is purely geometric — it has no memory of past states, no notion of temporal
+        dynamics, and no awareness of room geometry or HVAC forcing. Every timestep is
+        predicted independently from the current spatial snapshot.
+      </p>
+    </div>
+
+    <p>
+      In our evaluation we apply the same leave-one-out protocol to IDW: for each target sensor,
+      the prediction uses the 12 remaining sensors weighted by $1/d^2$ from the target's known
+      floor coordinate. This gives the fairest possible comparison — both methods see exactly the
+      same available inputs.
+    </p>
+
+    <figure>
+      <img src="eval/baseline_compare_temperature.png"
+           alt="DeepONet v0.5.3 vs IDW — per-sensor RMSE and R² for temperature" />
+      <figcaption>
+        Per-sensor RMSE (top) and R² (bottom) for temperature, comparing DeepONet (blue) and IDW
+        (orange). DeepONet consistently achieves lower RMSE and higher R² across all 13 sensors.
+        The largest gaps appear at sensors 6 and 13, which sit near the AC unit — exactly where
+        purely distance-based interpolation struggles most.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="eval/baseline_compare_summary.png"
+           alt="DeepONet v0.5.3 vs IDW — mean metrics across all sensors for temperature and humidity" />
+      <figcaption>
+        Mean RMSE (left) and mean R² (right) aggregated across all 13 sensors for both
+        temperature and humidity. DeepONet reduces mean temperature RMSE from 0.318 °C (IDW)
+        to 0.080 °C — a <strong>4× improvement</strong> — and humidity RMSE from 1.199 %RH
+        to 0.331 %RH — a <strong>3.6× improvement</strong>. Mean R² improves from 0.726 to
+        0.979 for temperature and from 0.883 to 0.991 for humidity.
+      </figcaption>
+    </figure>
+
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="eval-section">
+
+    <h2>Sensor Optimization: How Many Sensors Do You Actually Need?</h2>
+    <p>
+      Once the model is trained, a natural question arises: does a building operator
+      <em>really</em> need all 13 sensors active at once? And which sensors are inherently
+      easy or hard for the model to predict — regardless of how many inputs are available?
+      We answer both questions through a systematic <strong>sensor ablation study</strong>.
+    </p>
+
+    <h3>Predictability vs. Input Budget</h3>
+    <p>
+      We ran an exhaustive search over all possible subsets of $k$ active input sensors,
+      for $k = 1, \dots, 12$, and measured the mean R² at each target sensor for temperature.
+      The heatmap below encodes the result: rows are target sensors (the ones being predicted),
+      columns are the number of active input sensors $k$, and each cell shows the mean R²
+      averaged over many random input subsets of that size.
+    </p>
+    <p>
+      Two patterns stand out clearly. First, <strong>most sensors saturate quickly</strong> —
+      by $k = 3$ or $4$, R² is already above 0.95 for the majority of locations, meaning
+      the full 13-sensor array is largely redundant. Second, <strong>Sensor 13 is the
+      hardest by far</strong>: even with 12 active inputs its R² stays at 0.87, and
+      with just 1 input it drops to −0.10. Sensor 13 sits directly next to the AC unit,
+      where local thermal gradients are steep and not well captured by far-field readings.
+      Sensor 6 shows the second-highest difficulty for the same reason.
+    </p>
+
+    <figure>
+      <img src="eval/sensor_ablation_heatmap_temperature.png"
+           alt="Mean R² per sensor × k — Temperature heatmap" />
+      <figcaption>
+        Mean temperature R² for each target sensor (rows) as a function of the number of
+        active input sensors $k$ (columns). Each cell averages over random subsets of that
+        size. Most sensors reach R² &gt; 0.95 at $k = 3$–$4$. Sensor 13 (near the AC unit)
+        remains the hardest target even with all 12 inputs active.
+      </figcaption>
+    </figure>
+
+    <h3>Sensor Placement Matters: Best vs. Worst Pair at k = 2</h3>
+    <p>
+      Knowing that 2–3 sensors are often sufficient raises an immediate follow-up:
+      <em>which</em> 2 sensors? The answer turns out to matter enormously.
+      The floor map below shows, for each target sensor, the two input sensors that yield
+      the <strong>best</strong> prediction (green lines) and the two that yield the
+      <strong>worst</strong> (red dashed lines) when only 2 inputs are active.
+      The spread is striking — for Sensor 13, the best pair reaches R² = 0.677 while
+      the worst pair collapses to R² = −1.524. Even for easier targets the gap between
+      the best and worst pair can exceed 0.2 in R².
+    </p>
+    <p>
+      This means sensor <em>count</em> alone does not determine prediction quality —
+      sensor <em>placement</em> is equally critical. A poorly chosen pair of sensors
+      can be worse than useless, while a well-chosen pair comes close to the full
+      13-sensor result.
+    </p>
+
+    <figure>
+      <img src="eval/spatial_best_pair_floormap_temperature.png"
+           alt="k=2 best vs worst input pair per target sensor — Temperature floor map" />
+      <figcaption>
+        For each target sensor (yellow star), the input pair that yields the highest R²
+        (green lines) and the pair that yields the lowest R² (red dashed lines) when only
+        two input sensors are active. The gap between best and worst is large for almost
+        every target, underscoring that sensor placement — not just sensor count — drives
+        prediction quality.
+      </figcaption>
+    </figure>
+
+    <h3>Interactive Sensor Explorer</h3>
+    <p>
+      The tool below lets you click any combination of sensors and instantly see the
+      resulting DeepONet R² and IDW R² for the selected target sensor. Use it to explore
+      the trade-off between sensor count and prediction quality — and to see exactly how
+      quickly performance degrades as sensors are removed.
+    </p>
+
+  </section>
+
+  <div style="width:100%; border:1px solid #e0e0e0; border-radius:10px; overflow:hidden; margin:0 0 3rem;">
+    <iframe src="eval/sensor_interactive.html"
+            style="width:100%; height:640px; border:none; display:block; background:#fff;"
+            title="Interactive Sensor Selector"></iframe>
+  </div>
 
 </body>
 </html>
