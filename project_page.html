@@ -877,5 +877,84 @@
             title="Interactive Sensor Selector"></iframe>
   </div>
 
+  <section class="eval-section">
+    <h2>Thermal Comfort Analysis</h2>
+
+    <h3>From Sparse Sensors to a Full Spatial Field</h3>
+    <p>
+      A key advantage of DeepONet as the modeling backbone is that it is a
+      <strong>zero-shot resolution operator</strong>: once trained, it can be queried at
+      <em>any</em> spatial coordinate — not just the 13 sensor locations used during training.
+      The trunk network accepts a continuous $(x, y)$ coordinate as input, so there is no
+      fixed output grid. This means we can sample as many query points as we want across the
+      floor plan to reconstruct the full spatial temperature and humidity field at arbitrary
+      resolution. The model was never told about those locations — it is expected to have
+      learned the underlying physics of the space well enough to generalize everywhere.
+    </p>
+    <p>
+      The figure below illustrates this directly. Each panel shows the mean predicted floor
+      temperature averaged over 576 test timesteps, as the number of query points is scaled
+      from 13 (the original sensor positions) to 121 and then 676 uniformly distributed floor
+      points. The top row is DeepONet; the bottom row is Inverse Distance Weighting (IDW) as
+      a classical spatial interpolation baseline.
+    </p>
+
+    <figure>
+      <img src="eval/floor_heatmap_temp.png"
+           alt="Floor Temperature Heatmap — DeepONet vs IDW at 13, 121, and 676 query points" />
+      <figcaption>
+        Mean floor temperature heatmap (°C) averaged over 576 test timesteps.
+        <strong>Top row:</strong> DeepONet queried at 13, ~121, and ~676 uniform floor points.
+        <strong>Bottom row:</strong> IDW interpolated from the same point sets.
+        DeepONet produces spatially coherent, physics-consistent fields at all resolutions.
+        IDW, by contrast, degrades as query density grows — its estimate collapses to
+        Voronoi-like patches around sensor locations, revealing that it is purely
+        interpolating measured values rather than learning the spatial physics.
+        At 676 points, the hot zone near the south-east AC unit (Sensor 1) and the
+        cooler north corridor are clearly resolved by DeepONet but smeared by IDW.
+      </figcaption>
+    </figure>
+
+    <h3>Thermal Comfort Indices from High-Resolution Fields</h3>
+    <p>
+      With a dense, continuous prediction of temperature and humidity available at every point
+      on the floor, we can compute <strong>standardized thermal comfort indices</strong> across
+      the entire space — something impossible with a handful of sparse sensor readings alone.
+      We apply the <strong>ISO 7730 Fanger PMV/PPD model</strong>, which converts each
+      predicted $(T, \text{RH})$ pair into two occupant-centric metrics:
+    </p>
+    <ul>
+      <li>
+        <strong>PMV (Predicted Mean Vote)</strong> — a seven-point thermal sensation scale
+        running from −3 (cold) to +3 (hot), with 0 representing thermal neutrality.
+        ASHRAE 55 defines the comfortable zone as PMV ∈ [−0.5, +0.5].
+      </li>
+      <li>
+        <strong>PPD (Predicted Percentage Dissatisfied)</strong> — the expected fraction of
+        occupants who would find the thermal environment unacceptable. PPD is minimized
+        (~5%) at perfect neutrality and rises sharply as PMV moves away from zero.
+      </li>
+    </ul>
+    <p>
+      The analysis uses fixed occupant assumptions representative of the lab environment:
+      air speed 0.1 m/s (still air), metabolic rate 1.1 met (seated light work), and
+      clothing insulation 0.5 clo (light summer clothing). Mean radiant temperature is
+      approximated as equal to air temperature — a standard simplification in the absence
+      of radiometric measurements.
+    </p>
+
+    <div style="text-align:center; margin: 2.5rem 0 1rem;">
+      <a href="comfort_dashboard.html" target="_blank"
+         style="display:inline-block; padding: 0.75rem 2.2rem; background:#1d4ed8;
+                color:#fff; font-size:1rem; font-weight:600; border-radius:8px;
+                text-decoration:none; letter-spacing:0.02em;
+                box-shadow: 0 2px 8px rgba(29,78,216,0.25);
+                transition: background 0.2s;">
+        Launch Thermal Comfort Demo →
+      </a>
+    </div>
+
+  </section>
+
 </body>
 </html>
